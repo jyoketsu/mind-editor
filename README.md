@@ -1,17 +1,21 @@
 ```
- ________  _______   ________  ________ _________
-|\   __  \|\  ___ \ |\   __  \|\   ____\\___   ___\
-\ \  \|\  \ \   __/|\ \  \|\  \ \  \___\|___ \  \_|
- \ \   _  _\ \  \_|/_\ \   __  \ \  \       \ \  \
-  \ \  \\  \\ \  \_|\ \ \  \ \  \ \  \____   \ \  \
-   \ \__\\ _\\ \_______\ \__\ \__\ \_______\  \ \__\
-    \|__|\|__|\|_______|\|__|\|__|\|_______|   \|__|
+ _____ ______   ___  ________   ________
+|\   _ \  _   \|\  \|\   ___  \|\   ___ \
+\ \  \\\__\ \  \ \  \ \  \\ \  \ \  \_|\ \
+ \ \  \\|__| \  \ \  \ \  \\ \  \ \  \ \\ \
+  \ \  \    \ \  \ \  \ \  \\ \  \ \  \_\\ \
+   \ \__\    \ \__\ \__\ \__\\ \__\ \_______\
+    \|__|     \|__|\|__|\|__| \|__|\|_______|
+
 ```
 
 ## 简介
 
-react-example。使用 `Vite + React + TypeScript + React-Router + Redux-Toolkit + Material-UI + react-i18next` 开发。支持多语言和暗黑模式。
+mind-editor。使用 `Vite + React + TypeScript + React-Router + Redux-Toolkit + Material-UI + react-i18next` 开发。支持多语言和暗黑模式。
 
+```
+http://localhost:3000/?token=7F81JOM45YE1QK4C9C2WEOODXJJIRT5MHMLH926QPD7AWQMM&getDataApi=%7B%22url%22%3A%22https%3A%2F%2Fnotesfoxx.qingtime.cn%2Fappendix%2Fdetail%22%2C%22params%22%3A%7B%22nodeKey%22%3A%225B1EC086%22%2C%22cardKey%22%3A%221423264751%22%2C%22nodeType%22%3A%22mind%22%7D%2C%22docDataName%22%3A%22content%22%7D&patchDataApi=%7B%22url%22%3A%22https%3A%2F%2Fnotesfoxx.qingtime.cn%2Fappendix%2Fnode%22%2C%22params%22%3A%7B%22nodeKey%22%3A%225B1EC086%22%2C%22type%22%3A%22doc%22%7D%2C%22docDataName%22%3A%22content%22%7D&getUptokenApi=%7B%22url%22%3A%22https%3A%2F%2Fbaokudata.qingtime.cn%2Fsgbh%2FupTokenQiniu%2FgetQiNiuUpToken%22%2C%22params%22%3A%7B%22token%22%3A%22%22%2C%22type%22%3A2%7D%7D&isEdit=2&hideHead=1
+```
 ## 使用技术
 
 - [Vite](https://www.vitejs.net/) - 构建工具
@@ -22,7 +26,7 @@ react-example。使用 `Vite + React + TypeScript + React-Router + Redux-Toolkit
 - [Material UI](https://mui.com/zh/material-ui/getting-started/usage/) - ui 库
 - [react-i18next](https://react.i18next.com) 多语言
 
-## [online-demo](https://jyoketsu.github.io/react-example/)
+## [online-demo](https://jyoketsu.github.io/mind-editor/)
 
 ## 安装
 
@@ -41,7 +45,3 @@ yarn dev
 ```
 yarn deploy
 ```
-
-## 注意
-
-将本项目用户新建项目时，注意将.env 文件中的`VITE_BASE=/react-example/`改为`VITE_BASE=/`，原因见[github-pages](https://cn.vitejs.dev/guide/static-deploy.html#github-pages)，.github/workflows 中的部署至 github-pages 也改为自己的部署。

@@ -1,7 +1,7 @@
 {
-  "name": "react-example",
+  "name": "mind-editor",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -21,7 +21,8 @@
     "react-dom": "^18.0.0",
     "react-i18next": "^11.17.0",
     "react-redux": "^8.0.2",
-    "react-router-dom": "6"
+    "react-router-dom": "6",
+    "tree-graph-react": "^1.6.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.41",

@@ -74,46 +74,8 @@ const request = {
   },
 };
 
-const auth = {
-  loginByToken(token: string) {
-    return request.get(AUTH_URL + "/account/userinfo", { token: token });
-  },
-  // 获取七牛云uptoken
-  getUptoken() {
-    return request.get(AUTH_URL + "/upTokenQiniu/getQiNiuUpToken", {
-      token: token,
-      type: 2,
-      bucketType: 7,
-    });
-  },
-  getUptokenOverWrite(key: string) {
-    return request.get(AUTH_URL + "/upTokenQiniu/getQiNiuUpTokenKey", {
-      token: token,
-      type: 2,
-      key,
-      bucketType: 7,
-    });
-  },
-  // 同步用户
-  syncUser(props: {
-    userKey: string;
-    userName: string;
-    mobile: string;
-    app: number;
-    appHigh: number;
-    userAvatar?: string;
-    email?: string;
-  }) {
-    return request.patch(API_URL + "/user", props);
-  },
-  // 历史协作者
-  getCollaboratorsHistory() {
-    return request.get(API_URL + "/user/history");
-  },
-};
-
 export default {
-  auth,
+  request,
   setToken: (_token: string) => {
     localStorage.setItem("auth_token", _token);
     token = _token;
