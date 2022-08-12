@@ -125,7 +125,7 @@ export default function Editor() {
             blockHeight={30}
             pathWidth={2}
             pathColor={darkMode ? "#FFF" : "#535953"}
-            backgroundColor={darkMode ? "#212121" : undefined}
+            backgroundColor={undefined}
             hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
             selectedBorderColor={darkMode ? "#FF0000" : undefined}
             showDeleteConform={handledeleteConform}

@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync": "rsync -r dist/* root@132.232.47.47:/home/work/websites/mind.qingtime.cn",
+    "deploy": "npm run build && npm run sync"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",

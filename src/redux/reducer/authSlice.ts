@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { User } from "../../interface/User";
 
 // Define a type for the slice state
 interface AuthState {
-  user: User | null;
+  user: any;
   expired: boolean;
   uploadToken: string | null;
 }
@@ -21,7 +20,7 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
-    setUser: (state, action: PayloadAction<User>) => {
+    setUser: (state, action: PayloadAction<any>) => {
       state.user = action.payload;
       state.expired = false;
     },
