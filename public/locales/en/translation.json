@@ -10,5 +10,13 @@
   "page": {
     "page1": "page1",
     "page2": "page2"
+  },
+  "mind": {
+    "changed": "Changed",
+    "saved": "Saved",
+    "deleteTitle": "Delete",
+    "deleteContent": "This action deletes this node and all its children! Are you sure you want to continue?",
+    "cancel": "Cancel",
+    "ok": "Ok"
   }
 }

@@ -1,5 +1,5 @@
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 export default function Preview() {

@@ -6,6 +6,7 @@ import {
   Select,
   SelectChangeEvent,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -15,12 +16,14 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { setDark } from "../../redux/reducer/commonSlice";
 import { getSearchParamValue } from "../../utils/util";
-import { setApi } from "../../redux/reducer/serviceSlice";
+import { getDoc, setApi } from "../../redux/reducer/serviceSlice";
 
 export default function Home() {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const dark = useAppSelector((state) => state.common.dark);
+  const getDataApi = useAppSelector((state) => state.service.getDataApi);
+  const changed = useAppSelector((state) => state.service.changed);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -49,6 +52,12 @@ export default function Home() {
     }
   }, []);
 
+  useEffect(() => {
+    if (getDataApi) {
+      dispatch(getDoc(getDataApi));
+    }
+  }, [getDataApi]);
+
   const changeLanguage = (event: SelectChangeEvent) => {
     i18n.changeLanguage(event.target.value);
   };
@@ -76,7 +85,15 @@ export default function Home() {
           boxSizing: "border-box",
         }}
       >
+        <Typography variant="h5" sx={{ fontWeight: 800 }}>
+          Mind
+        </Typography>
         <span style={{ flex: 1 }} />
+        <Typography
+          sx={{ color: "text.secondary", fontSize: "14px", padding: "0 5px" }}
+        >
+          {changed ? t("mind.changed") : t("mind.saved")}
+        </Typography>
         <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
           <Select value={i18n.language} onChange={changeLanguage}>
             <MenuItem value="zh-CN">简体字</MenuItem>

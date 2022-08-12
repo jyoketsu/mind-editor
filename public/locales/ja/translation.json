@@ -10,5 +10,13 @@
   "page": {
     "page1": "頁１",
     "page2": "頁２"
+  },
+  "mind": {
+    "changed": "変更有り",
+    "saved": "保存済み",
+    "deleteTitle": "警告！",
+    "deleteContent": "本当に削除しますか？",
+    "cancel": "取り消し",
+    "ok": "確定"
   }
 }

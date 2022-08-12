@@ -1,3 +1,6 @@
+import NodeMap from "tree-graph-react/dist/interfaces/NodeMap";
+import Node from "tree-graph-react/dist/interfaces/Node";
+
 export const is_mobile = () => {
   let regex_match =
     /(nokia|iphone|android|motorola|^mot-|softbank|foma|docomo|kddi|up.browser|up.link|htc|dopod|blazer|netfront|helio|hosin|huawei|novarra|CoolPad|webos|techfaith|palmsource|blackberry|alcatel|amoi|ktouch|nexian|samsung|^sam-|s[cg]h|^lge|ericsson|philips|sagem|wellcom|bunjalloo|maui|symbian|smartphone|midp|wap|phone|windows ce|iemobile|^spice|^bird|^zte-|longcos|pantech|gionee|^sie-|portalmmm|jigs browser|hiptop|^benq|haier|^lct|operas*mobi|opera*mini|320x320|240x320|176x220|Mobile)/i;
@@ -114,4 +117,95 @@ export function getDeviceType() {
 export const getSearchParamValue = (search: string, paramName: string) => {
   const QUERY_PARAMS = new URLSearchParams(search);
   return QUERY_PARAMS.get(paramName);
+};
+
+/**
+ * @name plainTextToNaotuFormat
+ * @description
+ * mirror of kityminder-core
+ * source: https://github.com/fex-team/kityminder-core/blob/dev/src/core/data.js#L80-L167
+ * @param {string} text
+ */
+export const plainTextToNaotuFormat = (text: string) => {
+  let children = [];
+  let jsonMap: any = {};
+  let level = 0;
+  let LINE_SPLITTER = /\r|\n|\r\n/;
+  let TAB_REGEXP = /^(\t|\x20{2})/;
+  let lines = text.split(LINE_SPLITTER);
+  let line = "";
+  let jsonNode;
+  let i = 0;
+
+  function isEmpty(line: string) {
+    return line === "" && !/\S/.test(line);
+  }
+
+  function getNode(line: string) {
+    return {
+      data: {
+        id: guid(8, 16),
+        text: line.replace(/^(\t|\x20{2})+/, "").replace(/(\t|\x20{2})+$/, ""),
+      },
+      children: [],
+    };
+  }
+
+  function getLevel(text: string) {
+    var level = 0;
+    while (TAB_REGEXP.test(text)) {
+      text = text.replace(TAB_REGEXP, "");
+      level++;
+    }
+    return level;
+  }
+
+  function addChild(parent: any, node: any) {
+    parent.children.push(node);
+  }
+
+  while ((line = lines[i++]) !== undefined) {
+    line = line.replace(/&nbsp;{2}/g, ""); //空格数 /^(\t|\x20{2})/ {2}表示两个空格 &nbsp;&nbsp;同理
+    if (isEmpty(line)) continue;
+
+    level = getLevel(line);
+    jsonNode = getNode(line);
+    if (level === 0) {
+      jsonMap = {};
+      children.push(jsonNode);
+      jsonMap[0] = children[children.length - 1];
+    } else {
+      if (!jsonMap[level - 1]) {
+        throw new Error("格式错误"); // Invalid local format
+      }
+      addChild(jsonMap[level - 1], jsonNode);
+      jsonMap[level] = jsonNode;
+    }
+  }
+  return children;
+};
+
+/**
+ * 获取子孙节点
+ * @param node
+ * @param nodeMap
+ * @param includeSelf
+ * @returns
+ */
+export const getAncestor = (
+  node: Node,
+  nodeMap: NodeMap,
+  includeSelf?: boolean
+) => {
+  const getFather = (node: Node) => {
+    const father = nodeMap[node.father];
+    if (father) {
+      ancestorList.unshift(father);
+      getFather(father);
+    }
+  };
+
+  let ancestorList: Node[] = includeSelf ? [node] : [];
+  getFather(node);
+  return ancestorList;
 };
