@@ -17,6 +17,8 @@
     "deleteTitle": "Delete",
     "deleteContent": "This action deletes this node and all its children! Are you sure you want to continue?",
     "cancel": "Cancel",
-    "ok": "Ok"
+    "ok": "Ok",
+    "export": "Export",
+    "import": "Import"
   }
 }

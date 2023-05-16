@@ -17,6 +17,8 @@
     "deleteTitle": "警告！",
     "deleteContent": "本当に削除しますか？",
     "cancel": "取り消し",
-    "ok": "確定"
+    "ok": "確定",
+    "export": "エクスポート",
+    "import": "インポート"
   }
 }

@@ -10,13 +10,20 @@ import {
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import IosShareIcon from "@mui/icons-material/IosShare";
+import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { setDark } from "../../redux/reducer/commonSlice";
-import { getSearchParamValue } from "../../utils/util";
-import { getDoc, setApi } from "../../redux/reducer/serviceSlice";
+import { exportFile, getSearchParamValue } from "../../utils/util";
+import {
+  getDoc,
+  saveDoc,
+  setApi,
+  setDocData,
+} from "../../redux/reducer/serviceSlice";
 
 export default function Home() {
   const { t, i18n } = useTranslation();
@@ -24,6 +31,8 @@ export default function Home() {
   const dark = useAppSelector((state) => state.common.dark);
   const getDataApi = useAppSelector((state) => state.service.getDataApi);
   const changed = useAppSelector((state) => state.service.changed);
+  const docData = useAppSelector((state) => state.service.docData);
+  const patchDataApi = useAppSelector((state) => state.service.patchDataApi);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -66,6 +75,37 @@ export default function Home() {
     dispatch(setDark(!dark));
   };
 
+  const handleExport = () => {
+    if (docData) {
+      const root = docData.data[docData.rootKey];
+      exportFile(JSON.stringify(docData), `${root.name}.mind`);
+    }
+  };
+
+  const handleChange = (event: any) => {
+    const file = event.target.files[0];
+    if (!file || !patchDataApi) return;
+    const reader = new FileReader();
+    reader.onload = function fileReadCompleted() {
+      // console.log(reader.result);
+      if (
+        reader.result &&
+        typeof reader.result === "string" &&
+        reader.result.includes("rootKey")
+      ) {
+        const data = JSON.parse(reader.result);
+        dispatch(setDocData(data));
+        dispatch(
+          saveDoc({
+            patchDataApi,
+            data,
+          })
+        );
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <Box
       sx={{
@@ -104,6 +144,31 @@ export default function Home() {
           </Select>
         </FormControl>
 
+        <Tooltip title={t("mind.export")}>
+          <IconButton onClick={handleExport}>
+            <IosShareIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={t("mind.import")}>
+          <IconButton>
+            <input
+              type="file"
+              multiple
+              style={{
+                opacity: 0,
+                position: "absolute",
+                fontSize: "100px",
+                right: 0,
+                top: 0,
+                width: "100%",
+                height: "100%",
+                cursor: "pointer",
+              }}
+              onChange={handleChange}
+            />
+            <SystemUpdateAltIcon />
+          </IconButton>
+        </Tooltip>
         <Tooltip title={t(dark ? "menu.lightMode" : "menu.darkMode")}>
           <IconButton onClick={toggleMode}>
             {dark ? <LightModeIcon /> : <DarkModeIcon />}

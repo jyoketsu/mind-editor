@@ -17,6 +17,8 @@
     "deleteTitle": "确定要删除吗？",
     "deleteContent": "该动作会删除此节点及其所有子节点！确定要继续吗？",
     "cancel": "取消",
-    "ok": "确定"
+    "ok": "确定",
+    "export": "导出",
+    "import": "导入"
   }
 }

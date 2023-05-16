@@ -73,6 +73,9 @@ export const serviceSlice = createSlice({
     setChanged: (state, action: PayloadAction<boolean>) => {
       state.changed = action.payload;
     },
+    setDocData: (state, action: PayloadAction<TreeData>) => {
+      state.docData = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getDoc.fulfilled, (state, action: PayloadAction<any>) => {
@@ -90,12 +93,16 @@ export const serviceSlice = createSlice({
       }
     });
     builder.addCase(saveDoc.fulfilled, (state, action: PayloadAction<any>) => {
-      state.changed = false;
+      if (action.payload.status === 200) {
+        state.changed = false;
+      } else {
+        alert(action.payload.msg);
+      }
     });
   },
 });
 
-export const { setApi, setChanged } = serviceSlice.actions;
+export const { setApi, setChanged, setDocData } = serviceSlice.actions;
 
 export default serviceSlice.reducer;
 
