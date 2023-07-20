@@ -2,6 +2,9 @@ import {
   Box,
   FormControl,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -24,6 +27,7 @@ import {
   setApi,
   setDocData,
 } from "../../redux/reducer/serviceSlice";
+import { MoreHoriz } from "@mui/icons-material";
 
 export default function Home() {
   const { t, i18n } = useTranslation();
@@ -33,7 +37,9 @@ export default function Home() {
   const changed = useAppSelector((state) => state.service.changed);
   const docData = useAppSelector((state) => state.service.docData);
   const patchDataApi = useAppSelector((state) => state.service.patchDataApi);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const dispatch = useAppDispatch();
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const token = getSearchParamValue(location.search, "token");
@@ -106,6 +112,13 @@ export default function Home() {
     reader.readAsText(file);
   };
 
+  const handleClickMore = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMoreMenu = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Box
       sx={{
@@ -135,22 +148,33 @@ export default function Home() {
         >
           {changed ? t("mind.changed") : t("mind.saved")}
         </Typography>
-        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-          <Select value={i18n.language} onChange={changeLanguage}>
-            <MenuItem value="zh-CN">简体字</MenuItem>
-            <MenuItem value="zh-TW">繁體字</MenuItem>
-            <MenuItem value="en">English</MenuItem>
-            <MenuItem value="ja">日本語</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Tooltip title={t("mind.export")}>
-          <IconButton onClick={handleExport}>
-            <IosShareIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={t("mind.import")}>
-          <IconButton>
+        <IconButton onClick={handleClickMore}>
+          <MoreHoriz />
+        </IconButton>
+        <Menu anchorEl={anchorEl} open={open} onClose={handleCloseMoreMenu}>
+          <MenuItem onClick={handleCloseMoreMenu}>
+            <Select
+              value={i18n.language}
+              size="small"
+              onChange={changeLanguage}
+            >
+              <MenuItem value="zh-CN">简体字</MenuItem>
+              <MenuItem value="zh-TW">繁體字</MenuItem>
+              <MenuItem value="en">English</MenuItem>
+              <MenuItem value="ja">日本語</MenuItem>
+            </Select>
+          </MenuItem>
+          <MenuItem onClick={handleExport}>
+            <ListItemIcon>
+              <SystemUpdateAltIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{t("mind.export")}</ListItemText>
+          </MenuItem>
+          <MenuItem>
+            <ListItemIcon>
+              <IosShareIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{t("mind.import")}</ListItemText>
             <input
               type="file"
               multiple
@@ -166,14 +190,17 @@ export default function Home() {
               }}
               onChange={handleChange}
             />
-            <SystemUpdateAltIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={t(dark ? "menu.lightMode" : "menu.darkMode")}>
-          <IconButton onClick={toggleMode}>
-            {dark ? <LightModeIcon /> : <DarkModeIcon />}
-          </IconButton>
-        </Tooltip>
+          </MenuItem>
+
+          <MenuItem onClick={toggleMode}>
+            <ListItemIcon>
+              {dark ? <LightModeIcon /> : <DarkModeIcon />}
+            </ListItemIcon>
+            <ListItemText>
+              {t(dark ? "menu.lightMode" : "menu.darkMode")}
+            </ListItemText>
+          </MenuItem>
+        </Menu>
       </Box>
       <Box sx={{ flex: 1 }}>
         <Outlet />

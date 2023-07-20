@@ -1,4 +1,5 @@
 import axios from "axios";
+import Resource from "../interface/Resource";
 const AUTH_URL = import.meta.env.VITE_AUTH_URL;
 const API_URL = import.meta.env.VITE_API_URL;
 let token = localStorage.getItem("auth_token") || "";
@@ -74,10 +75,26 @@ const request = {
   },
 };
 
+const qiniu = {
+  remainingStorage(fileSize?: number) {
+    return request.get(AUTH_URL + "/qiniuResource/remainSize", { fileSize });
+  },
+  updateStorage(resourceArr: Resource[]) {
+    return request.post(AUTH_URL + "/qiniuResource", { resourceArr });
+  },
+  deleteQiniu(urls: string[]) {
+    return request.delete(AUTH_URL + "/qiniuResource", { urlArr: urls });
+  },
+};
+
 export default {
   request,
+  qiniu,
   setToken: (_token: string) => {
     localStorage.setItem("auth_token", _token);
     token = _token;
+  },
+  getToken: () => {
+    return token;
   },
 };

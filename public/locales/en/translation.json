@@ -19,6 +19,12 @@
     "cancel": "Cancel",
     "ok": "Ok",
     "export": "Export",
-    "import": "Import"
+    "import": "Import",
+    "addChild": "Add Child Node",
+    "addNext": "Add Node After",
+    "delete": "Delete Node",
+    "deleteImage": "Delete Image",
+    "addNodeImage": "Upload Image",
+    "changeNodeImage": "Change Image"
   }
 }

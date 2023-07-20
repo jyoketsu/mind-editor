@@ -19,6 +19,12 @@
     "cancel": "取り消し",
     "ok": "確定",
     "export": "エクスポート",
-    "import": "インポート"
+    "import": "インポート",
+    "addChild": "子ノードを追加",
+    "addNext": "次にノードを追加",
+    "delete": "ノードを削除",
+    "deleteImage": "画像を削除",
+    "addNodeImage": "画像をアップロード",
+    "changeNodeImage": "画像を変更"
   }
 }

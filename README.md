@@ -9,45 +9,51 @@
 
 ```
 
-## 简介
+## Introduction
 
-mind-editor。使用 `Vite + React + TypeScript + React-Router + Redux-Toolkit + Material-UI + react-i18next` 开发。支持多语言和暗黑模式。
+Mind Editor. Developed using `Vite + React + TypeScript + React-Router + Redux-Toolkit + Material-UI + react-i18next`. Supports multiple languages and dark mode.
 
+## Technologies Used
 
-## 使用技术
+- [Vite](https://www.vitejs.net/) - Build Tool
+- [React](https://reactjs.org/) - Framework
+- [React Router](https://reactrouter.com/docs/en/v6) - Routing
+- [React Redux](https://react-redux.js.org/) - State Management
+- [Redux Toolkit](https://redux-toolkit.js.org/) - Redux Logic Utilities
+- [Material UI](https://mui.com/) - UI Library
+- [react-i18next](https://react.i18next.com) - Multilingual Support
 
-- [Vite](https://www.vitejs.net/) - 构建工具
-- [React](https://zh-hans.reactjs.org/) - 框架
-- [React Router](https://reactrouter.com/docs/en/v6) - 路由
-- [React Redux](https://react-redux.js.org/) - 状态管理
-- [Redux Toolkit](https://redux-toolkit.js.org/) - 编写 Redux 逻辑的方法
-- [Material UI](https://mui.com/zh/material-ui/getting-started/usage/) - ui 库
-- [react-i18next](https://react.i18next.com) 多语言
+## [Online Demo](https://jyoketsu.github.io/mind-editor/)
 
-## [online-demo](https://jyoketsu.github.io/mind-editor/)
+## Installation
 
-## 安装
+To install the necessary dependencies, run the following command:
 
 ```
 yarn
 ```
 
-## 启动服务
+## Start Development Server
+
+To start the development server, use the following command:
 
 ```
 yarn dev
 ```
 
-## 编译并发布
+## Build and Deploy
+
+To compile and publish the application, execute the following command:
 
 ```
 yarn deploy
 ```
 
-## 使用
+## Usage
+
 ```javascript
 /**
- * 获取第三方应用地址
+ * Get the URL of a third-party application
  * @param nodeKey
  * @returns
  */
@@ -73,7 +79,7 @@ export const getThirdAppUrl = (
     params: { token: "", type: 2 },
   });
   const token = localStorage.getItem("auth_token");
-  // isEdit 2:编辑模式 1:只读 0:预览
+  // isEdit 2:edit mode 1:read-only mode 0:preview mode
   const query = `token=${token}&getDataApi=${encodeURIComponent(
     getDataApi
   )}&patchDataApi=${encodeURIComponent(
@@ -83,6 +89,6 @@ export const getThirdAppUrl = (
   }&hideHead=1`;
   return `${appUrl}?${query}`;
 };
-// 示例地址
-http://localhost:3000/?token=7F81JOM45YE1QK4C9C2WEOODXJJIRT5MHMLH926QPD7AWQMM&getDataApi=%7B%22url%22%3A%22https%3A%2F%2Fnotesfoxx.qingtime.cn%2Fappendix%2Fdetail%22%2C%22params%22%3A%7B%22nodeKey%22%3A%225B1EC086%22%2C%22cardKey%22%3A%221423264751%22%2C%22nodeType%22%3A%22mind%22%7D%2C%22docDataName%22%3A%22content%22%7D&patchDataApi=%7B%22url%22%3A%22https%3A%2F%2Fnotesfoxx.qingtime.cn%2Fappendix%2Fnode%22%2C%22params%22%3A%7B%22nodeKey%22%3A%225B1EC086%22%2C%22type%22%3A%22doc%22%7D%2C%22docDataName%22%3A%22content%22%7D&getUptokenApi=%7B%22url%22%3A%22https%3A%2F%2Fbaokudata.qingtime.cn%2Fsgbh%2FupTokenQiniu%2FgetQiNiuUpToken%22%2C%22params%22%3A%7B%22token%22%3A%22%22%2C%22type%22%3A2%7D%7D&isEdit=2&hideHead=1
 ```
+
+## [Sample address](http://localhost:3000/?token=E9POCJMZ5SH4IDRXK2MJBSQNIA2IEWO791HZIBS8TCNT3C7P&getDataApi=%7B%22url%22%3A%22https%3A%2F%2Fnotesfoxx.qingtime.cn%2Fappendix%2Fdetail%22%2C%22params%22%3A%7B%22nodeKey%22%3A%225B1EC086%22%2C%22cardKey%22%3A%221423264751%22%2C%22nodeType%22%3A%22mind%22%7D%2C%22docDataName%22%3A%22content%22%7D&patchDataApi=%7B%22url%22%3A%22https%3A%2F%2Fnotesfoxx.qingtime.cn%2Fappendix%2Fnode%22%2C%22params%22%3A%7B%22nodeKey%22%3A%225B1EC086%22%2C%22type%22%3A%22doc%22%7D%2C%22docDataName%22%3A%22content%22%7D&getUptokenApi=%7B%22url%22%3A%22https%3A%2F%2Fbaokudata.qingtime.cn%2Fsgbh%2FupTokenQiniu%2FgetQiNiuUpToken%22%2C%22params%22%3A%7B%22token%22%3A%22%22%2C%22type%22%3A2%7D%7D&isEdit=2&hideHead=1)

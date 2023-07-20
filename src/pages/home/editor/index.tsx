@@ -5,6 +5,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Mind, Tree } from "tree-graph-react";
@@ -20,6 +22,8 @@ import { saveDoc, setChanged } from "../../../redux/reducer/serviceSlice";
 import CNode from "tree-graph-react/dist/interfaces/CNode";
 import NodeMap from "tree-graph-react/dist/interfaces/NodeMap";
 import Breadcrumbs from "../../../components/common/Breadcrumbs";
+import api from "../../../utils/api";
+import qiniuUpload from "../../../utils/qiniu";
 
 let timeout: NodeJS.Timeout;
 
@@ -27,15 +31,21 @@ export default function Editor() {
   const { t } = useTranslation();
   const treeRef = useRef<any>(null);
   const moveRef = useRef<any>(null);
+  const contextMenuAnchorEl = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const dispatch = useAppDispatch();
   const darkMode = useAppSelector((state) => state.common.dark);
   const docData = useAppSelector((state) => state.service.docData);
   const patchDataApi = useAppSelector((state) => state.service.patchDataApi);
+  const getUptokenApi = useAppSelector((state) => state.service.getUptokenApi);
   const viewType = getSearchParamValue(location.search, "viewType") || "mutil";
   const [treeData, setTreeData] = useState<any>(null);
   const [rootKey, setRootKey] = useState<string | null>(null);
   const [openDelConfirm, setOpenDelConfirm] = useState(false);
+  const [contextAnchorX, setContextAnchorX] = useState(0);
+  const [contextAnchorY, setContextAnchorY] = useState(0);
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const [contextMenuTargetNodeKey, setContextMenuTargetNodeKey] = useState("");
 
   const handleChange = useCallback(() => {
     clearTimeout(timeout);
@@ -101,76 +111,6 @@ export default function Editor() {
     [handleImport]
   );
 
-  const tree = useMemo(() => {
-    if (
-      rootKey &&
-      treeData &&
-      treeData.rootKey &&
-      treeData.data &&
-      treeData.data[treeData.rootKey]
-    ) {
-      if (viewType === "mutil" || viewType === "single") {
-        return (
-          <Tree
-            ref={treeRef}
-            startId={rootKey}
-            nodes={treeData.data}
-            handleClickDot={(node: CNode) => handleClickDot(node)}
-            // handleChangeNodeText={(nodeId: string, text: string) =>
-            //   handleChangeNodeText(nodeId, text)
-            // }
-            singleColumn={viewType === "single" ? true : false}
-            handleChange={handleChange}
-            itemHeight={35}
-            blockHeight={30}
-            pathWidth={2}
-            pathColor={darkMode ? "#FFF" : "#535953"}
-            backgroundColor={undefined}
-            hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
-            selectedBorderColor={darkMode ? "#FF0000" : undefined}
-            showDeleteConform={handledeleteConform}
-            fontWeight={800}
-            handlePasteText={handlePasteText}
-          />
-        );
-      } else {
-        return (
-          <Mind
-            ref={treeRef}
-            singleColumn={viewType === "mind-oneway" ? true : false}
-            startId={rootKey}
-            nodes={treeData.data}
-            handleClickDot={(node: CNode) => handleClickDot(node)}
-            handleChange={handleChange}
-            // handleChangeNodeText={(nodeId: string, text: string) =>
-            //   handleChangeNodeText(nodeId, text)
-            // }
-            itemHeight={38}
-            blockHeight={30}
-            pathWidth={2}
-            pathColor={darkMode ? "#FFF" : "#535953"}
-            backgroundColor={darkMode ? "#212121" : undefined}
-            hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
-            selectedBorderColor={darkMode ? "#FF0000" : undefined}
-            showDeleteConform={handledeleteConform}
-            fontWeight={800}
-            handlePasteText={handlePasteText}
-          />
-        );
-      }
-    } else {
-      return <div></div>;
-    }
-  }, [
-    rootKey,
-    treeData,
-    darkMode,
-    handleChange,
-    // handleChangeNodeText,
-    viewType,
-    handlePasteText,
-  ]);
-
   useEffect(() => {
     if (docData) {
       setTreeData(JSON.parse(JSON.stringify(docData)));
@@ -203,13 +143,172 @@ export default function Editor() {
   };
   const handleDeleteNode = () => {
     if (treeRef && treeRef.current) {
-      treeRef.current.deleteNode();
+      treeRef.current.deleteNode(contextMenuTargetNodeKey);
       setOpenDelConfirm(false);
+      handleCloseContextMenu();
     }
   };
 
+  function handleInputFileChange(event: any) {
+    const files = event.target.files;
+    handleFileChange(contextMenuTargetNodeKey, files);
+    handleCloseContextMenu();
+  }
+
+  async function handleFileChange(nodeKey: string, files: FileList) {
+    const file = files[0];
+    if (file.type.startsWith("image/")) {
+      if (nodeKey !== rootKey) {
+        if (getUptokenApi) {
+          const res: any = await api.request.get(getUptokenApi.url, {
+            ...getUptokenApi.params,
+            ...{ token: api.getToken() },
+          });
+          if (res.statusCode === "200") {
+            const upToken = res.result;
+            try {
+              const url = await qiniuUpload(upToken, file);
+              if (
+                typeof url === "string" &&
+                url.startsWith("https://cdn-icare.qingtime.cn/")
+              ) {
+                let img = new Image();
+                img.src = url;
+                img.onload = async () => {
+                  const height = 200 / (img.width / img.height);
+                  const data = treeRef.current.saveNodes();
+                  treeRef.current.updateNodeById(data.data, nodeKey, {
+                    imageUrl: url,
+                    imageWidth: 200,
+                    imageHeight: height,
+                  });
+                };
+              }
+            } catch (error) {
+              alert("error!");
+            }
+          } else {
+            alert("error!");
+          }
+        }
+      }
+    }
+  }
+
+  function handleContextMenu(nodeKey: string, event: React.MouseEvent) {
+    setContextMenuTargetNodeKey(nodeKey);
+    setContextAnchorX(event.clientX);
+    setContextAnchorY(event.clientY - 50);
+    setContextMenuOpen(true);
+  }
+
+  function handleCloseContextMenu() {
+    setContextMenuOpen(false);
+    setContextMenuTargetNodeKey("");
+  }
+
+  function handleAddChild() {
+    treeRef.current.addChild(contextMenuTargetNodeKey);
+    handleCloseContextMenu();
+  }
+
+  function handleAddNext() {
+    treeRef.current.addNext(contextMenuTargetNodeKey);
+    handleCloseContextMenu();
+  }
+
+  function handleDelete() {
+    setOpenDelConfirm(true);
+  }
+
+  function handleDeleteImage() {
+    const data = treeRef.current.saveNodes();
+    treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
+      imageUrl: "",
+      imageWidth: 0,
+      imageHeight: 0,
+    });
+    handleCloseContextMenu();
+  }
+
+  const tree = useMemo(() => {
+    if (
+      rootKey &&
+      treeData &&
+      treeData.rootKey &&
+      treeData.data &&
+      treeData.data[treeData.rootKey]
+    ) {
+      if (viewType === "mutil" || viewType === "single") {
+        return (
+          <Tree
+            ref={treeRef}
+            startId={rootKey}
+            nodes={treeData.data}
+            handleClickDot={(node: CNode) => handleClickDot(node)}
+            // handleChangeNodeText={(nodeId: string, text: string) =>
+            //   handleChangeNodeText(nodeId, text)
+            // }
+            showChildNum={true}
+            singleColumn={viewType === "single" ? true : false}
+            handleChange={handleChange}
+            itemHeight={35}
+            blockHeight={30}
+            pathWidth={2}
+            pathColor={darkMode ? "#FFF" : "#535953"}
+            backgroundColor={undefined}
+            hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
+            selectedBorderColor={darkMode ? "#FF0000" : undefined}
+            showDeleteConform={handledeleteConform}
+            fontWeight={800}
+            handlePasteText={handlePasteText}
+            handleFileChange={handleFileChange}
+            handleContextMenu={handleContextMenu}
+          />
+        );
+      } else {
+        return (
+          <Mind
+            ref={treeRef}
+            singleColumn={viewType === "mind-oneway" ? true : false}
+            startId={rootKey}
+            nodes={treeData.data}
+            handleClickDot={(node: CNode) => handleClickDot(node)}
+            handleChange={handleChange}
+            // handleChangeNodeText={(nodeId: string, text: string) =>
+            //   handleChangeNodeText(nodeId, text)
+            // }
+            itemHeight={38}
+            blockHeight={30}
+            pathWidth={2}
+            pathColor={darkMode ? "#FFF" : "#535953"}
+            backgroundColor={darkMode ? "#212121" : undefined}
+            hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
+            selectedBorderColor={darkMode ? "#FF0000" : undefined}
+            showDeleteConform={handledeleteConform}
+            fontWeight={800}
+            handlePasteText={handlePasteText}
+            handleFileChange={handleFileChange}
+            handleContextMenu={handleContextMenu}
+          />
+        );
+      }
+    } else {
+      return <div></div>;
+    }
+  }, [
+    rootKey,
+    treeData,
+    darkMode,
+    handleChange,
+    // handleChangeNodeText,
+    viewType,
+    handlePasteText,
+  ]);
+
   return (
     <Box
+      className="editor"
       sx={{
         position: "relative",
         width: "100%",
@@ -246,6 +345,49 @@ export default function Editor() {
           <Button onClick={handleDeleteNode}>{t("mind.ok")}</Button>
         </DialogActions>
       </Dialog>
+      <div
+        style={{
+          position: "absolute",
+          top: contextAnchorY,
+          left: contextAnchorX,
+          pointerEvents: "none",
+        }}
+        ref={contextMenuAnchorEl}
+      />
+      <Menu
+        anchorEl={contextMenuAnchorEl.current}
+        open={contextMenuOpen}
+        onClose={handleCloseContextMenu}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        <MenuItem onClick={handleAddChild}>{t("mind.addChild")}</MenuItem>
+        <MenuItem onClick={handleAddNext}>{t("mind.addNext")}</MenuItem>
+        <MenuItem>
+          <span>{t("mind.addNodeImage")}</span>
+          <input
+            accept="image/*"
+            type="file"
+            style={{
+              opacity: 0,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+            }}
+            onChange={handleInputFileChange}
+          />
+        </MenuItem>
+        <MenuItem onClick={handleDelete}>{t("mind.delete")}</MenuItem>
+        <MenuItem onClick={handleDeleteImage}>{t("mind.deleteImage")}</MenuItem>
+      </Menu>
     </Box>
   );
 }

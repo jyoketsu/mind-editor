@@ -19,6 +19,12 @@
     "cancel": "取消",
     "ok": "確定",
     "export": "導出",
-    "import": "導入"
+    "import": "導入",
+    "addChild": "添加子節點",
+    "addNext": "向後添加節點",
+    "delete": "刪除節點",
+    "deleteImage": "刪除圖片",
+    "addNodeImage": "上傳圖片",
+    "changeNodeImage": "更改圖片"
   }
 }
