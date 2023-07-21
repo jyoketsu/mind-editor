@@ -65,10 +65,8 @@ export default function Router() {
       <CssBaseline />
       <BrowserRouter>
         <Routes>
-          <Route path={BASE} element={<Home />}>
-            <Route path="" element={<Editor />} />
-            <Route path="preview" element={<Preview />} />
-          </Route>
+          <Route path={BASE} element={<Home />} />
+          <Route path="preview" element={<Preview />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

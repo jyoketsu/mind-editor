@@ -25,6 +25,7 @@
     "delete": "Delete Node",
     "deleteImage": "Delete Image",
     "addNodeImage": "Upload Image",
-    "changeNodeImage": "Change Image"
+    "changeNodeImage": "Change Image",
+    "changeView": "Change View"
   }
 }

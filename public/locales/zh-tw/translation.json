@@ -25,6 +25,7 @@
     "delete": "刪除節點",
     "deleteImage": "刪除圖片",
     "addNodeImage": "上傳圖片",
-    "changeNodeImage": "更改圖片"
+    "changeNodeImage": "更改圖片",
+    "changeView": "切換視圖"
   }
 }

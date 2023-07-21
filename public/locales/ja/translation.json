@@ -25,6 +25,7 @@
     "delete": "ノードを削除",
     "deleteImage": "画像を削除",
     "addNodeImage": "画像をアップロード",
-    "changeNodeImage": "画像を変更"
+    "changeNodeImage": "画像を変更",
+    "changeView": "ビューを変更する"
   }
 }

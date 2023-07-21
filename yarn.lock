@@ -1337,10 +1337,10 @@ tr46@~0.0.3:
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=
 
-tree-graph-react@2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/tree-graph-react/-/tree-graph-react-2.0.2.tgz#63e7d0aa5d4fe7ce6272c86a05ee83d1efe9fcc6"
-  integrity sha512-SgMeNopaHBLHZ98hxuwPkMFchdyMWizjb5vmw6hv6h0s11J1geKKopOJsnlUQP8zKmAgF/Rpm3J3jtjMwGlldw==
+tree-graph-react@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/tree-graph-react/-/tree-graph-react-2.0.3.tgz#cc9b6e0ed6e20134afeae0647b80d6b931815c8a"
+  integrity sha512-hdkqAMnYUr5jxh6iJ4JQsF6p+8tCuSxdIp+KmryvTTeYsUmQSEsZ5LT8wM7GLylp4Z4tfhtOrwpIA1ERa+bEHg==
   dependencies:
     react-tooltip "^4.2.21"
     screenfull "^5.1.0"

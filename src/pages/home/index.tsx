@@ -1,6 +1,5 @@
 import {
   Box,
-  FormControl,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -8,16 +7,15 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import IosShareIcon from "@mui/icons-material/IosShare";
 import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { setDark } from "../../redux/reducer/commonSlice";
 import { exportFile, getSearchParamValue } from "../../utils/util";
@@ -28,6 +26,8 @@ import {
   setDocData,
 } from "../../redux/reducer/serviceSlice";
 import { MoreHoriz } from "@mui/icons-material";
+import Toolbar from "./Toolbar";
+import Editor from "./editor";
 
 export default function Home() {
   const { t, i18n } = useTranslation();
@@ -38,8 +38,24 @@ export default function Home() {
   const docData = useAppSelector((state) => state.service.docData);
   const patchDataApi = useAppSelector((state) => state.service.patchDataApi);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [viewType, setViewType] = useState<
+    "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind"
+  >("mutil-tree");
   const dispatch = useAppDispatch();
+  const editorRef = useRef<any>(null);
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    const viewtype: any = localStorage.getItem("VIEW_TYPE");
+    if (viewtype) {
+      setViewType(viewtype);
+    }
+  }, []);
+
+  useEffect(() => {
+    editorRef?.current?.resetMove();
+    localStorage.setItem("VIEW_TYPE", viewType);
+  }, [viewType]);
 
   useEffect(() => {
     const token = getSearchParamValue(location.search, "token");
@@ -115,8 +131,21 @@ export default function Home() {
   const handleClickMore = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleCloseMoreMenu = () => {
     setAnchorEl(null);
+  };
+
+  const handleAddChild = () => {
+    editorRef?.current?.handleAddChild();
+  };
+
+  const handleAddNext = () => {
+    editorRef?.current?.handleAddNext();
+  };
+
+  const handleDelete = () => {
+    editorRef?.current?.handleDelete();
   };
 
   return (
@@ -124,25 +153,35 @@ export default function Home() {
       sx={{
         width: "100%",
         height: "100%",
-        display: "flex",
-        flexDirection: "column",
+        display: "grid",
+        gridTemplateRows: "50px 1fr",
         overflow: "hidden",
       }}
     >
       <Box
         sx={{
           width: "100%",
-          height: "50px",
+          height: "100%",
           display: "flex",
           alignItems: "center",
           padding: "0 15px",
           boxSizing: "border-box",
+          borderBottom: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Typography variant="h5" sx={{ fontWeight: 800 }}>
           Mind
         </Typography>
-        <span style={{ flex: 1 }} />
+        <div style={{ flex: 1 }}>
+          <Toolbar
+            viewType={viewType}
+            handleAddChild={handleAddChild}
+            handleAddNext={handleAddNext}
+            handleDelete={handleDelete}
+            handleSetViewType={setViewType}
+          />
+        </div>
         <Typography
           sx={{ color: "text.secondary", fontSize: "14px", padding: "0 5px" }}
         >
@@ -202,8 +241,8 @@ export default function Home() {
           </MenuItem>
         </Menu>
       </Box>
-      <Box sx={{ flex: 1 }}>
-        <Outlet />
+      <Box sx={{ overflow: "hidden" }}>
+        <Editor ref={editorRef} viewType={viewType} />
       </Box>
     </Box>
   );
