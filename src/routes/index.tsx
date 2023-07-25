@@ -6,7 +6,7 @@ import { useMemo } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { PaletteMode } from "@mui/material";
-import { grey, red } from "@mui/material/colors";
+import { grey, blue } from "@mui/material/colors";
 import { useAppSelector } from "../redux/hooks";
 const BASE = import.meta.env.VITE_BASE;
 
@@ -23,7 +23,7 @@ export default function Router() {
         ? {
             // palette values for light mode
             primary: {
-              main: red[800],
+              main: blue[500],
             },
             background: {
               default: grey[100],
@@ -33,7 +33,7 @@ export default function Router() {
         : {
             // palette values for dark mode
             primary: {
-              main: red[700],
+              main: blue[700],
             },
             background: {
               default: grey[900],

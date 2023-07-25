@@ -26,6 +26,8 @@
     "deleteImage": "Delete Image",
     "addNodeImage": "Upload Image",
     "changeNodeImage": "Change Image",
-    "changeView": "Change View"
+    "changeView": "Change View",
+    "addNote": "Add Note",
+    "deleteNote": "Delete Note"
   }
 }

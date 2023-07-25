@@ -13,9 +13,10 @@ export default function Loading() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        zIndex: 999,
       }}
     >
-      <CircularProgress size={28} color="inherit" />
+      <CircularProgress size={28} color="primary" />
     </Box>
   );
 }
