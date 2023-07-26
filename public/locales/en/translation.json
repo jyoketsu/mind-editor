@@ -28,6 +28,13 @@
     "changeNodeImage": "Change Image",
     "changeView": "Change View",
     "addNote": "Add Note",
-    "deleteNote": "Delete Note"
+    "deleteNote": "Delete Note",
+    "icon": "Icon",
+    "priority": "Priority",
+    "progress": "Progress",
+    "flag": "Flag",
+    "study": "Study",
+    "office": "Office",
+    "symbol": "Symbol"
   }
 }

@@ -37,6 +37,8 @@ import ImageViewer from "./ImageViewer";
 import Note from "./Note";
 import { JSONContent } from "@tiptap/react";
 import Loading from "../../../components/common/Loading";
+import Icons from "./Icons";
+import { getNoteComp } from "./components";
 
 let timeout: NodeJS.Timeout;
 
@@ -71,12 +73,17 @@ const Editor = React.forwardRef(
     const [noteAnchorEl, setNoteAnchorEl] = useState<null | HTMLElement>(null);
     const [note, setNote] = useState<JSONContent>();
     const [loading, setLoading] = useState(false);
+    const [iconsAnchorEl, setIconsAnchorEl] = useState<null | HTMLElement>(
+      null
+    );
 
     useImperativeHandle(ref, () => ({
       handleAddChild,
       handleAddNext,
       handleDelete,
       resetMove,
+      addNote,
+      addIcon,
     }));
 
     const handleChange = useCallback(() => {
@@ -148,8 +155,15 @@ const Editor = React.forwardRef(
         const data = _.cloneDeep(docData);
         Object.keys(data.data).forEach((key) => {
           const item = data.data[key];
-          if (item.customItemContent?.note) {
-            item.customItem = NoteComp;
+          if (item.customItemContent) {
+            item.customItem = getNoteComp(
+              item.customItemContent,
+              handleOpenNote,
+              handleClickNodeIcon
+            );
+            item.customItemWidth =
+              Object.keys(item.customItemContent).length * (18 + 2);
+            item.customItemHeight = 18;
           }
         });
         setTreeData(data);
@@ -214,7 +228,9 @@ const Editor = React.forwardRef(
             if (res.statusCode === "200") {
               const upToken = res.result;
               try {
+                setLoading(true);
                 const url = await qiniuUpload(upToken, file);
+                setLoading(false);
                 if (
                   typeof url === "string" &&
                   url.startsWith("https://cdn-icare.qingtime.cn/")
@@ -288,13 +304,40 @@ const Editor = React.forwardRef(
       handleCloseContextMenu();
     }
 
-    function handleAddNote() {
+    function addNote() {
+      const nodeKey = treeRef.current.getSelectedId();
+      setContextMenuTargetNodeKey(nodeKey);
+      handleAddNote(nodeKey);
+    }
+
+    function addIcon() {
+      const nodeKey = treeRef.current.getSelectedId();
+      setContextMenuTargetNodeKey(nodeKey);
+      handleOpenIcon(nodeKey);
+    }
+
+    function handleAddNote(nodeKey?: string) {
       const data = treeRef.current.saveNodes();
-      treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
-        customItem: NoteComp,
-        customItemWidth: 18,
-        customItemHeight: 18,
-      });
+      const node = data.data[nodeKey || contextMenuTargetNodeKey];
+      if (!node) return;
+      let customItemContent = node.customItemContent || {};
+      if (!customItemContent.note) {
+        customItemContent = { ...customItemContent, note: <p></p> };
+      }
+      treeRef.current.updateNodeById(
+        data.data,
+        nodeKey || contextMenuTargetNodeKey,
+        {
+          customItem: getNoteComp(
+            customItemContent,
+            handleOpenNote,
+            handleClickNodeIcon
+          ),
+          customItemWidth: Object.keys(customItemContent).length * (18 + 2),
+          customItemHeight: 18,
+          customItemContent,
+        }
+      );
       handleCloseContextMenu();
     }
 
@@ -333,47 +376,73 @@ const Editor = React.forwardRef(
       }
     }
 
-    const NoteComp = ({
-      x,
-      y,
-      nodeKey,
-    }: {
-      x: number;
-      y: number;
-      nodeKey: string;
-    }) => (
-      <svg
-        viewBox="0 0 1024 1024"
-        version="1.1"
-        width="18"
-        height="18"
-        x={x}
-        y={y}
-        onClick={(event: any) => handleOpenNote(nodeKey, event)}
-      >
-        <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
-        <path
-          d="M886.624 297.376l-191.968-191.968c-2.944-2.944-6.432-5.312-10.336-6.912C680.48 96.864 676.288 96 672 96L224 96C171.072 96 128 139.072 128 192l0 640c0 52.928 43.072 96 96 96l576 0c52.928 0 96-43.072 96-96L896 320C896 311.52 892.64 303.36 886.624 297.376zM704 205.248 818.752 320 704 320 704 205.248zM800 864 224 864c-17.632 0-32-14.336-32-32L192 192c0-17.632 14.368-32 32-32l416 0 0 192c0 17.664 14.304 32 32 32l160 0 0 448C832 849.664 817.664 864 800 864z"
-          fill="#5D646F"
-          p-id="7882"
-        ></path>
-        <path
-          d="M288 352l192 0c17.664 0 32-14.336 32-32s-14.336-32-32-32L288 288c-17.664 0-32 14.336-32 32S270.336 352 288 352z"
-          fill="#5D646F"
-          p-id="7883"
-        ></path>
-        <path
-          d="M608 480 288 480c-17.664 0-32 14.336-32 32s14.336 32 32 32l320 0c17.696 0 32-14.336 32-32S625.696 480 608 480z"
-          fill="#5D646F"
-          p-id="7884"
-        ></path>
-        <path
-          d="M608 672 288 672c-17.664 0-32 14.304-32 32s14.336 32 32 32l320 0c17.696 0 32-14.304 32-32S625.696 672 608 672z"
-          fill="#5D646F"
-          p-id="7885"
-        ></path>
-      </svg>
-    );
+    function handleCloseIcons() {
+      setIconsAnchorEl(null);
+      setContextMenuTargetNodeKey("");
+    }
+
+    function handleOpenIcon(nodeKey?: string) {
+      setIconsAnchorEl(
+        document.getElementById(
+          `tree-node-${nodeKey || contextMenuTargetNodeKey}`
+        )
+      );
+      setAnchorEl(null);
+    }
+
+    function handleClickIcon(category: string, index: number) {
+      let iconJson: any = {};
+      iconJson[category] = index;
+      const data = treeRef.current.saveNodes();
+      const node = data.data[contextMenuTargetNodeKey];
+      if (node) {
+        let customItemContent = node.customItemContent || {};
+        customItemContent = { ...customItemContent, ...iconJson };
+        treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
+          customItem: getNoteComp(
+            customItemContent,
+            handleOpenNote,
+            handleClickNodeIcon
+          ),
+          customItemWidth: Object.keys(customItemContent).length * (18 + 2),
+          customItemHeight: 18,
+          customItemContent,
+        });
+        handleCloseIcons();
+      }
+    }
+
+    function handleDeleteIcon(category: string) {
+      const data = treeRef.current.saveNodes();
+      const node = data.data[contextMenuTargetNodeKey];
+      if (node) {
+        const customItemContent = { ...node.customItemContent };
+        if (customItemContent) {
+          delete customItemContent[category];
+          treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
+            customItem: getNoteComp(
+              customItemContent,
+              handleOpenNote,
+              handleClickNodeIcon
+            ),
+            customItemWidth: Object.keys(customItemContent).length * (18 + 2),
+            customItemHeight: 18,
+            customItemContent,
+          });
+          handleCloseIcons();
+        }
+      }
+    }
+
+    function handleClickNodeIcon(
+      nodeKey: string,
+      category: string,
+      index: number,
+      event: any
+    ) {
+      setContextMenuTargetNodeKey(nodeKey);
+      handleOpenIcon(nodeKey);
+    }
 
     const tree = useMemo(() => {
       if (
@@ -513,7 +582,10 @@ const Editor = React.forwardRef(
               onChange={handleInputFileChange}
             />
           </MenuItem>
-          <MenuItem onClick={handleAddNote}>{t("mind.addNote")}</MenuItem>
+          <MenuItem onClick={() => handleAddNote()}>
+            {t("mind.addNote")}
+          </MenuItem>
+          <MenuItem onClick={() => handleOpenIcon()}>{t("mind.icon")}</MenuItem>
           <MenuItem onClick={handleDelete}>{t("mind.delete")}</MenuItem>
           <MenuItem onClick={handleDeleteImage}>
             {t("mind.deleteImage")}
@@ -529,6 +601,12 @@ const Editor = React.forwardRef(
             handleClose={handleCloseNote}
           />
         ) : null}
+        <Icons
+          anchorEl={iconsAnchorEl}
+          handleClickIcon={handleClickIcon}
+          handleClose={handleCloseIcons}
+          handleDelete={handleDeleteIcon}
+        />
         {loading ? <Loading /> : null}
       </Box>
     );

@@ -28,6 +28,13 @@
     "changeNodeImage": "画像を変更",
     "changeView": "ビューを変更する",
     "addNote": "メモを追加する",
-"deleteNote": "メモを削除する"
+    "deleteNote": "メモを削除する",
+    "icon": "アイコン",
+    "priority": "優先度",
+    "progress": "進捗",
+    "flag": "フラグ",
+    "study": "学ぶ",
+    "office": "オフィス",
+    "symbol": "シンボル"
   }
 }

@@ -7,7 +7,6 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { useEffect, useState } from "react";
 import api from "../../../utils/api";
-import { useAppSelector } from "../../../redux/hooks";
 import qiniuUpload from "../../../utils/qiniu";
 import Loading from "../../../components/common/Loading";
 import IconFontIconButton from "../../../components/common/IconFontIconButton";
@@ -78,7 +77,7 @@ export default function Note({
       } else {
         editor.commands.clearContent();
       }
-      editor.commands.focus();
+      editor.commands.focus("start");
     }
   }, [data]);
 

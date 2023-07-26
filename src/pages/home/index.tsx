@@ -148,6 +148,14 @@ export default function Home() {
     editorRef?.current?.handleDelete();
   };
 
+  const handleAddNote = () => {
+    editorRef?.current?.addNote();
+  };
+
+  const handleAddIcon = () => {
+    editorRef?.current?.addIcon();
+  };
+
   return (
     <Box
       sx={{
@@ -180,6 +188,8 @@ export default function Home() {
             handleAddNext={handleAddNext}
             handleDelete={handleDelete}
             handleSetViewType={setViewType}
+            handleAddNote={handleAddNote}
+            handleAddIcon={handleAddIcon}
           />
         </div>
         <Typography

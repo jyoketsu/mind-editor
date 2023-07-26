@@ -28,6 +28,13 @@
     "changeNodeImage": "更改图片",
     "changeView": "切换视图",
     "addNote": "添加备注",
-    "deleteNote": "删除备注"
+    "deleteNote": "删除备注",
+    "icon": "图标",
+    "priority": "优先级",
+    "progress": "进度",
+    "flag": "旗帜",
+    "study": "学习",
+    "office": "办公",
+    "symbol": "符号"
   }
 }

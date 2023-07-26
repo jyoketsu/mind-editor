@@ -1,8 +1,6 @@
 import { useTranslation } from "react-i18next";
 import IconFontIconButton from "../../components/common/IconFontIconButton";
 import Divider from "@mui/material/Divider";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import { useMemo, useState } from "react";
 import Popover from "@mui/material/Popover";
 
@@ -12,6 +10,8 @@ export default function Toolbar({
   handleAddNext,
   handleDelete,
   handleSetViewType,
+  handleAddNote,
+  handleAddIcon,
 }: {
   viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind";
   handleAddChild: () => void;
@@ -20,6 +20,8 @@ export default function Toolbar({
   handleSetViewType: (
     viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind"
   ) => void;
+  handleAddNote: () => void;
+  handleAddIcon: () => void;
 }) {
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -116,6 +118,18 @@ export default function Toolbar({
         iconName="a-zizhuti1"
         fontSize={30}
         onClick={handleAddNext}
+      />
+      <IconFontIconButton
+        title={t("mind.addNote")}
+        iconName="a-ziyuan1"
+        fontSize={30}
+        onClick={handleAddNote}
+      />
+      <IconFontIconButton
+        title={t("mind.icon")}
+        iconName="a-gongzuo1"
+        fontSize={30}
+        onClick={handleAddIcon}
       />
       <IconFontIconButton
         title={t("mind.delete")}
