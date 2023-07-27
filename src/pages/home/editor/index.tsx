@@ -39,6 +39,7 @@ import { JSONContent } from "@tiptap/react";
 import Loading from "../../../components/common/Loading";
 import Icons from "./Icons";
 import { getNoteComp } from "./components";
+import Illustrations from "./Illustrations";
 
 let timeout: NodeJS.Timeout;
 
@@ -76,6 +77,8 @@ const Editor = React.forwardRef(
     const [iconsAnchorEl, setIconsAnchorEl] = useState<null | HTMLElement>(
       null
     );
+    const [illustrationAnchorEl, setIllustrationAnchorEl] =
+      useState<null | HTMLElement>(null);
 
     useImperativeHandle(ref, () => ({
       handleAddChild,
@@ -444,6 +447,36 @@ const Editor = React.forwardRef(
       handleOpenIcon(nodeKey);
     }
 
+    function handleOpenIllustration(nodeKey?: string) {
+      setIllustrationAnchorEl(
+        document.getElementById(
+          `tree-node-${nodeKey || contextMenuTargetNodeKey}`
+        )
+      );
+      setAnchorEl(null);
+    }
+
+    function handleCloseIllustration() {
+      setIllustrationAnchorEl(null);
+      setContextMenuTargetNodeKey("");
+    }
+
+    function handleClickIllustration(
+      url: string,
+      imageWidth: number,
+      imageHeight: number
+    ) {
+      const data = treeRef.current.saveNodes();
+      if (contextMenuTargetNodeKey) {
+        treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
+          imageUrl: url,
+          imageWidth,
+          imageHeight,
+        });
+        handleCloseIllustration();
+      }
+    }
+
     const tree = useMemo(() => {
       if (
         rootKey &&
@@ -488,6 +521,7 @@ const Editor = React.forwardRef(
               startId={rootKey}
               nodes={treeData.data}
               handleClickDot={(node: CNode) => handleClickDot(node)}
+              showChildNum={true}
               handleChange={handleChange}
               // handleChangeNodeText={(nodeId: string, text: string) =>
               //   handleChangeNodeText(nodeId, text)
@@ -504,6 +538,7 @@ const Editor = React.forwardRef(
               handlePasteText={handlePasteText}
               handleFileChange={handleFileChange}
               handleContextMenu={handleContextMenu}
+              handleClickNodeImage={(url) => setUrl(url || "")}
             />
           );
         }
@@ -582,10 +617,13 @@ const Editor = React.forwardRef(
               onChange={handleInputFileChange}
             />
           </MenuItem>
+          <MenuItem onClick={() => handleOpenIllustration()}>
+            {t("illustration.illustration")}
+          </MenuItem>
           <MenuItem onClick={() => handleAddNote()}>
             {t("mind.addNote")}
           </MenuItem>
-          <MenuItem onClick={() => handleOpenIcon()}>{t("mind.icon")}</MenuItem>
+          <MenuItem onClick={() => handleOpenIcon()}>{t("icon.icon")}</MenuItem>
           <MenuItem onClick={handleDelete}>{t("mind.delete")}</MenuItem>
           <MenuItem onClick={handleDeleteImage}>
             {t("mind.deleteImage")}
@@ -606,6 +644,11 @@ const Editor = React.forwardRef(
           handleClickIcon={handleClickIcon}
           handleClose={handleCloseIcons}
           handleDelete={handleDeleteIcon}
+        />
+        <Illustrations
+          anchorEl={illustrationAnchorEl}
+          handleClick={handleClickIllustration}
+          handleClose={handleCloseIllustration}
         />
         {loading ? <Loading /> : null}
       </Box>

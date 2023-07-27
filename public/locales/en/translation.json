@@ -11,6 +11,24 @@
     "page1": "page1",
     "page2": "page2"
   },
+  "icon": {
+    "icon": "Icon",
+    "priority": "Priority",
+    "progress": "Progress",
+    "flag": "Flag",
+    "study": "Study",
+    "office": "Office",
+    "symbol": "Symbol"
+  },
+  "illustration": {
+    "illustration": "Illustration",
+    "all": "All",
+    "work": "Work",
+    "travel": "Travel",
+    "holiday": "Holiday",
+    "food": "Food",
+    "others": "Others"
+  },
   "mind": {
     "changed": "Changed",
     "saved": "Saved",
@@ -28,13 +46,6 @@
     "changeNodeImage": "Change Image",
     "changeView": "Change View",
     "addNote": "Add Note",
-    "deleteNote": "Delete Note",
-    "icon": "Icon",
-    "priority": "Priority",
-    "progress": "Progress",
-    "flag": "Flag",
-    "study": "Study",
-    "office": "Office",
-    "symbol": "Symbol"
+    "deleteNote": "Delete Note"
   }
 }

@@ -11,6 +11,24 @@
     "page1": "頁１",
     "page2": "頁２"
   },
+  "icon": {
+    "icon": "アイコン",
+    "priority": "優先度",
+    "progress": "進捗",
+    "flag": "フラグ",
+    "study": "学ぶ",
+    "office": "オフィス",
+    "symbol": "シンボル"
+  },
+  "illustration": {
+    "illustration": "イラスト",
+    "all": "全部",
+    "work": "仕事",
+    "travel": "旅行",
+    "holiday": "休日",
+    "food": "食べ物",
+    "others": "その他"
+  },
   "mind": {
     "changed": "変更有り",
     "saved": "保存済み",
@@ -28,13 +46,6 @@
     "changeNodeImage": "画像を変更",
     "changeView": "ビューを変更する",
     "addNote": "メモを追加する",
-    "deleteNote": "メモを削除する",
-    "icon": "アイコン",
-    "priority": "優先度",
-    "progress": "進捗",
-    "flag": "フラグ",
-    "study": "学ぶ",
-    "office": "オフィス",
-    "symbol": "シンボル"
+    "deleteNote": "メモを削除する"
   }
 }

@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import "./Note.scss";
 import Menu from "@mui/material/Menu";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -40,7 +39,7 @@ export default function Icons({
       >
         <Box sx={headStyle}>
           <Typography variant="h6" gutterBottom>
-            {t("mind.priority")}
+            {t("icon.priority")}
           </Typography>
           <IconButton onClick={() => handleDelete("priority")}>
             <DeleteIcon />
@@ -63,7 +62,7 @@ export default function Icons({
         </Box>
         <Box sx={headStyle}>
           <Typography variant="h6" gutterBottom>
-            {t("mind.progress")}
+            {t("icon.progress")}
           </Typography>
           <IconButton onClick={() => handleDelete("progress")}>
             <DeleteIcon />
@@ -86,7 +85,7 @@ export default function Icons({
         </Box>
         <Box sx={headStyle}>
           <Typography variant="h6" gutterBottom>
-            {t("mind.flag")}
+            {t("icon.flag")}
           </Typography>
           <IconButton onClick={() => handleDelete("flag")}>
             <DeleteIcon />
@@ -109,7 +108,7 @@ export default function Icons({
         </Box>
         <Box sx={headStyle}>
           <Typography variant="h6" gutterBottom>
-            {t("mind.study")}
+            {t("icon.study")}
           </Typography>
           <IconButton onClick={() => handleDelete("study")}>
             <DeleteIcon />
@@ -132,7 +131,7 @@ export default function Icons({
         </Box>
         <Box sx={headStyle}>
           <Typography variant="h6" gutterBottom>
-            {t("mind.office")}
+            {t("icon.office")}
           </Typography>
           <IconButton onClick={() => handleDelete("office")}>
             <DeleteIcon />
@@ -155,7 +154,7 @@ export default function Icons({
         </Box>
         <Box sx={headStyle}>
           <Typography variant="h6" gutterBottom>
-            {t("mind.symbol")}
+            {t("icon.symbol")}
           </Typography>
           <IconButton onClick={() => handleDelete("symbol")}>
             <DeleteIcon />

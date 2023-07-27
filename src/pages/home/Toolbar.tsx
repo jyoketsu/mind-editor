@@ -126,7 +126,7 @@ export default function Toolbar({
         onClick={handleAddNote}
       />
       <IconFontIconButton
-        title={t("mind.icon")}
+        title={t("icon.icon")}
         iconName="a-gongzuo1"
         fontSize={30}
         onClick={handleAddIcon}

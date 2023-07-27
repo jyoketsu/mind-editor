@@ -11,6 +11,24 @@
     "page1": "頁面1",
     "page2": "頁面2"
   },
+  "icon": {
+    "icon": "圖標",
+    "priority": "優先級",
+    "progress": "進度",
+    "flag": "旗幟",
+    "study": "學習",
+    "office": "辦公",
+    "symbol": "符號"
+  },
+  "illustration": {
+    "illustration": "插圖",
+    "all": "全部",
+    "work": "工作",
+    "travel": "旅遊",
+    "holiday": "假日",
+    "food": "食物",
+    "others": "其他"
+  },
   "mind": {
     "changed": "有更改",
     "saved": "已保存",
@@ -28,13 +46,6 @@
     "changeNodeImage": "更改圖片",
     "changeView": "切換視圖",
     "addNote": "添加備註",
-    "deleteNote": "刪除備註",
-    "icon": "圖標",
-  "priority": "優先級",
-  "progress": "進度",
-  "flag": "旗幟",
-  "study": "學習",
-  "office": "辦公",
-  "symbol": "符號"
+    "deleteNote": "刪除備註"
   }
 }
