@@ -5,29 +5,50 @@ import { useTranslation } from "react-i18next";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const work = [
-  "https://cdn-notes.qingtime.cn/E799C4B4.svg",
-  "https://cdn-notes.qingtime.cn/E799C4B4.svg",
-  "https://cdn-notes.qingtime.cn/E799C4B4.svg",
-  "https://cdn-notes.qingtime.cn/D463CF80.svg",
-  "https://cdn-notes.qingtime.cn/722B0FF2.svg",
+  "https://cdn-notes.qingtime.cn/D04CF33A.svg",
+  "https://cdn-notes.qingtime.cn/661CEC74.svg",
+  "https://cdn-notes.qingtime.cn/F83D96CF.svg",
+  "https://cdn-notes.qingtime.cn/D005DF18.svg",
+  "https://cdn-notes.qingtime.cn/720282BB.svg",
+  "https://cdn-notes.qingtime.cn/24DA2028.svg",
+  "https://cdn-notes.qingtime.cn/EF86045A.svg",
 ];
-
 const travel = [
-  "https://cdn-notes.qingtime.cn/E799C4B4.svg",
-  "https://cdn-notes.qingtime.cn/D463CF80.svg",
+  "https://cdn-notes.qingtime.cn/5DD18EEC.svg",
+  "https://cdn-notes.qingtime.cn/EB970BF6.svg",
+  "https://cdn-notes.qingtime.cn/02E6BD7A.svg",
+  "https://cdn-notes.qingtime.cn/2F493CDD.svg",
+  "https://cdn-notes.qingtime.cn/85784D4B.svg",
+  "https://cdn-notes.qingtime.cn/D5C9DEDE.svg",
+  "https://cdn-notes.qingtime.cn/D60F0FAC.svg",
+  "https://cdn-notes.qingtime.cn/54E0420E.svg",
 ];
-
 const holiday = [
-  "https://cdn-notes.qingtime.cn/E799C4B4.svg",
-  "https://cdn-notes.qingtime.cn/D463CF80.svg",
+  "https://cdn-notes.qingtime.cn/1502B726.svg",
+  "https://cdn-notes.qingtime.cn/2E99DD0F.svg",
+  "https://cdn-notes.qingtime.cn/A3815C42.svg",
+  "https://cdn-notes.qingtime.cn/0A685104.svg",
+  "https://cdn-notes.qingtime.cn/030B1BE1.svg",
+  "https://cdn-notes.qingtime.cn/64316F74.svg",
+  "https://cdn-notes.qingtime.cn/6D758BA3.svg",
+  "https://cdn-notes.qingtime.cn/C5BAF536.svg",
 ];
 const food = [
-  "https://cdn-notes.qingtime.cn/E799C4B4.svg",
-  "https://cdn-notes.qingtime.cn/D463CF80.svg",
+  "https://cdn-notes.qingtime.cn/04A59900.svg",
+  "https://cdn-notes.qingtime.cn/CDDE40EA.svg",
+  "https://cdn-notes.qingtime.cn/FA08FE10.svg",
+  "https://cdn-notes.qingtime.cn/F098B183.svg",
+  "https://cdn-notes.qingtime.cn/1989B082.svg",
+  "https://cdn-notes.qingtime.cn/621EF3E2.svg",
+  "https://cdn-notes.qingtime.cn/D2F6EA0D.svg",
 ];
 const others = [
-  "https://cdn-notes.qingtime.cn/E799C4B4.svg",
-  "https://cdn-notes.qingtime.cn/D463CF80.svg",
+  "https://cdn-notes.qingtime.cn/C6E691CA.svg",
+  "https://cdn-notes.qingtime.cn/F90276C0.svg",
+  "https://cdn-notes.qingtime.cn/E6FE685C.svg",
+  "https://cdn-notes.qingtime.cn/A3ED8D9D.svg",
+  "https://cdn-notes.qingtime.cn/C79B62EE.svg",
+  "https://cdn-notes.qingtime.cn/703E7980.svg",
 ];
 
 export default function Illustrations({
@@ -42,9 +63,10 @@ export default function Illustrations({
   const { t } = useTranslation();
   const style = {
     display: "grid",
-    gridTemplateColumns: "repeat(3,1fr)",
-    columnGap: "5px",
-    rowGap: "5px",
+    gridTemplateColumns: "repeat(4,1fr)",
+    columnGap: "12px",
+    rowGap: "12px",
+    marginBottom: "24px",
   };
   return (
     <Menu
@@ -57,6 +79,8 @@ export default function Illustrations({
         sx={{
           width: "420px",
           padding: "0 15px",
+          height: "900px",
+          overflow: "auto",
         }}
       >
         <Typography variant="h6" gutterBottom>
@@ -77,15 +101,63 @@ export default function Illustrations({
         <Typography variant="h6" gutterBottom>
           {t("illustration.travel")}
         </Typography>
+        <Box sx={style}>
+          {travel.map((item, index) => (
+            <LazyLoadImage
+              key={index}
+              src={item}
+              width="100%"
+              height="100%"
+              draggable={false}
+              onClick={() => handleClick(item, 134, 134)}
+            />
+          ))}
+        </Box>
         <Typography variant="h6" gutterBottom>
           {t("illustration.holiday")}
         </Typography>
+        <Box sx={style}>
+          {holiday.map((item, index) => (
+            <LazyLoadImage
+              key={index}
+              src={item}
+              width="100%"
+              height="100%"
+              draggable={false}
+              onClick={() => handleClick(item, 134, 134)}
+            />
+          ))}
+        </Box>
         <Typography variant="h6" gutterBottom>
           {t("illustration.food")}
         </Typography>
+        <Box sx={style}>
+          {food.map((item, index) => (
+            <LazyLoadImage
+              key={index}
+              src={item}
+              width="100%"
+              height="100%"
+              draggable={false}
+              onClick={() => handleClick(item, 134, 134)}
+            />
+          ))}
+        </Box>
         <Typography variant="h6" gutterBottom>
           {t("illustration.others")}
         </Typography>
+        <Box sx={style}>
+          {others.map((item, index) => (
+            <LazyLoadImage
+              key={index}
+              src={item}
+              width="100%"
+              height="100%"
+              draggable={false}
+              onClick={() => handleClick(item, 134, 134)}
+            />
+          ))}
+        </Box>
       </Box>
     </Menu>
   );
