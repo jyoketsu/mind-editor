@@ -38,7 +38,7 @@ import Note from "./Note";
 import { JSONContent } from "@tiptap/react";
 import Loading from "../../../components/common/Loading";
 import Icons from "./Icons";
-import { getNoteComp } from "./components";
+import { getStartAdornment, getEndAdornment } from "./components";
 import Illustrations from "./Illustrations";
 
 let timeout: NodeJS.Timeout;
@@ -158,15 +158,23 @@ const Editor = React.forwardRef(
         const data = _.cloneDeep(docData);
         Object.keys(data.data).forEach((key) => {
           const item = data.data[key];
-          if (item.customItemContent) {
-            item.customItem = getNoteComp(
-              item.customItemContent,
-              handleOpenNote,
+          if (item.startAdornmentContent) {
+            item.startAdornment = getStartAdornment(
+              item.startAdornmentContent,
               handleClickNodeIcon
             );
-            item.customItemWidth =
-              Object.keys(item.customItemContent).length * (18 + 2);
-            item.customItemHeight = 18;
+            item.startAdornmentWidth =
+              Object.keys(item.startAdornmentContent).length * (18 + 2);
+            item.startAdornmentHeight = 18;
+          }
+          if (item.endAdornmentContent) {
+            item.endAdornment = getEndAdornment(
+              item.endAdornmentContent,
+              handleOpenNote
+            );
+            item.endAdornmentWidth =
+              Object.keys(item.endAdornmentContent).length * (18 + 2);
+            item.endAdornmentHeight = 18;
           }
         });
         setTreeData(data);
@@ -323,22 +331,18 @@ const Editor = React.forwardRef(
       const data = treeRef.current.saveNodes();
       const node = data.data[nodeKey || contextMenuTargetNodeKey];
       if (!node) return;
-      let customItemContent = node.customItemContent || {};
-      if (!customItemContent.note) {
-        customItemContent = { ...customItemContent, note: <p></p> };
+      let endAdornmentContent = node.endAdornmentContent || {};
+      if (!endAdornmentContent.note) {
+        endAdornmentContent = { ...endAdornmentContent, note: <p></p> };
       }
       treeRef.current.updateNodeById(
         data.data,
         nodeKey || contextMenuTargetNodeKey,
         {
-          customItem: getNoteComp(
-            customItemContent,
-            handleOpenNote,
-            handleClickNodeIcon
-          ),
-          customItemWidth: Object.keys(customItemContent).length * (18 + 2),
-          customItemHeight: 18,
-          customItemContent,
+          endAdornment: getEndAdornment(endAdornmentContent, handleOpenNote),
+          endAdornmentWidth: Object.keys(endAdornmentContent).length * (18 + 2),
+          endAdornmentHeight: 18,
+          endAdornmentContent,
         }
       );
       handleCloseContextMenu();
@@ -347,10 +351,10 @@ const Editor = React.forwardRef(
     function handleDeleteNote() {
       const data = treeRef.current.saveNodes();
       treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
-        customItem: undefined,
-        customItemWidth: undefined,
-        customItemHeight: undefined,
-        customItemContent: null,
+        endAdornment: undefined,
+        endAdornmentWidth: undefined,
+        endAdornmentHeight: undefined,
+        endAdornmentContent: null,
       });
       handleCloseContextMenu();
     }
@@ -359,7 +363,7 @@ const Editor = React.forwardRef(
       const data = treeRef.current.saveNodes();
       const node = data.data[nodeKey];
       if (node) {
-        setNote(node.customItemContent?.note);
+        setNote(node.endAdornmentContent?.note);
         setContextMenuTargetNodeKey(nodeKey);
         setNoteAnchorEl(event.currentTarget);
       }
@@ -369,10 +373,10 @@ const Editor = React.forwardRef(
       const data = treeRef.current.saveNodes();
       const node = data.data[contextMenuTargetNodeKey];
       if (node) {
-        const customItemContent = node.customItemContent || {};
-        customItemContent["note"] = json;
+        const endAdornmentContent = node.endAdornmentContent || {};
+        endAdornmentContent["note"] = json;
         treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
-          customItemContent,
+          endAdornmentContent,
         });
         setNoteAnchorEl(null);
         setContextMenuTargetNodeKey("");
@@ -399,17 +403,17 @@ const Editor = React.forwardRef(
       const data = treeRef.current.saveNodes();
       const node = data.data[contextMenuTargetNodeKey];
       if (node) {
-        let customItemContent = node.customItemContent || {};
-        customItemContent = { ...customItemContent, ...iconJson };
+        let startAdornmentContent = node.startAdornmentContent || {};
+        startAdornmentContent = { ...startAdornmentContent, ...iconJson };
         treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
-          customItem: getNoteComp(
-            customItemContent,
-            handleOpenNote,
+          startAdornment: getStartAdornment(
+            startAdornmentContent,
             handleClickNodeIcon
           ),
-          customItemWidth: Object.keys(customItemContent).length * (18 + 2),
-          customItemHeight: 18,
-          customItemContent,
+          startAdornmentWidth:
+            Object.keys(startAdornmentContent).length * (18 + 2),
+          startAdornmentHeight: 18,
+          startAdornmentContent,
         });
         handleCloseIcons();
       }
@@ -419,18 +423,18 @@ const Editor = React.forwardRef(
       const data = treeRef.current.saveNodes();
       const node = data.data[contextMenuTargetNodeKey];
       if (node) {
-        const customItemContent = { ...node.customItemContent };
-        if (customItemContent) {
-          delete customItemContent[category];
+        const startAdornmentContent = { ...node.startAdornmentContent };
+        if (startAdornmentContent) {
+          delete startAdornmentContent[category];
           treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
-            customItem: getNoteComp(
-              customItemContent,
-              handleOpenNote,
+            startAdornment: getStartAdornment(
+              startAdornmentContent,
               handleClickNodeIcon
             ),
-            customItemWidth: Object.keys(customItemContent).length * (18 + 2),
-            customItemHeight: 18,
-            customItemContent,
+            startAdornmentWidth:
+              Object.keys(startAdornmentContent).length * (18 + 2),
+            startAdornmentHeight: 18,
+            startAdornmentContent,
           });
           handleCloseIcons();
         }

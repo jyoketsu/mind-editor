@@ -1,6 +1,5 @@
-export function getNoteComp(
-  customItemContent: any,
-  handleClickNote: (nodeKey: string, event: any) => void,
+export function getStartAdornment(
+  startAdornment: any,
   handleClickIcon: (
     nodeKey: string,
     category: string,
@@ -8,73 +7,60 @@ export function getNoteComp(
     event: any
   ) => void
 ) {
-  const keys = Object.keys(customItemContent);
-  const order = [
-    "priority",
-    "progress",
-    "flag",
-    "study",
-    "office",
-    "symbol",
-    "note",
-  ];
+  const keys = Object.keys(startAdornment);
+  const order = ["priority", "progress", "flag", "study", "office", "symbol"];
   const orderedKeys = keys.sort((a, b) => {
     return order.indexOf(a) - order.indexOf(b);
   });
   return ({ x, y, nodeKey }: { x: number; y: number; nodeKey: string }) => (
     <g>
-      {orderedKeys.map((key, index) =>
-        key === "note" ? (
-          <svg
-            key={index}
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            width="18"
-            height="18"
-            x={x + (18 + 2) * index}
-            y={y}
-            onClick={(event: any) => handleClickNote(nodeKey, event)}
-          >
-            <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
-            <path
-              d="M886.624 297.376l-191.968-191.968c-2.944-2.944-6.432-5.312-10.336-6.912C680.48 96.864 676.288 96 672 96L224 96C171.072 96 128 139.072 128 192l0 640c0 52.928 43.072 96 96 96l576 0c52.928 0 96-43.072 96-96L896 320C896 311.52 892.64 303.36 886.624 297.376zM704 205.248 818.752 320 704 320 704 205.248zM800 864 224 864c-17.632 0-32-14.336-32-32L192 192c0-17.632 14.368-32 32-32l416 0 0 192c0 17.664 14.304 32 32 32l160 0 0 448C832 849.664 817.664 864 800 864z"
-              fill="#5D646F"
-              p-id="7882"
-            ></path>
-            <path
-              d="M288 352l192 0c17.664 0 32-14.336 32-32s-14.336-32-32-32L288 288c-17.664 0-32 14.336-32 32S270.336 352 288 352z"
-              fill="#5D646F"
-              p-id="7883"
-            ></path>
-            <path
-              d="M608 480 288 480c-17.664 0-32 14.336-32 32s14.336 32 32 32l320 0c17.696 0 32-14.336 32-32S625.696 480 608 480z"
-              fill="#5D646F"
-              p-id="7884"
-            ></path>
-            <path
-              d="M608 672 288 672c-17.664 0-32 14.304-32 32s14.336 32 32 32l320 0c17.696 0 32-14.304 32-32S625.696 672 608 672z"
-              fill="#5D646F"
-              p-id="7885"
-            ></path>
-          </svg>
-        ) : (
-          <svg
-            key={index}
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            width="18"
-            height="18"
-            x={x + (18 + 2) * index}
-            y={y}
-            onClick={(event: any) =>
-              handleClickIcon(nodeKey, key, customItemContent[key], event)
-            }
-          >
-            <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
-            {icons[key][customItemContent[key]]}
-          </svg>
-        )
-      )}
+      {orderedKeys.map((key, index) => (
+        <svg
+          key={index}
+          viewBox="0 0 1024 1024"
+          version="1.1"
+          width="18"
+          height="18"
+          x={x + (18 + 2) * index}
+          y={y}
+          onClick={(event: any) =>
+            handleClickIcon(nodeKey, key, startAdornment[key], event)
+          }
+        >
+          <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
+          {startAdornments[key][startAdornment[key]]}
+        </svg>
+      ))}
+    </g>
+  );
+}
+
+export function getEndAdornment(
+  endAdornment: any,
+  handleClickNote: (nodeKey: string, event: any) => void
+) {
+  const keys = Object.keys(endAdornment);
+  const order = ["note", "link"];
+  const orderedKeys = keys.sort((a, b) => {
+    return order.indexOf(a) - order.indexOf(b);
+  });
+  return ({ x, y, nodeKey }: { x: number; y: number; nodeKey: string }) => (
+    <g>
+      {orderedKeys.map((key, index) => (
+        <svg
+          key={index}
+          viewBox="0 0 1024 1024"
+          version="1.1"
+          width="18"
+          height="18"
+          x={x + (18 + 2) * index}
+          y={y}
+          onClick={(event: any) => handleClickNote(nodeKey, event)}
+        >
+          <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
+          {endAdornments[key]}
+        </svg>
+      ))}
     </g>
   );
 }
@@ -242,11 +228,54 @@ export const symbol = [
   </g>,
 ];
 
-export const icons: any = {
+export const note = (
+  <g>
+    <path
+      d="M886.624 297.376l-191.968-191.968c-2.944-2.944-6.432-5.312-10.336-6.912C680.48 96.864 676.288 96 672 96L224 96C171.072 96 128 139.072 128 192l0 640c0 52.928 43.072 96 96 96l576 0c52.928 0 96-43.072 96-96L896 320C896 311.52 892.64 303.36 886.624 297.376zM704 205.248 818.752 320 704 320 704 205.248zM800 864 224 864c-17.632 0-32-14.336-32-32L192 192c0-17.632 14.368-32 32-32l416 0 0 192c0 17.664 14.304 32 32 32l160 0 0 448C832 849.664 817.664 864 800 864z"
+      fill="#5D646F"
+      p-id="7882"
+    ></path>
+    <path
+      d="M288 352l192 0c17.664 0 32-14.336 32-32s-14.336-32-32-32L288 288c-17.664 0-32 14.336-32 32S270.336 352 288 352z"
+      fill="#5D646F"
+      p-id="7883"
+    ></path>
+    <path
+      d="M608 480 288 480c-17.664 0-32 14.336-32 32s14.336 32 32 32l320 0c17.696 0 32-14.336 32-32S625.696 480 608 480z"
+      fill="#5D646F"
+      p-id="7884"
+    ></path>
+    <path
+      d="M608 672 288 672c-17.664 0-32 14.304-32 32s14.336 32 32 32l320 0c17.696 0 32-14.304 32-32S625.696 672 608 672z"
+      fill="#5D646F"
+      p-id="7885"
+    ></path>
+  </g>
+);
+
+export const link = (
+  <g>
+    <path
+      d="M574 665.4c-3.1-3.1-8.2-3.1-11.3 0L446.5 781.6c-53.8 53.8-144.6 59.5-204 0-59.5-59.5-53.8-150.2 0-204l116.2-116.2c3.1-3.1 3.1-8.2 0-11.3l-39.8-39.8c-3.1-3.1-8.2-3.1-11.3 0L191.4 526.5c-84.6 84.6-84.6 221.5 0 306s221.5 84.6 306 0l116.2-116.2c3.1-3.1 3.1-8.2 0-11.3L574 665.4zM832.6 191.4c-84.6-84.6-221.5-84.6-306 0L410.3 307.6c-3.1 3.1-3.1 8.2 0 11.3l39.7 39.7c3.1 3.1 8.2 3.1 11.3 0l116.2-116.2c53.8-53.8 144.6-59.5 204 0 59.5 59.5 53.8 150.2 0 204L665.3 562.6c-3.1 3.1-3.1 8.2 0 11.3l39.8 39.8c3.1 3.1 8.2 3.1 11.3 0l116.2-116.2c84.5-84.6 84.5-221.5 0-306.1z"
+      p-id="2295"
+    ></path>
+    <path
+      d="M610.1 372.3c-3.1-3.1-8.2-3.1-11.3 0L372.3 598.7c-3.1 3.1-3.1 8.2 0 11.3l39.6 39.6c3.1 3.1 8.2 3.1 11.3 0l226.4-226.4c3.1-3.1 3.1-8.2 0-11.3l-39.5-39.6z"
+      p-id="2296"
+    ></path>
+  </g>
+);
+
+export const startAdornments: any = {
   priority,
   progress,
   flag,
   study,
   office,
   symbol,
+};
+
+export const endAdornments: any = {
+  note,
+  link,
 };
