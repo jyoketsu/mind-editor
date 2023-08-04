@@ -28,6 +28,8 @@ import {
 import { MoreHoriz } from "@mui/icons-material";
 import Toolbar from "./Toolbar";
 import Editor from "./editor";
+import NodeToolbar from "./NodeToolbar";
+import CNode from "tree-graph-react/dist/interfaces/CNode";
 
 export default function Home() {
   const { t, i18n } = useTranslation();
@@ -41,6 +43,7 @@ export default function Home() {
   const [viewType, setViewType] = useState<
     "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind"
   >("mutil-tree");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const dispatch = useAppDispatch();
   const editorRef = useRef<any>(null);
   const open = Boolean(anchorEl);
@@ -156,13 +159,32 @@ export default function Home() {
     editorRef?.current?.addIcon();
   };
 
+  const handleClickNode = (node: any) => {
+    if (!node) {
+      setSelectedIds([]);
+    } else if (Array.isArray(node)) {
+      setSelectedIds(node.map((item) => item._key));
+    } else {
+      setSelectedIds([node._key]);
+    }
+  };
+
+  const handleCheckBox = () => {
+    if (selectedIds.length) {
+      editorRef?.current?.handleCheckbox(selectedIds, {
+        showCheckbox: true,
+        checked: false,
+      });
+    }
+  };
+
   return (
     <Box
       sx={{
         width: "100%",
         height: "100%",
         display: "grid",
-        gridTemplateRows: "50px 1fr",
+        gridTemplateRows: "69px 1fr",
         overflow: "hidden",
       }}
     >
@@ -176,6 +198,7 @@ export default function Home() {
           boxSizing: "border-box",
           borderBottom: "1px solid",
           borderColor: "divider",
+          backgroundColor: "background.head",
         }}
       >
         <Typography variant="h5" sx={{ fontWeight: 800 }}>
@@ -251,8 +274,21 @@ export default function Home() {
           </MenuItem>
         </Menu>
       </Box>
-      <Box sx={{ overflow: "hidden" }}>
-        <Editor ref={editorRef} viewType={viewType} />
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "68px 1fr",
+          overflow: "hidden",
+        }}
+      >
+        <Box sx={{ backgroundColor: "background.slide" }}>
+          <NodeToolbar handleCheckBox={handleCheckBox} />
+        </Box>
+        <Editor
+          ref={editorRef}
+          viewType={viewType}
+          handleClickNode={handleClickNode}
+        />
       </Box>
     </Box>
   );

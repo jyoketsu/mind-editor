@@ -47,5 +47,8 @@
     "changeView": "Change View",
     "addNote": "Add Note",
     "deleteNote": "Delete Note"
+  },
+  "nodeTool": {
+    "task": "Task"
   }
 }

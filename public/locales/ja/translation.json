@@ -47,5 +47,8 @@
     "changeView": "ビューを変更する",
     "addNote": "メモを追加する",
     "deleteNote": "メモを削除する"
+  },
+  "nodeTool": {
+    "task": "タスク"
   }
 }

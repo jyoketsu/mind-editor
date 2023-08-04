@@ -53,6 +53,7 @@ export default function Icons({
               version="1.1"
               width="28"
               height="28"
+              style={{ marginRight: "5px" }}
               onClick={() => handleClickIcon("priority", index)}
             >
               <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
@@ -76,6 +77,7 @@ export default function Icons({
               version="1.1"
               width="28"
               height="28"
+              style={{ marginRight: "5px" }}
               onClick={() => handleClickIcon("progress", index)}
             >
               <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
@@ -99,6 +101,7 @@ export default function Icons({
               version="1.1"
               width="28"
               height="28"
+              style={{ marginRight: "5px" }}
               onClick={() => handleClickIcon("flag", index)}
             >
               <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
@@ -122,6 +125,7 @@ export default function Icons({
               version="1.1"
               width="28"
               height="28"
+              style={{ marginRight: "5px" }}
               onClick={() => handleClickIcon("study", index)}
             >
               <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
@@ -145,6 +149,7 @@ export default function Icons({
               version="1.1"
               width="28"
               height="28"
+              style={{ marginRight: "5px" }}
               onClick={() => handleClickIcon("office", index)}
             >
               <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
@@ -168,6 +173,7 @@ export default function Icons({
               version="1.1"
               width="28"
               height="28"
+              style={{ marginRight: "5px" }}
               onClick={() => handleClickIcon("symbol", index)}
             >
               <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />

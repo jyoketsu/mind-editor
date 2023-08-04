@@ -28,6 +28,8 @@ export default function Router() {
             background: {
               default: grey[100],
               paper: "#FFF",
+              slide: "#F5F5F5",
+              head: "#F9F9F9",
             },
           }
         : {
@@ -37,7 +39,9 @@ export default function Router() {
             },
             background: {
               default: grey[900],
-              paper: grey[800],
+              paper: grey[600],
+              slide: grey[800],
+              head: grey[700],
             },
           }),
     },

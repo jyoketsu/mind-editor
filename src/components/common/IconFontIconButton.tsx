@@ -1,4 +1,3 @@
-import Tooltip from "@mui/material/Tooltip";
 import ButtonBase from "@mui/material/ButtonBase";
 import IconFont from "./IconFont";
 
@@ -18,18 +17,19 @@ export default function IconFontIconButton({
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   return (
-    <Tooltip title={title}>
-      <ButtonBase
-        sx={{
-          borderRadius: "50%",
-          padding: "5px",
-          filter: `opacity(${disabled ? 0.5 : 1})`,
-        }}
-        disabled={disabled}
-        onClick={onClick}
-      >
-        <IconFont name={iconName} fontSize={fontSize} color={color} />
-      </ButtonBase>
-    </Tooltip>
+    <ButtonBase
+      sx={{
+        borderRadius: "8px",
+        padding: "5px",
+        filter: `opacity(${disabled ? 0.5 : 1})`,
+        display: "flex",
+        flexDirection: "column",
+      }}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      <IconFont name={iconName} fontSize={fontSize} color={color} />
+      <span>{title}</span>
+    </ButtonBase>
   );
 }

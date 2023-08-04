@@ -47,5 +47,8 @@
     "changeView": "切换视图",
     "addNote": "添加备注",
     "deleteNote": "删除备注"
+  },
+  "nodeTool": {
+    "task": "任务"
   }
 }

@@ -47,8 +47,10 @@ const Editor = React.forwardRef(
   (
     {
       viewType,
+      handleClickNode,
     }: {
       viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind";
+      handleClickNode: (node: CNode) => void;
     },
     ref
   ) => {
@@ -87,6 +89,7 @@ const Editor = React.forwardRef(
       resetMove,
       addNote,
       addIcon,
+      handleCheckbox,
     }));
 
     const handleChange = useCallback(() => {
@@ -327,6 +330,11 @@ const Editor = React.forwardRef(
       handleOpenIcon(nodeKey);
     }
 
+    function handleCheckbox(ids: string[], data: any) {
+      const res = treeRef.current.saveNodes();
+      treeRef?.current?.updateNodesByIds(res.data, ids, data);
+    }
+
     function handleAddNote(nodeKey?: string) {
       const data = treeRef.current.saveNodes();
       const node = data.data[nodeKey || contextMenuTargetNodeKey];
@@ -510,11 +518,11 @@ const Editor = React.forwardRef(
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
               showDeleteConform={handledeleteConform}
-              fontWeight={800}
               handlePasteText={handlePasteText}
               handleFileChange={handleFileChange}
               handleContextMenu={handleContextMenu}
               handleClickNodeImage={(url) => setUrl(url || "")}
+              handleClickNode={handleClickNode}
             />
           );
         } else {
@@ -530,7 +538,6 @@ const Editor = React.forwardRef(
               // handleChangeNodeText={(nodeId: string, text: string) =>
               //   handleChangeNodeText(nodeId, text)
               // }
-              itemHeight={38}
               blockHeight={30}
               pathWidth={2}
               pathColor={darkMode ? "#FFF" : "#535953"}
@@ -538,11 +545,11 @@ const Editor = React.forwardRef(
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
               showDeleteConform={handledeleteConform}
-              fontWeight={800}
               handlePasteText={handlePasteText}
               handleFileChange={handleFileChange}
               handleContextMenu={handleContextMenu}
               handleClickNodeImage={(url) => setUrl(url || "")}
+              handleClickNode={handleClickNode}
             />
           );
         }
@@ -567,6 +574,7 @@ const Editor = React.forwardRef(
           width: "100%",
           height: "100%",
           overflow: "hidden",
+          backgroundColor: "background.paper",
         }}
       >
         {rootKey && treeData && treeData.data ? (
