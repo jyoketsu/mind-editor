@@ -37,7 +37,7 @@ export function getStartAdornment(
 
 export function getEndAdornment(
   endAdornment: any,
-  handleClickNote: (nodeKey: string, event: any) => void
+  handleClick: { [_key: string]: (nodeKey: string, event: any) => void }
 ) {
   const keys = Object.keys(endAdornment);
   const order = ["note", "link"];
@@ -55,7 +55,7 @@ export function getEndAdornment(
           height="18"
           x={x + (18 + 2) * index}
           y={y}
-          onClick={(event: any) => handleClickNote(nodeKey, event)}
+          onClick={(event: any) => handleClick[key](nodeKey, event)}
         >
           <rect x={0} y={0} width="1024" height="1024" fillOpacity={0} />
           {endAdornments[key]}

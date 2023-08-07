@@ -38,15 +38,18 @@
     "ok": "确定",
     "export": "导出",
     "import": "导入",
-    "addChild": "添加子节点",
-    "addNext": "向后添加节点",
-    "delete": "删除节点",
+    "addChild": "子节点",
+    "addNext": "次节点",
+    "delete": "删除",
     "deleteImage": "删除图片",
-    "addNodeImage": "上传图片",
+    "addNodeImage": "图片",
     "changeNodeImage": "更改图片",
     "changeView": "切换视图",
-    "addNote": "添加备注",
-    "deleteNote": "删除备注"
+    "addNote": "备注",
+    "deleteNote": "删除备注",
+    "link": "链接",
+    "linkUrl": "链接地址",
+    "linkText": "提示文本"
   },
   "nodeTool": {
     "task": "任务"

@@ -93,7 +93,10 @@ export const serviceSlice = createSlice({
       }
     });
     builder.addCase(saveDoc.fulfilled, (state, action: PayloadAction<any>) => {
-      if (action.payload.status === 200) {
+      if (
+        action.payload.status === 200 ||
+        action.payload.statusCode === "200"
+      ) {
         state.changed = false;
       } else {
         alert(action.payload.msg);

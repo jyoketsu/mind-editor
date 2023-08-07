@@ -38,15 +38,18 @@
     "ok": "確定",
     "export": "エクスポート",
     "import": "インポート",
-    "addChild": "子ノードを追加",
-    "addNext": "次にノードを追加",
-    "delete": "ノードを削除",
+    "addChild": "子ノード",
+    "addNext": "次のノード",
+    "delete": "削除",
     "deleteImage": "画像を削除",
-    "addNodeImage": "画像をアップロード",
+    "addNodeImage": "画像",
     "changeNodeImage": "画像を変更",
     "changeView": "ビューを変更する",
-    "addNote": "メモを追加する",
-    "deleteNote": "メモを削除する"
+    "addNote": "メモ",
+    "deleteNote": "メモを削除する",
+    "link": "リンク",
+    "linkUrl": "リンクアドレス",
+    "linkText": "リンクテキスト"
   },
   "nodeTool": {
     "task": "タスク"

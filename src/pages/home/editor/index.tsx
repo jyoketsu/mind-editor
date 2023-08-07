@@ -40,6 +40,7 @@ import Loading from "../../../components/common/Loading";
 import Icons from "./Icons";
 import { getStartAdornment, getEndAdornment } from "./components";
 import Illustrations from "./Illustrations";
+import Link from "./Link";
 
 let timeout: NodeJS.Timeout;
 
@@ -81,6 +82,9 @@ const Editor = React.forwardRef(
     );
     const [illustrationAnchorEl, setIllustrationAnchorEl] =
       useState<null | HTMLElement>(null);
+    const [linkAnchorEl, setLinkAnchorEl] = useState<null | HTMLElement>(null);
+    const [initUrl, setInitUrl] = useState("");
+    const [initText, setInitText] = useState("");
 
     useImperativeHandle(ref, () => ({
       handleAddChild,
@@ -89,7 +93,13 @@ const Editor = React.forwardRef(
       resetMove,
       addNote,
       addIcon,
-      handleCheckbox,
+      addIllustration,
+      addLink,
+      getSelectedIds: () => treeRef.current.getSelectedIds(),
+      getNodes: () => treeRef.current.saveNodes(),
+      updateNodesByIds: (nodes: NodeMap, ids: string[], data: any) => {
+        treeRef?.current?.updateNodesByIds(nodes, ids, data);
+      },
     }));
 
     const handleChange = useCallback(() => {
@@ -171,10 +181,10 @@ const Editor = React.forwardRef(
             item.startAdornmentHeight = 18;
           }
           if (item.endAdornmentContent) {
-            item.endAdornment = getEndAdornment(
-              item.endAdornmentContent,
-              handleOpenNote
-            );
+            item.endAdornment = getEndAdornment(item.endAdornmentContent, {
+              note: handleOpenNote,
+              link: handleOpenLink,
+            });
             item.endAdornmentWidth =
               Object.keys(item.endAdornmentContent).length * (18 + 2);
             item.endAdornmentHeight = 18;
@@ -233,52 +243,46 @@ const Editor = React.forwardRef(
     ) {
       const file = files[0];
       if (file.type.startsWith("image/")) {
-        if (nodeKey !== rootKey) {
-          if (getUptokenApi) {
-            const res: any = await api.request.get(getUptokenApi.url, {
-              ...getUptokenApi.params,
-              ...{ token: api.getToken() },
-            });
-            if (res.statusCode === "200") {
-              const upToken = res.result;
-              try {
-                setLoading(true);
-                const url = await qiniuUpload(upToken, file);
-                setLoading(false);
-                if (
-                  typeof url === "string" &&
-                  url.startsWith("https://cdn-icare.qingtime.cn/")
-                ) {
-                  let img = new Image();
-                  img.src = url;
-                  img.onload = async () => {
-                    const height = 200 / (img.width / img.height);
-                    const data = treeRef.current.saveNodes();
-                    const patchData = nodeName
-                      ? {
-                          name: nodeName,
-                          imageUrl: url,
-                          imageWidth: 200,
-                          imageHeight: height,
-                        }
-                      : {
-                          imageUrl: url,
-                          imageWidth: 200,
-                          imageHeight: height,
-                        };
-                    treeRef.current.updateNodeById(
-                      data.data,
-                      nodeKey,
-                      patchData
-                    );
-                  };
-                }
-              } catch (error) {
-                alert("error!");
+        if (getUptokenApi) {
+          const res: any = await api.request.get(getUptokenApi.url, {
+            ...getUptokenApi.params,
+            ...{ token: api.getToken() },
+          });
+          if (res.statusCode === "200") {
+            const upToken = res.result;
+            try {
+              setLoading(true);
+              const url = await qiniuUpload(upToken, file);
+              setLoading(false);
+              if (
+                typeof url === "string" &&
+                url.startsWith("https://cdn-icare.qingtime.cn/")
+              ) {
+                let img = new Image();
+                img.src = url;
+                img.onload = async () => {
+                  const height = 200 / (img.width / img.height);
+                  const data = treeRef.current.saveNodes();
+                  const patchData = nodeName
+                    ? {
+                        name: nodeName,
+                        imageUrl: url,
+                        imageWidth: 200,
+                        imageHeight: height,
+                      }
+                    : {
+                        imageUrl: url,
+                        imageWidth: 200,
+                        imageHeight: height,
+                      };
+                  treeRef.current.updateNodeById(data.data, nodeKey, patchData);
+                };
               }
-            } else {
+            } catch (error) {
               alert("error!");
             }
+          } else {
+            alert("error!");
           }
         }
       }
@@ -330,9 +334,31 @@ const Editor = React.forwardRef(
       handleOpenIcon(nodeKey);
     }
 
-    function handleCheckbox(ids: string[], data: any) {
-      const res = treeRef.current.saveNodes();
-      treeRef?.current?.updateNodesByIds(res.data, ids, data);
+    function addIllustration() {
+      const nodeKey = treeRef.current.getSelectedId();
+      setContextMenuTargetNodeKey(nodeKey);
+      handleOpenIllustration(nodeKey);
+    }
+
+    function addLink() {
+      const nodeKey = treeRef.current.getSelectedId();
+      const data = treeRef.current.saveNodes();
+      const node = data.data[nodeKey];
+      if (!node) return;
+      const link = node.endAdornmentContent?.link;
+      if (link) {
+        setInitText(link.text);
+        setInitUrl(link.url);
+      } else {
+        setInitText("");
+        setInitUrl("");
+      }
+      setContextMenuTargetNodeKey(nodeKey);
+      setLinkAnchorEl(
+        document.getElementById(
+          `tree-node-${nodeKey || contextMenuTargetNodeKey}`
+        )
+      );
     }
 
     function handleAddNote(nodeKey?: string) {
@@ -347,7 +373,10 @@ const Editor = React.forwardRef(
         data.data,
         nodeKey || contextMenuTargetNodeKey,
         {
-          endAdornment: getEndAdornment(endAdornmentContent, handleOpenNote),
+          endAdornment: getEndAdornment(endAdornmentContent, {
+            note: handleOpenNote,
+            link: handleOpenLink,
+          }),
           endAdornmentWidth: Object.keys(endAdornmentContent).length * (18 + 2),
           endAdornmentHeight: 18,
           endAdornmentContent,
@@ -374,6 +403,19 @@ const Editor = React.forwardRef(
         setNote(node.endAdornmentContent?.note);
         setContextMenuTargetNodeKey(nodeKey);
         setNoteAnchorEl(event.currentTarget);
+      }
+    }
+
+    function handleOpenLink(nodeKey: string) {
+      const data = treeRef.current.saveNodes();
+      const node = data.data[nodeKey];
+      if (node) {
+        const url = node.endAdornmentContent.link.url;
+        if (url.includes("http")) {
+          window.open(url, "_blank");
+        } else {
+          window.open(`http://${url}`, "_blank");
+        }
       }
     }
 
@@ -487,6 +529,29 @@ const Editor = React.forwardRef(
         });
         handleCloseIllustration();
       }
+    }
+
+    function handleSetLink(url: string, text: string) {
+      const nodeKey = treeRef.current.getSelectedId();
+      const data = treeRef.current.saveNodes();
+      const node = data.data[nodeKey];
+      if (!node) return;
+      let endAdornmentContent = node.endAdornmentContent || {};
+      endAdornmentContent = { ...endAdornmentContent, link: { url, text } };
+      treeRef.current.updateNodeById(
+        data.data,
+        nodeKey || contextMenuTargetNodeKey,
+        {
+          endAdornment: getEndAdornment(endAdornmentContent, {
+            note: handleOpenNote,
+            link: handleOpenLink,
+          }),
+          endAdornmentWidth: Object.keys(endAdornmentContent).length * (18 + 2),
+          endAdornmentHeight: 18,
+          endAdornmentContent,
+        }
+      );
+      setLinkAnchorEl(null);
     }
 
     const tree = useMemo(() => {
@@ -661,6 +726,13 @@ const Editor = React.forwardRef(
           anchorEl={illustrationAnchorEl}
           handleClick={handleClickIllustration}
           handleClose={handleCloseIllustration}
+        />
+        <Link
+          anchorEl={linkAnchorEl}
+          initUrl={initUrl}
+          initText={initText}
+          handleOK={handleSetLink}
+          handleClose={() => setLinkAnchorEl(null)}
         />
         {loading ? <Loading /> : null}
       </Box>

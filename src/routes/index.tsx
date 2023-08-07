@@ -8,10 +8,12 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { PaletteMode } from "@mui/material";
 import { grey, blue } from "@mui/material/colors";
 import { useAppSelector } from "../redux/hooks";
+import Loading from "../components/common/Loading";
 const BASE = import.meta.env.VITE_BASE;
 
 export default function Router() {
   const isDark = useAppSelector((state) => state.common.dark);
+  const loading = useAppSelector((state) => state.common.loading);
 
   // 配色
   // 默认颜色：https://mui.com/zh/material-ui/customization/default-theme/
@@ -73,6 +75,7 @@ export default function Router() {
           <Route path="preview" element={<Preview />} />
         </Routes>
       </BrowserRouter>
+      {loading ? <Loading /> : null}
     </ThemeProvider>
   );
 }

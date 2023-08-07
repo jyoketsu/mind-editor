@@ -1,5 +1,6 @@
 import ButtonBase from "@mui/material/ButtonBase";
 import IconFont from "./IconFont";
+import React from "react";
 
 export default function IconFontIconButton({
   title,
@@ -7,6 +8,8 @@ export default function IconFontIconButton({
   fontSize,
   color,
   disabled,
+  style,
+  children,
   onClick,
 }: {
   title: string;
@@ -14,6 +17,8 @@ export default function IconFontIconButton({
   fontSize: number;
   color?: string;
   disabled?: boolean;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   return (
@@ -24,12 +29,15 @@ export default function IconFontIconButton({
         filter: `opacity(${disabled ? 0.5 : 1})`,
         display: "flex",
         flexDirection: "column",
+        alignItems: "center",
+        ...style,
       }}
       disabled={disabled}
       onClick={onClick}
     >
       <IconFont name={iconName} fontSize={fontSize} color={color} />
       <span>{title}</span>
+      {children}
     </ButtonBase>
   );
 }

@@ -38,15 +38,18 @@
     "ok": "Ok",
     "export": "Export",
     "import": "Import",
-    "addChild": "Add Child Node",
-    "addNext": "Add Node After",
-    "delete": "Delete Node",
+    "addChild": "Child Node",
+    "addNext": "Next Node",
+    "delete": "Delete",
     "deleteImage": "Delete Image",
-    "addNodeImage": "Upload Image",
+    "addNodeImage": "Image",
     "changeNodeImage": "Change Image",
     "changeView": "Change View",
-    "addNote": "Add Note",
-    "deleteNote": "Delete Note"
+    "addNote": "Note",
+    "deleteNote": "Delete Note",
+    "link": "Link",
+    "linkUrl": "Link URL",
+    "linkText": "Link Text"
   },
   "nodeTool": {
     "task": "Task"

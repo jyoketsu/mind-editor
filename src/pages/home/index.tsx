@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { setDark } from "../../redux/reducer/commonSlice";
+import { setDark, setLoading } from "../../redux/reducer/commonSlice";
 import { exportFile, getSearchParamValue } from "../../utils/util";
 import {
   getDoc,
@@ -30,12 +30,15 @@ import Toolbar from "./Toolbar";
 import Editor from "./editor";
 import NodeToolbar from "./NodeToolbar";
 import CNode from "tree-graph-react/dist/interfaces/CNode";
+import qiniuUpload from "../../utils/qiniu";
+import api from "../../utils/api";
 
 export default function Home() {
   const { t, i18n } = useTranslation();
   const location = useLocation();
   const dark = useAppSelector((state) => state.common.dark);
   const getDataApi = useAppSelector((state) => state.service.getDataApi);
+  const getUptokenApi = useAppSelector((state) => state.service.getUptokenApi);
   const changed = useAppSelector((state) => state.service.changed);
   const docData = useAppSelector((state) => state.service.docData);
   const patchDataApi = useAppSelector((state) => state.service.patchDataApi);
@@ -159,6 +162,14 @@ export default function Home() {
     editorRef?.current?.addIcon();
   };
 
+  const handleLink = () => {
+    editorRef?.current?.addLink();
+  };
+
+  const handleAddIllustration = () => {
+    editorRef?.current?.addIllustration();
+  };
+
   const handleClickNode = (node: any) => {
     if (!node) {
       setSelectedIds([]);
@@ -171,10 +182,59 @@ export default function Home() {
 
   const handleCheckBox = () => {
     if (selectedIds.length) {
-      editorRef?.current?.handleCheckbox(selectedIds, {
-        showCheckbox: true,
+      const res = editorRef.current.getNodes();
+      const firstNode = res.data[selectedIds[0]];
+      const data = {
+        showCheckbox: !firstNode.showCheckbox,
         checked: false,
-      });
+      };
+      editorRef?.current?.updateNodesByIds(res.data, selectedIds, data);
+    }
+  };
+
+  const handleFileChange = async (files: FileList) => {
+    if (!selectedIds.length) return;
+    const file = files[0];
+    if (file.type.startsWith("image/")) {
+      if (getUptokenApi) {
+        const res: any = await api.request.get(getUptokenApi.url, {
+          ...getUptokenApi.params,
+          ...{ token: api.getToken() },
+        });
+        if (res.statusCode === "200") {
+          const upToken = res.result;
+          try {
+            dispatch(setLoading(true));
+            const url = await qiniuUpload(upToken, file);
+            dispatch(setLoading(false));
+            if (
+              typeof url === "string" &&
+              url.startsWith("https://cdn-icare.qingtime.cn/")
+            ) {
+              let img = new Image();
+              img.src = url;
+              img.onload = async () => {
+                const height = 200 / (img.width / img.height);
+                const data = editorRef.current.getNodes();
+                const patchData = {
+                  imageUrl: url,
+                  imageWidth: 200,
+                  imageHeight: height,
+                };
+                editorRef?.current?.updateNodesByIds(
+                  data.data,
+                  selectedIds,
+                  patchData
+                );
+              };
+            }
+          } catch (error) {
+            alert("error!");
+          }
+        } else {
+          alert("error!");
+        }
+      }
     }
   };
 
@@ -205,7 +265,7 @@ export default function Home() {
           Mind
         </Typography>
         <div style={{ flex: 1 }}>
-          <Toolbar
+          {/* <Toolbar
             viewType={viewType}
             handleAddChild={handleAddChild}
             handleAddNext={handleAddNext}
@@ -213,7 +273,7 @@ export default function Home() {
             handleSetViewType={setViewType}
             handleAddNote={handleAddNote}
             handleAddIcon={handleAddIcon}
-          />
+          /> */}
         </div>
         <Typography
           sx={{ color: "text.secondary", fontSize: "14px", padding: "0 5px" }}
@@ -282,7 +342,19 @@ export default function Home() {
         }}
       >
         <Box sx={{ backgroundColor: "background.slide" }}>
-          <NodeToolbar handleCheckBox={handleCheckBox} />
+          <NodeToolbar
+            handleCheckBox={handleCheckBox}
+            handleAddChild={handleAddChild}
+            handleAddNext={handleAddNext}
+            handleAddNote={handleAddNote}
+            handleAddIcon={handleAddIcon}
+            handleAddIllustration={handleAddIllustration}
+            handleFileChange={(files: FileList) => handleFileChange(files)}
+            handleDelete={handleDelete}
+            handleExport={handleExport}
+            handleImport={handleChange}
+            handleLink={handleLink}
+          />
         </Box>
         <Editor
           ref={editorRef}
