@@ -36,7 +36,7 @@ export default function IconFontIconButton({
       onClick={onClick}
     >
       <IconFont name={iconName} fontSize={fontSize} color={color} />
-      <span>{title}</span>
+      {title ? <span>{title}</span> : null}
       {children}
     </ButtonBase>
   );

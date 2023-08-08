@@ -299,12 +299,16 @@ const Editor = React.forwardRef(
     }
 
     function handleAddChild() {
-      treeRef.current.addChild(contextMenuTargetNodeKey);
+      const nodeKey =
+        treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
+      treeRef.current.addChild(contextMenuTargetNodeKey || nodeKey);
       handleCloseContextMenu();
     }
 
     function handleAddNext() {
-      treeRef.current.addNext(contextMenuTargetNodeKey);
+      const nodeKey =
+        treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
+      treeRef.current.addNext(contextMenuTargetNodeKey || nodeKey);
       handleCloseContextMenu();
     }
 
@@ -323,25 +327,29 @@ const Editor = React.forwardRef(
     }
 
     function addNote() {
-      const nodeKey = treeRef.current.getSelectedId();
+      const nodeKey =
+        treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
       setContextMenuTargetNodeKey(nodeKey);
       handleAddNote(nodeKey);
     }
 
     function addIcon() {
-      const nodeKey = treeRef.current.getSelectedId();
+      const nodeKey =
+        treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
       setContextMenuTargetNodeKey(nodeKey);
       handleOpenIcon(nodeKey);
     }
 
     function addIllustration() {
-      const nodeKey = treeRef.current.getSelectedId();
+      const nodeKey =
+        treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
       setContextMenuTargetNodeKey(nodeKey);
       handleOpenIllustration(nodeKey);
     }
 
     function addLink() {
-      const nodeKey = treeRef.current.getSelectedId();
+      const nodeKey =
+        treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
       const data = treeRef.current.saveNodes();
       const node = data.data[nodeKey];
       if (!node) return;
@@ -554,6 +562,39 @@ const Editor = React.forwardRef(
       setLinkAnchorEl(null);
     }
 
+    function handleChangeNodeText(nodeKey: string, text: string) {
+      const urlReg =
+        /(([\w-]{1,}\.+)+(com|cn|org|net|info)(\/#\/)*\/*[\w\/\?=&%.]*)|(http:\/\/([\w-]{1,}\.+)+(com|cn|org|net|info)(\/#\/)*\/*[\w\/\?=&%.]*)|(https:\/\/([\w-]{1,}\.+)+(com|cn|org|net|info)(\/#\/)*\/*[\w\/\?=&%.]*)/g;
+      if (urlReg.test(text)) {
+        const matchList = text.match(urlReg);
+
+        const data = treeRef.current.saveNodes();
+        const node = data.data[nodeKey];
+        if (!node) return;
+        if (!matchList?.length) return;
+        let endAdornmentContent = node.endAdornmentContent || {};
+        endAdornmentContent = {
+          ...endAdornmentContent,
+          link: { url: matchList[0], text: "" },
+        };
+        treeRef.current.updateNodeById(
+          data.data,
+          nodeKey || contextMenuTargetNodeKey,
+          {
+            endAdornment: getEndAdornment(endAdornmentContent, {
+              note: handleOpenNote,
+              link: handleOpenLink,
+            }),
+            endAdornmentWidth:
+              Object.keys(endAdornmentContent).length * (18 + 2),
+            endAdornmentHeight: 18,
+            endAdornmentContent,
+            name: text.replace(matchList[0], ""),
+          }
+        );
+      }
+    }
+
     const tree = useMemo(() => {
       if (
         rootKey &&
@@ -588,6 +629,9 @@ const Editor = React.forwardRef(
               handleContextMenu={handleContextMenu}
               handleClickNodeImage={(url) => setUrl(url || "")}
               handleClickNode={handleClickNode}
+              handleChangeNodeText={(nodeKey: string, text: string) =>
+                handleChangeNodeText(nodeKey, text)
+              }
             />
           );
         } else {

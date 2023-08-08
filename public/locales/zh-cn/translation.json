@@ -4,8 +4,8 @@
   "menu": {
     "menu": "菜单",
     "logout": "登出",
-    "darkMode": "暗黑模式",
-    "lightMode": "亮色模式"
+    "darkMode": "暗色",
+    "lightMode": "亮色"
   },
   "page": {
     "page1": "页面1",
@@ -39,19 +39,20 @@
     "export": "导出",
     "import": "导入",
     "addChild": "子节点",
-    "addNext": "次节点",
+    "addNext": "弟节点",
     "delete": "删除",
     "deleteImage": "删除图片",
     "addNodeImage": "图片",
     "changeNodeImage": "更改图片",
-    "changeView": "切换视图",
+    "changeView": "视图",
     "addNote": "备注",
     "deleteNote": "删除备注",
     "link": "链接",
     "linkUrl": "链接地址",
     "linkText": "提示文本"
   },
-  "nodeTool": {
-    "task": "任务"
+  "toolBar": {
+    "task": "任务",
+    "fullScreen": "全屏"
   }
 }

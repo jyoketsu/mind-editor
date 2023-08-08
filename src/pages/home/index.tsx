@@ -1,23 +1,9 @@
-import {
-  Box,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Typography,
-} from "@mui/material";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import IosShareIcon from "@mui/icons-material/IosShare";
-import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
+import { Box, Slide, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { setDark, setLoading } from "../../redux/reducer/commonSlice";
+import { setLoading } from "../../redux/reducer/commonSlice";
 import { exportFile, getSearchParamValue } from "../../utils/util";
 import {
   getDoc,
@@ -25,31 +11,26 @@ import {
   setApi,
   setDocData,
 } from "../../redux/reducer/serviceSlice";
-import { MoreHoriz } from "@mui/icons-material";
 import Toolbar from "./Toolbar";
 import Editor from "./editor";
 import NodeToolbar from "./NodeToolbar";
-import CNode from "tree-graph-react/dist/interfaces/CNode";
 import qiniuUpload from "../../utils/qiniu";
 import api from "../../utils/api";
 
 export default function Home() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const location = useLocation();
-  const dark = useAppSelector((state) => state.common.dark);
   const getDataApi = useAppSelector((state) => state.service.getDataApi);
   const getUptokenApi = useAppSelector((state) => state.service.getUptokenApi);
   const changed = useAppSelector((state) => state.service.changed);
   const docData = useAppSelector((state) => state.service.docData);
   const patchDataApi = useAppSelector((state) => state.service.patchDataApi);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [viewType, setViewType] = useState<
     "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind"
   >("mutil-tree");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const dispatch = useAppDispatch();
   const editorRef = useRef<any>(null);
-  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const viewtype: any = localStorage.getItem("VIEW_TYPE");
@@ -95,14 +76,6 @@ export default function Home() {
     }
   }, [getDataApi]);
 
-  const changeLanguage = (event: SelectChangeEvent) => {
-    i18n.changeLanguage(event.target.value);
-  };
-
-  const toggleMode = () => {
-    dispatch(setDark(!dark));
-  };
-
   const handleExport = () => {
     if (docData) {
       const root = docData.data[docData.rootKey];
@@ -132,14 +105,6 @@ export default function Home() {
       }
     };
     reader.readAsText(file);
-  };
-
-  const handleClickMore = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseMoreMenu = () => {
-    setAnchorEl(null);
   };
 
   const handleAddChild = () => {
@@ -264,75 +229,12 @@ export default function Home() {
         <Typography variant="h5" sx={{ fontWeight: 800 }}>
           Mind
         </Typography>
-        <div style={{ flex: 1 }}>
-          {/* <Toolbar
-            viewType={viewType}
-            handleAddChild={handleAddChild}
-            handleAddNext={handleAddNext}
-            handleDelete={handleDelete}
-            handleSetViewType={setViewType}
-            handleAddNote={handleAddNote}
-            handleAddIcon={handleAddIcon}
-          /> */}
-        </div>
+        <div style={{ flex: 1 }}></div>
         <Typography
           sx={{ color: "text.secondary", fontSize: "14px", padding: "0 5px" }}
         >
           {changed ? t("mind.changed") : t("mind.saved")}
         </Typography>
-        <IconButton onClick={handleClickMore}>
-          <MoreHoriz />
-        </IconButton>
-        <Menu anchorEl={anchorEl} open={open} onClose={handleCloseMoreMenu}>
-          <MenuItem onClick={handleCloseMoreMenu}>
-            <Select
-              value={i18n.language}
-              size="small"
-              onChange={changeLanguage}
-            >
-              <MenuItem value="zh-CN">简体字</MenuItem>
-              <MenuItem value="zh-TW">繁體字</MenuItem>
-              <MenuItem value="en">English</MenuItem>
-              <MenuItem value="ja">日本語</MenuItem>
-            </Select>
-          </MenuItem>
-          <MenuItem onClick={handleExport}>
-            <ListItemIcon>
-              <SystemUpdateAltIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>{t("mind.export")}</ListItemText>
-          </MenuItem>
-          <MenuItem>
-            <ListItemIcon>
-              <IosShareIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>{t("mind.import")}</ListItemText>
-            <input
-              type="file"
-              multiple
-              style={{
-                opacity: 0,
-                position: "absolute",
-                fontSize: "100px",
-                right: 0,
-                top: 0,
-                width: "100%",
-                height: "100%",
-                cursor: "pointer",
-              }}
-              onChange={handleChange}
-            />
-          </MenuItem>
-
-          <MenuItem onClick={toggleMode}>
-            <ListItemIcon>
-              {dark ? <LightModeIcon /> : <DarkModeIcon />}
-            </ListItemIcon>
-            <ListItemText>
-              {t(dark ? "menu.lightMode" : "menu.darkMode")}
-            </ListItemText>
-          </MenuItem>
-        </Menu>
       </Box>
       <Box
         sx={{
@@ -342,19 +244,37 @@ export default function Home() {
         }}
       >
         <Box sx={{ backgroundColor: "background.slide" }}>
-          <NodeToolbar
-            handleCheckBox={handleCheckBox}
-            handleAddChild={handleAddChild}
-            handleAddNext={handleAddNext}
-            handleAddNote={handleAddNote}
-            handleAddIcon={handleAddIcon}
-            handleAddIllustration={handleAddIllustration}
-            handleFileChange={(files: FileList) => handleFileChange(files)}
-            handleDelete={handleDelete}
-            handleExport={handleExport}
-            handleImport={handleChange}
-            handleLink={handleLink}
-          />
+          <Slide
+            direction="right"
+            in={selectedIds.length ? true : false}
+            mountOnEnter
+            unmountOnExit
+          >
+            <div style={{ width: "100%", height: "100%" }}>
+              <NodeToolbar
+                handleCheckBox={handleCheckBox}
+                handleAddChild={handleAddChild}
+                handleAddNext={handleAddNext}
+                handleAddNote={handleAddNote}
+                handleAddIcon={handleAddIcon}
+                handleAddIllustration={handleAddIllustration}
+                handleFileChange={(files: FileList) => handleFileChange(files)}
+                handleDelete={handleDelete}
+                handleExport={handleExport}
+                handleImport={handleChange}
+                handleLink={handleLink}
+              />
+            </div>
+          </Slide>
+          <Slide
+            direction="right"
+            in={!selectedIds.length ? true : false}
+            timeout={500}
+          >
+            <div style={{ width: "100%", height: "100%" }}>
+              <Toolbar viewType={viewType} handleSetViewType={setViewType} />
+            </div>
+          </Slide>
         </Box>
         <Editor
           ref={editorRef}

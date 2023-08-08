@@ -3,29 +3,29 @@ import IconFontIconButton from "../../components/common/IconFontIconButton";
 import Divider from "@mui/material/Divider";
 import { useMemo, useState } from "react";
 import Popover from "@mui/material/Popover";
+import screenfull from "screenfull";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { setDark } from "../../redux/reducer/commonSlice";
+import Button from "@mui/material/Button";
 
 export default function Toolbar({
   viewType,
-  handleAddChild,
-  handleAddNext,
-  handleDelete,
   handleSetViewType,
-  handleAddNote,
-  handleAddIcon,
 }: {
   viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind";
-  handleAddChild: () => void;
-  handleAddNext: () => void;
-  handleDelete: () => void;
   handleSetViewType: (
     viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind"
   ) => void;
-  handleAddNote: () => void;
-  handleAddIcon: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dispatch = useAppDispatch();
+  const dark = useAppSelector((state) => state.common.dark);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const [languageAnchorEl, setLanguageAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const languageOpen = Boolean(languageAnchorEl);
 
   const iconName = useMemo(() => {
     switch (viewType) {
@@ -50,13 +50,36 @@ export default function Toolbar({
     setAnchorEl(null);
   };
 
+  const handleOpenLanguage = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setLanguageAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseLanguage = () => {
+    setLanguageAnchorEl(null);
+  };
+
+  const handleFullScreen = () => {
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
+  };
+
+  const toggleMode = () => {
+    dispatch(setDark(!dark));
+  };
+
+  const changeLanguage = (lan: string) => {
+    i18n.changeLanguage(lan);
+  };
+
   return (
     <div
       style={{
         width: "100%",
         height: "100%",
+        padding: "15px 0",
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
         alignItems: "center",
       }}
     >
@@ -70,8 +93,8 @@ export default function Toolbar({
         anchorEl={anchorEl}
         open={open}
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
+          vertical: "top",
+          horizontal: "right",
         }}
         onClose={handleClose}
       >
@@ -106,37 +129,63 @@ export default function Toolbar({
           />
         </div>
       </Popover>
-      <Divider orientation="vertical" flexItem />
       <IconFontIconButton
-        title={t("mind.addChild")}
-        iconName="a-zhuti1"
+        title={t("toolBar.fullScreen")}
+        iconName="quanping"
         fontSize={30}
-        onClick={handleAddChild}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        onClick={handleFullScreen}
       />
       <IconFontIconButton
-        title={t("mind.addNext")}
-        iconName="a-zizhuti1"
+        title={t(dark ? "menu.lightMode" : "menu.darkMode")}
+        iconName={dark ? "liangse" : "a-anse1"}
         fontSize={30}
-        onClick={handleAddNext}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        onClick={toggleMode}
       />
+      <div style={{ flex: 1 }} />
       <IconFontIconButton
-        title={t("mind.addNote")}
-        iconName="a-ziyuan1"
+        title=""
+        iconName="zhongyingwenqiehuan"
         fontSize={30}
-        onClick={handleAddNote}
+        onClick={handleOpenLanguage}
       />
-      <IconFontIconButton
-        title={t("icon.icon")}
-        iconName="a-gongzuo1"
-        fontSize={30}
-        onClick={handleAddIcon}
-      />
-      <IconFontIconButton
-        title={t("mind.delete")}
-        iconName="shanchu"
-        fontSize={30}
-        onClick={handleDelete}
-      />
+      <Popover
+        anchorEl={languageAnchorEl}
+        open={languageOpen}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseLanguage}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Button
+            color={i18n.language === "zh-CN" ? "primary" : "inherit"}
+            onClick={() => changeLanguage("zh-CN")}
+          >
+            简化字
+          </Button>
+          <Button
+            color={i18n.language === "zh-TW" ? "primary" : "inherit"}
+            onClick={() => changeLanguage("zh-TW")}
+          >
+            繁體字
+          </Button>
+          <Button
+            color={i18n.language === "en" ? "primary" : "inherit"}
+            onClick={() => changeLanguage("en")}
+          >
+            English
+          </Button>
+          <Button
+            color={i18n.language === "ja" ? "primary" : "inherit"}
+            onClick={() => changeLanguage("ja")}
+          >
+            日本語
+          </Button>
+        </div>
+      </Popover>
     </div>
   );
 }

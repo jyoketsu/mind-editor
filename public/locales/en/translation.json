@@ -4,8 +4,8 @@
   "menu": {
     "menu": "menu",
     "logout": "logout",
-    "darkMode": "Dark Mode",
-    "lightMode": "Light Mode"
+    "darkMode": "Dark",
+    "lightMode": "Light"
   },
   "page": {
     "page1": "page1",
@@ -38,20 +38,21 @@
     "ok": "Ok",
     "export": "Export",
     "import": "Import",
-    "addChild": "Child Node",
-    "addNext": "Next Node",
+    "addChild": "Child",
+    "addNext": "Silbing",
     "delete": "Delete",
     "deleteImage": "Delete Image",
     "addNodeImage": "Image",
     "changeNodeImage": "Change Image",
-    "changeView": "Change View",
+    "changeView": "View",
     "addNote": "Note",
     "deleteNote": "Delete Note",
     "link": "Link",
     "linkUrl": "Link URL",
     "linkText": "Link Text"
   },
-  "nodeTool": {
-    "task": "Task"
+  "toolBar": {
+    "task": "Task",
+    "fullScreen": "Full Screen"
   }
 }

@@ -60,7 +60,7 @@ export default function NodeToolbar({
         onClick={handleAddNext}
       />
       <IconFontIconButton
-        title={t("nodeTool.task")}
+        title={t("toolBar.task")}
         iconName="wancheng"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}

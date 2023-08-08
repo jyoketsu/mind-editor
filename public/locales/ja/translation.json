@@ -4,8 +4,8 @@
   "menu": {
     "menu": "メニュー",
     "logout": "ログアウト",
-    "darkMode": "暗黒様式",
-    "lightMode": "明るい様式"
+    "darkMode": "暗黒",
+    "lightMode": "明るい"
   },
   "page": {
     "page1": "頁１",
@@ -44,14 +44,15 @@
     "deleteImage": "画像を削除",
     "addNodeImage": "画像",
     "changeNodeImage": "画像を変更",
-    "changeView": "ビューを変更する",
+    "changeView": "ビュー",
     "addNote": "メモ",
     "deleteNote": "メモを削除する",
     "link": "リンク",
     "linkUrl": "リンクアドレス",
     "linkText": "リンクテキスト"
   },
-  "nodeTool": {
-    "task": "タスク"
+  "toolBar": {
+    "task": "タスク",
+    "fullScreen": "全画面"
   }
 }

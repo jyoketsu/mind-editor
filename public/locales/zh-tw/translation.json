@@ -4,8 +4,8 @@
   "menu": {
     "menu": "菜單",
     "logout": "登出",
-    "darkMode": "暗黑模式",
-    "lightMode": "亮色模式"
+    "darkMode": "暗色",
+    "lightMode": "亮色"
   },
   "page": {
     "page1": "頁面1",
@@ -39,19 +39,20 @@
     "export": "導出",
     "import": "導入",
     "addChild": "子節點",
-    "addNext": "次節點",
+    "addNext": "弟節點",
     "delete": "刪除",
     "deleteImage": "刪除圖片",
     "addNodeImage": "圖片",
     "changeNodeImage": "更改圖片",
-    "changeView": "切換視圖",
+    "changeView": "視圖",
     "addNote": "備註",
     "deleteNote": "刪除備註",
     "link": "連結",
     "linkUrl": "連結地址",
-  "linkText": "提示文字"
+    "linkText": "提示文字"
   },
-  "nodeTool": {
-    "task": "任務"
+  "toolBar": {
+    "task": "任務",
+    "fullScreen": "全螢幕"
   }
 }
