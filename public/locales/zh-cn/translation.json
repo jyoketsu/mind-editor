@@ -53,6 +53,12 @@
   },
   "toolBar": {
     "task": "任务",
-    "fullScreen": "全屏"
+    "fullScreen": "全屏",
+    "theme": "主题",
+    "lineColor": "线条颜色",
+    "nodeColor": "节点颜色",
+    "backgroundColor": "背景色",
+    "wallpaper": "壁纸",
+    "custom": "自定义"
   }
 }

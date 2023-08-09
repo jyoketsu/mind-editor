@@ -53,6 +53,12 @@
   },
   "toolBar": {
     "task": "Task",
-    "fullScreen": "Full Screen"
+    "fullScreen": "Full Screen",
+    "theme": "Theme",
+    "lineColor": "Line Color",
+  "nodeColor": "Node Color",
+  "backgroundColor": "Background Color",
+  "wallpaper": "Wallpaper",
+  "custom": "Custom"
   }
 }

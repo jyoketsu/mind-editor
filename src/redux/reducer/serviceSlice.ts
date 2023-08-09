@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import NodeMap from "tree-graph-react/dist/interfaces/NodeMap";
 import api from "../../utils/api";
 import { guid } from "../../utils/util";
+import Config from "../../interface/Config";
 
 interface Api {
   url: string;
@@ -13,6 +14,7 @@ interface Api {
 interface TreeData {
   rootKey: string;
   data: NodeMap;
+  config?: Config | null;
 }
 
 interface ServiceState {

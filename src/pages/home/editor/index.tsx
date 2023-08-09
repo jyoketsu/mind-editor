@@ -41,16 +41,20 @@ import Icons from "./Icons";
 import { getStartAdornment, getEndAdornment } from "./components";
 import Illustrations from "./Illustrations";
 import Link from "./Link";
+import Config from "../../../interface/Config";
 
 let timeout: NodeJS.Timeout;
+let configLoaded = false;
 
 const Editor = React.forwardRef(
   (
     {
       viewType,
+      config,
       handleClickNode,
     }: {
       viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind";
+      config: Config | null;
       handleClickNode: (node: CNode) => void;
     },
     ref
@@ -116,7 +120,7 @@ const Editor = React.forwardRef(
           );
         }
       }, 4000);
-    }, [treeData]);
+    }, [treeData, config]);
 
     const handleImport = useCallback((text?: string) => {
       let newData: NodeMap = {};
@@ -195,11 +199,26 @@ const Editor = React.forwardRef(
       }
     }, [docData]);
 
+    useEffect(() => {
+      if (config) {
+        if (configLoaded) {
+          handleChange();
+        } else {
+          configLoaded = true;
+        }
+      }
+    }, [config]);
+
     function getData() {
       if (treeRef && treeRef.current) {
         let data = treeRef.current.saveNodes();
         if (treeData && treeData.viewType) {
           data.viewType = treeData.viewType;
+        }
+        console.log("---config---", config);
+
+        if (config) {
+          data.config = config;
         }
         return data;
       }
@@ -619,7 +638,8 @@ const Editor = React.forwardRef(
               itemHeight={35}
               blockHeight={30}
               pathWidth={2}
-              pathColor={darkMode ? "#FFF" : "#535953"}
+              pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
+              nodeColor={config?.nodeColor || undefined}
               backgroundColor={undefined}
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
@@ -649,7 +669,8 @@ const Editor = React.forwardRef(
               // }
               blockHeight={30}
               pathWidth={2}
-              pathColor={darkMode ? "#FFF" : "#535953"}
+              pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
+              nodeColor={config?.nodeColor || undefined}
               backgroundColor={darkMode ? "#212121" : undefined}
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
@@ -683,7 +704,13 @@ const Editor = React.forwardRef(
           width: "100%",
           height: "100%",
           overflow: "hidden",
-          backgroundColor: "background.paper",
+          background: config?.background
+            ? /^#[a-zA-Z0-9]*/gm.test(config.background)
+              ? config.background
+              : `url("${config.background}")`
+            : "background.paper",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         {rootKey && treeData && treeData.data ? (

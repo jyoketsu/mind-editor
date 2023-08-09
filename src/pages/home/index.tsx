@@ -16,6 +16,7 @@ import Editor from "./editor";
 import NodeToolbar from "./NodeToolbar";
 import qiniuUpload from "../../utils/qiniu";
 import api from "../../utils/api";
+import Config from "../../interface/Config";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -31,6 +32,7 @@ export default function Home() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const dispatch = useAppDispatch();
   const editorRef = useRef<any>(null);
+  const [config, setConfig] = useState<Config | null>(null);
 
   useEffect(() => {
     const viewtype: any = localStorage.getItem("VIEW_TYPE");
@@ -75,6 +77,12 @@ export default function Home() {
       dispatch(getDoc(getDataApi));
     }
   }, [getDataApi]);
+
+  useEffect(() => {
+    if (docData?.config) {
+      setConfig(docData.config);
+    }
+  }, [docData]);
 
   const handleExport = () => {
     if (docData) {
@@ -203,6 +211,11 @@ export default function Home() {
     }
   };
 
+  const handleSetConfig = (config: Config) => {
+    console.log("---handleSetConfig---", config);
+    setConfig(config);
+  };
+
   return (
     <Box
       sx={{
@@ -272,13 +285,19 @@ export default function Home() {
             timeout={500}
           >
             <div style={{ width: "100%", height: "100%" }}>
-              <Toolbar viewType={viewType} handleSetViewType={setViewType} />
+              <Toolbar
+                viewType={viewType}
+                config={config}
+                handleSetViewType={setViewType}
+                handleSetConfig={handleSetConfig}
+              />
             </div>
           </Slide>
         </Box>
         <Editor
           ref={editorRef}
           viewType={viewType}
+          config={config}
           handleClickNode={handleClickNode}
         />
       </Box>
