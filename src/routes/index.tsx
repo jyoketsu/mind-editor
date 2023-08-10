@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "../pages/home";
-import Editor from "../pages/home/editor";
 import Preview from "../pages/home/preview";
 import { useMemo } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";

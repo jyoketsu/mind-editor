@@ -643,6 +643,8 @@ const Editor = React.forwardRef(
               backgroundColor={undefined}
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
+              paddingLeft={1000}
+              paddingTop={1000}
               showDeleteConform={handledeleteConform}
               handlePasteText={handlePasteText}
               handleFileChange={handleFileChange}
@@ -674,6 +676,8 @@ const Editor = React.forwardRef(
               backgroundColor={darkMode ? "#212121" : undefined}
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
+              paddingLeft={1000}
+              paddingTop={1000}
               showDeleteConform={handledeleteConform}
               handlePasteText={handlePasteText}
               handleFileChange={handleFileChange}
@@ -726,7 +730,7 @@ const Editor = React.forwardRef(
           style={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "flex-start",
+            alignItems: "center",
           }}
           rightClickToStart={true}
         >

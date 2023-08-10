@@ -59,6 +59,7 @@
     "nodeColor": "节点颜色",
     "backgroundColor": "背景色",
     "wallpaper": "壁纸",
-    "custom": "自定义"
+    "custom": "自定义",
+    "style": "样式"
   }
 }

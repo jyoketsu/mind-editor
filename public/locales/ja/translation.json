@@ -59,6 +59,7 @@
     "nodeColor": "ノードの色",
     "backgroundColor": "背景色",
     "wallpaper": "壁紙",
-    "custom": "カスタム"
+    "custom": "カスタム",
+    "style": "スタイル"
   }
 }

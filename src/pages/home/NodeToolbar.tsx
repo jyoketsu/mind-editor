@@ -1,6 +1,7 @@
-import { Box } from "@mui/material";
+import { Box, Popover } from "@mui/material";
 import IconFontIconButton from "../../components/common/IconFontIconButton";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 export default function NodeToolbar({
   handleCheckBox,
@@ -14,6 +15,7 @@ export default function NodeToolbar({
   handleExport,
   handleImport,
   handleLink,
+  handleUpdateNode,
 }: {
   handleCheckBox: () => void;
   handleAddChild: () => void;
@@ -26,13 +28,24 @@ export default function NodeToolbar({
   handleExport: () => void;
   handleImport: (e: any) => void;
   handleLink: () => void;
+  handleUpdateNode: (key: string, value?: string) => void;
 }) {
   const { t } = useTranslation();
+  const [styleAnchorEl, setStyleAnchorEl] = useState<null | HTMLElement>(null);
+  const styleOpen = Boolean(styleAnchorEl);
 
   function handleInputFileChange(event: any) {
     const files = event.target.files;
     handleFileChange(files);
   }
+
+  const handleOpenStyle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setStyleAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseStyle = () => {
+    setStyleAnchorEl(null);
+  };
 
   return (
     <Box
@@ -47,14 +60,14 @@ export default function NodeToolbar({
     >
       <IconFontIconButton
         title={t("mind.addChild")}
-        iconName="a-zizhuti1"
+        iconName="a-xiajijiedian1x"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         onClick={handleAddChild}
       />
       <IconFontIconButton
         title={t("mind.addNext")}
-        iconName="a-zhuti1"
+        iconName="a-tongjijiedian1x"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         onClick={handleAddNext}
@@ -66,6 +79,63 @@ export default function NodeToolbar({
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         onClick={handleCheckBox}
       />
+      <IconFontIconButton
+        title={t("toolBar.style")}
+        iconName="yangshi"
+        fontSize={30}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        onClick={handleOpenStyle}
+      />
+      <Popover
+        anchorEl={styleAnchorEl}
+        open={styleOpen}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseStyle}
+      >
+        <div style={{ padding: "8px", display: "flex", alignItems: "center" }}>
+          <IconFontIconButton
+            title=""
+            iconName="B1"
+            fontSize={30}
+            onClick={() => handleUpdateNode("bold")}
+          />
+          <IconFontIconButton
+            title=""
+            iconName="I"
+            fontSize={30}
+            onClick={() => handleUpdateNode("italic")}
+          />
+          <IconFontIconButton
+            title=""
+            iconName="u"
+            fontSize={30}
+            onClick={() => handleUpdateNode("textDecoration")}
+          />
+          {[
+            "#fbbfbc",
+            "#f8e6ab",
+            "#e2c6d6",
+            "#bacefd",
+            "#a9efe6",
+            "#dfee96",
+            "#dee0e3",
+          ].map((color) => (
+            <div
+              key={color}
+              style={{
+                width: "23px",
+                height: "23px",
+                background: color,
+                margin: "0 3px",
+              }}
+              onClick={() => handleUpdateNode("color", color)}
+            />
+          ))}
+        </div>
+      </Popover>
       <IconFontIconButton
         title={t("icon.icon")}
         iconName="tubiao"

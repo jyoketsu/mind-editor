@@ -2428,10 +2428,10 @@ tr46@~0.0.3:
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=
 
-tree-graph-react@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/tree-graph-react/-/tree-graph-react-2.1.1.tgz#732718a9e6fb188f724941df98333cdb8c75483d"
-  integrity sha512-+zYwycwGicmXWJrUjoL1CQYYEhsaGHeXouhLZbNzScYi08TW/ASemfnz5t0k2X1CsfUfrIBO/6aXuK2cEMp+/g==
+tree-graph-react@2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/tree-graph-react/-/tree-graph-react-2.1.3.tgz#be8b03b606f07d30c4589d55be9df016ea8e5e47"
+  integrity sha512-N78CF8Sxb0QI34cxHYrZmbfxDL/t17G/LO8CPfn0jLvUqfzGb0vO5MocHA7PogGSc7XZjwIvHBjOc+92kSiyZQ==
   dependencies:
     lodash "^4.17.21"
     react-tooltip "^4.2.21"

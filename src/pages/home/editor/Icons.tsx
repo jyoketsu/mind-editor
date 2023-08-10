@@ -1,10 +1,10 @@
-import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 import { flag, office, priority, study, symbol, progress } from "./components";
+import { Box } from "@mui/material";
 
 export default function Icons({
   anchorEl,

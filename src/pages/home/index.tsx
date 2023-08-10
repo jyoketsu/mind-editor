@@ -165,6 +165,28 @@ export default function Home() {
     }
   };
 
+  const handleUpdateNode = (key: string, value?: string) => {
+    if (selectedIds.length) {
+      const res = editorRef.current.getNodes();
+      const firstNode = res.data[selectedIds[0]];
+      const data: { [_key: string]: string | boolean } = {};
+      if (key === "color") {
+        if (value) {
+          data[key] = value;
+        }
+      } else if (key === "textDecoration") {
+        if (firstNode[key] === "underline") {
+          delete data[key];
+        } else {
+          data[key] = "underline";
+        }
+      } else {
+        data[key] = !firstNode[key];
+      }
+      editorRef?.current?.updateNodesByIds(res.data, selectedIds, data);
+    }
+  };
+
   const handleFileChange = async (files: FileList) => {
     if (!selectedIds.length) return;
     const file = files[0];
@@ -222,7 +244,7 @@ export default function Home() {
         width: "100%",
         height: "100%",
         display: "grid",
-        gridTemplateRows: "69px 1fr",
+        gridTemplateRows: "48px 1fr",
         overflow: "hidden",
       }}
     >
@@ -276,6 +298,7 @@ export default function Home() {
                 handleExport={handleExport}
                 handleImport={handleChange}
                 handleLink={handleLink}
+                handleUpdateNode={handleUpdateNode}
               />
             </div>
           </Slide>

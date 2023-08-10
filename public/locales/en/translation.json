@@ -59,6 +59,7 @@
   "nodeColor": "Node Color",
   "backgroundColor": "Background Color",
   "wallpaper": "Wallpaper",
-  "custom": "Custom"
+  "custom": "Custom",
+  "style": "Style"
   }
 }
