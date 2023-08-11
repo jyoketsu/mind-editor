@@ -115,6 +115,7 @@ export default function NodeToolbar({
             onClick={() => handleUpdateNode("textDecoration")}
           />
           {[
+            "#595959",
             "#fbbfbc",
             "#f8e6ab",
             "#e2c6d6",
@@ -131,7 +132,12 @@ export default function NodeToolbar({
                 background: color,
                 margin: "0 3px",
               }}
-              onClick={() => handleUpdateNode("color", color)}
+              onClick={() =>
+                handleUpdateNode(
+                  "color",
+                  color === "#595959" ? undefined : color
+                )
+              }
             />
           ))}
         </div>

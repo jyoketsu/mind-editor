@@ -60,6 +60,7 @@
   "backgroundColor": "Background Color",
   "wallpaper": "Wallpaper",
   "custom": "Custom",
-  "style": "Style"
+  "style": "Style",
+  "reset": "Reset"
   }
 }

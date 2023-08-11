@@ -53,7 +53,7 @@ const Editor = React.forwardRef(
       config,
       handleClickNode,
     }: {
-      viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind";
+      viewType: string;
       config: Config | null;
       handleClickNode: (node: CNode) => void;
     },
@@ -215,8 +215,6 @@ const Editor = React.forwardRef(
         if (treeData && treeData.viewType) {
           data.viewType = treeData.viewType;
         }
-        console.log("---config---", config);
-
         if (config) {
           data.config = config;
         }
@@ -640,7 +638,7 @@ const Editor = React.forwardRef(
               pathWidth={2}
               pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
               nodeColor={config?.nodeColor || undefined}
-              backgroundColor={undefined}
+              // backgroundColor={undefined}
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
               paddingLeft={1000}
@@ -673,7 +671,7 @@ const Editor = React.forwardRef(
               pathWidth={2}
               pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
               nodeColor={config?.nodeColor || undefined}
-              backgroundColor={darkMode ? "#212121" : undefined}
+              // backgroundColor={darkMode ? "#212121" : undefined}
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
               paddingLeft={1000}
@@ -712,7 +710,8 @@ const Editor = React.forwardRef(
             ? /^#[a-zA-Z0-9]*/gm.test(config.background)
               ? config.background
               : `url("${config.background}")`
-            : "background.paper",
+            : "unset",
+          backgroundColor: config?.background ? undefined : "background.paper",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -730,7 +729,7 @@ const Editor = React.forwardRef(
           style={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
+            alignItems: "flex-start",
           }}
           rightClickToStart={true}
         >

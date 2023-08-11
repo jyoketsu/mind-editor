@@ -5,10 +5,12 @@ import { useMemo, useState } from "react";
 import Popover from "@mui/material/Popover";
 import screenfull from "screenfull";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { setDark } from "../../redux/reducer/commonSlice";
+import { setDark, setLoading } from "../../redux/reducer/commonSlice";
 import Button from "@mui/material/Button";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Config from "../../interface/Config";
+import api from "../../utils/api";
+import qiniuUpload from "../../utils/qiniu";
 
 export default function Toolbar({
   viewType,
@@ -16,7 +18,7 @@ export default function Toolbar({
   handleSetViewType,
   handleSetConfig,
 }: {
-  viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind";
+  viewType: string;
   config: Config | null;
   handleSetViewType: (
     viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind"
@@ -26,6 +28,8 @@ export default function Toolbar({
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
   const dark = useAppSelector((state) => state.common.dark);
+  const changed = useAppSelector((state) => state.service.changed);
+  const getUptokenApi = useAppSelector((state) => state.service.getUptokenApi);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [languageAnchorEl, setLanguageAnchorEl] = useState<null | HTMLElement>(
@@ -35,7 +39,8 @@ export default function Toolbar({
   const [themeAnchorEl, setThemeAnchorEl] = useState<null | HTMLElement>(null);
   const themeOpen = Boolean(themeAnchorEl);
 
-  const boxStyle = {
+  const boxStyle: React.CSSProperties = {
+    position: "relative",
     display: "grid",
     gridTemplateColumns: "repeat(3,1fr)",
     columnGap: "12px",
@@ -102,6 +107,41 @@ export default function Toolbar({
     handleSetConfig({ ...(config || {}), ...data });
   };
 
+  const customBackground = async (event: any) => {
+    const file = event.target.files[0];
+    if (file.type.startsWith("image/")) {
+      if (getUptokenApi) {
+        const res: any = await api.request.get(getUptokenApi.url, {
+          ...getUptokenApi.params,
+          ...{ token: api.getToken() },
+        });
+        if (res.statusCode === "200") {
+          const upToken = res.result;
+          try {
+            dispatch(setLoading(true));
+            const url = await qiniuUpload(upToken, file);
+            dispatch(setLoading(false));
+            if (
+              typeof url === "string" &&
+              url.startsWith("https://cdn-icare.qingtime.cn/")
+            ) {
+              handleClickColor(url, "background");
+            }
+          } catch (error) {
+            alert("error!");
+          }
+        } else {
+          alert("error!");
+        }
+      }
+    }
+  };
+
+  const handleReset = () => {
+    // @ts-ignore
+    handleSetConfig({});
+  };
+
   return (
     <div
       style={{
@@ -117,6 +157,7 @@ export default function Toolbar({
         title={t("mind.changeView")}
         iconName={iconName}
         fontSize={30}
+        disabled={changed ? true : false}
         onClick={handleClick}
       />
       <Popover
@@ -133,6 +174,7 @@ export default function Toolbar({
             title=""
             iconName="a-siweidaotu1"
             fontSize={30}
+            disabled={changed ? true : false}
             color={viewType === "mutil-tree" ? "#35a6f8" : undefined}
             onClick={() => handleSetViewType("mutil-tree")}
           />
@@ -140,6 +182,7 @@ export default function Toolbar({
             title=""
             iconName="a-luojitu11"
             fontSize={30}
+            disabled={changed ? true : false}
             color={viewType === "single-tree" ? "#35a6f8" : undefined}
             onClick={() => handleSetViewType("single-tree")}
           />
@@ -147,6 +190,7 @@ export default function Toolbar({
             title=""
             iconName="a-luojitu1"
             fontSize={30}
+            disabled={changed ? true : false}
             color={viewType === "single-mind" ? "#35a6f8" : undefined}
             onClick={() => handleSetViewType("single-mind")}
           />
@@ -154,6 +198,7 @@ export default function Toolbar({
             title=""
             iconName="a-bazhaoyu1"
             fontSize={30}
+            disabled={changed ? true : false}
             color={viewType === "mutil-mind" ? "#35a6f8" : undefined}
             onClick={() => handleSetViewType("mutil-mind")}
           />
@@ -189,7 +234,16 @@ export default function Toolbar({
         }}
         onClose={handleCloseTheme}
       >
-        <div style={{ padding: "15px", width: "300px" }}>
+        <div style={{ padding: "15px", width: "300px", position: "relative" }}>
+          <Typography variant="h4" sx={{ margin: "8px 0" }}>
+            {t("toolBar.theme")}
+          </Typography>
+          <Button
+            sx={{ position: "absolute", right: 0, top: "25px" }}
+            onClick={handleReset}
+          >
+            {t("toolBar.reset")}
+          </Button>
           <Typography variant="h6">{t("toolBar.lineColor")}</Typography>
           <div style={boxStyle}>
             {["#535953", "#FFF", "#35a6f8", "#cb1b45"].map((color, index) => (
@@ -254,10 +308,11 @@ export default function Toolbar({
           <Typography variant="h6">{t("toolBar.wallpaper")}</Typography>
           <div style={boxStyle}>
             {[
+              "https://cdn-icare.qingtime.cn/2D37A392.jpg",
               "https://cdn-icare.qingtime.cn/1603628714015_20151118230621.jpg",
               "https://cdn-icare.qingtime.cn/1603620783103_v2-9c9c335fde1b23ede0a32f542330e9eb_r.jpg",
-              "https://cdn-icare.qingtime.cn/1603505758598_android-3840x2160-4k-hd-wallpaper-5k-wallpaper-underwater-fish-3432.jpg",
               "https://cdn-icare.qingtime.cn/1603505755074_android-3840x2160-5k-4k-hd-wallpaper-pattern-landscape-orange-yellow-3431.jpg",
+              "https://cdn-icare.qingtime.cn/1603505758598_android-3840x2160-4k-hd-wallpaper-5k-wallpaper-underwater-fish-3432.jpg",
               "https://cdn-icare.qingtime.cn/1603505756891_android-3840x2160-5k-4k-hd-wallpaper-wallpaper-pattern-landscape-3433.jpg",
             ].map((url, index) => (
               <ColorBox
@@ -267,6 +322,24 @@ export default function Toolbar({
                 onClick={(val) => handleClickColor(val, "background")}
               />
             ))}
+            <Button sx={{ position: "absolute", top: "-50px", right: "0px" }}>
+              {`+${t("toolBar.custom")}`}
+              <input
+                type="file"
+                multiple
+                style={{
+                  opacity: 0,
+                  position: "absolute",
+                  fontSize: "100px",
+                  right: 0,
+                  top: 0,
+                  width: "100%",
+                  height: "100%",
+                  cursor: "pointer",
+                }}
+                onChange={(e: any) => customBackground(e)}
+              />
+            </Button>
           </div>
         </div>
       </Popover>
@@ -327,21 +400,21 @@ function ColorBox({
   onClick: (value: string) => void;
 }) {
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         width: "66px",
         height: "40px",
         background: /^#[a-zA-Z0-9]*/gm.test(background)
           ? background
-          : `url("${background}")`,
+          : `url("${background}?imageView2/2/h/132")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         borderRadius: "8px",
-        border: selected || background === "#FFF" ? "1px solid" : "unset",
+        border: selected || background === "#FFF" ? "3px solid" : "unset",
         borderColor: "primary.main",
         cursor: "pointer",
       }}
       onClick={() => onClick(background)}
-    ></div>
+    ></Box>
   );
 }

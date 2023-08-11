@@ -26,20 +26,13 @@ export default function Home() {
   const changed = useAppSelector((state) => state.service.changed);
   const docData = useAppSelector((state) => state.service.docData);
   const patchDataApi = useAppSelector((state) => state.service.patchDataApi);
-  const [viewType, setViewType] = useState<
-    "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind"
-  >("mutil-tree");
+  const [viewType, setViewType] = useState<string>(
+    localStorage.getItem("VIEW_TYPE") || "mutil-tree"
+  );
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const dispatch = useAppDispatch();
   const editorRef = useRef<any>(null);
   const [config, setConfig] = useState<Config | null>(null);
-
-  useEffect(() => {
-    const viewtype: any = localStorage.getItem("VIEW_TYPE");
-    if (viewtype) {
-      setViewType(viewtype);
-    }
-  }, []);
 
   useEffect(() => {
     editorRef?.current?.resetMove();
@@ -70,7 +63,7 @@ export default function Home() {
         })
       );
     }
-  }, []);
+  }, [viewType]);
 
   useEffect(() => {
     if (getDataApi) {
@@ -169,11 +162,9 @@ export default function Home() {
     if (selectedIds.length) {
       const res = editorRef.current.getNodes();
       const firstNode = res.data[selectedIds[0]];
-      const data: { [_key: string]: string | boolean } = {};
+      const data: { [_key: string]: string | boolean | undefined } = {};
       if (key === "color") {
-        if (value) {
-          data[key] = value;
-        }
+        data[key] = value;
       } else if (key === "textDecoration") {
         if (firstNode[key] === "underline") {
           delete data[key];
@@ -234,7 +225,6 @@ export default function Home() {
   };
 
   const handleSetConfig = (config: Config) => {
-    console.log("---handleSetConfig---", config);
     setConfig(config);
   };
 

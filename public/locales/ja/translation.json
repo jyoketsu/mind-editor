@@ -60,6 +60,7 @@
     "backgroundColor": "背景色",
     "wallpaper": "壁紙",
     "custom": "カスタム",
-    "style": "スタイル"
+    "style": "スタイル",
+    "reset": "リセット"
   }
 }

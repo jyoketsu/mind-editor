@@ -23,11 +23,11 @@ export const Moveable = React.forwardRef(
     useImperativeHandle(ref, () => ({
       reset: () => {
         setTranslateX(0);
-        setTranslateY(0);
+        setTranslateY(-800);
       },
     }));
     const [translateX, setTranslateX] = useState(0);
-    const [translateY, setTranslateY] = useState(0);
+    const [translateY, setTranslateY] = useState(-800);
     const [started, setStarted] = useState(false);
 
     const handleMoveStart = (e: React.MouseEvent<HTMLElement>) => {
