@@ -61,6 +61,20 @@
     "wallpaper": "壁紙",
     "custom": "カスタム",
     "style": "スタイル",
-    "reset": "リセット"
+    "reset": "リセット",
+    "more": "もっと"
+  },
+  "shortcut": {
+    "enter": "次のノードを追加",
+    "tab": "子ノードを追加",
+    "delete": "削除",
+    "cut": "切り取り",
+    "paste": "貼り付け",
+    "arrowUp": "上へ移動",
+    "arrowDown": "下へ移動",
+    "arrowRight": "右へ移動",
+    "arrowLeft": "左へ移動",
+    "shiftLeft": "前に移動",
+    "shiftRight": "後ろに移動"
   }
 }

@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   Menu,
   MenuItem,
 } from "@mui/material";
@@ -706,14 +707,6 @@ const Editor = React.forwardRef(
           width: "100%",
           height: "100%",
           overflow: "hidden",
-          background: config?.background
-            ? /^#[a-zA-Z0-9]*/gm.test(config.background)
-              ? config.background
-              : `url("${config.background}")`
-            : "unset",
-          backgroundColor: config?.background ? undefined : "background.paper",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
         }}
       >
         {rootKey && treeData && treeData.data ? (
@@ -752,6 +745,11 @@ const Editor = React.forwardRef(
         <Menu anchorEl={anchorEl} open={open} onClose={handleCloseContextMenu}>
           <MenuItem onClick={handleAddChild}>{t("mind.addChild")}</MenuItem>
           <MenuItem onClick={handleAddNext}>{t("mind.addNext")}</MenuItem>
+          <Divider />
+          <MenuItem onClick={() => handleOpenIcon()}>{t("icon.icon")}</MenuItem>
+          <MenuItem onClick={() => handleOpenIllustration()}>
+            {t("illustration.illustration")}
+          </MenuItem>
           <MenuItem>
             <span>{t("mind.addNodeImage")}</span>
             <input
@@ -768,18 +766,15 @@ const Editor = React.forwardRef(
               onChange={handleInputFileChange}
             />
           </MenuItem>
-          <MenuItem onClick={() => handleOpenIllustration()}>
-            {t("illustration.illustration")}
-          </MenuItem>
           <MenuItem onClick={() => handleAddNote()}>
             {t("mind.addNote")}
           </MenuItem>
-          <MenuItem onClick={() => handleOpenIcon()}>{t("icon.icon")}</MenuItem>
-          <MenuItem onClick={handleDelete}>{t("mind.delete")}</MenuItem>
+          <Divider />
+          <MenuItem onClick={handleDeleteNote}>{t("mind.deleteNote")}</MenuItem>
           <MenuItem onClick={handleDeleteImage}>
             {t("mind.deleteImage")}
           </MenuItem>
-          <MenuItem onClick={handleDeleteNote}>{t("mind.deleteNote")}</MenuItem>
+          <MenuItem onClick={handleDelete}>{t("mind.delete")}</MenuItem>
         </Menu>
         <ImageViewer url={url} handleClose={() => setUrl(null)} />
         {getUptokenApi ? (

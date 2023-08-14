@@ -1,10 +1,16 @@
-import { Box, Slide, Typography } from "@mui/material";
+import { Box, IconButton, Slide, Typography } from "@mui/material";
+import KeyboardIcon from "@mui/icons-material/Keyboard";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { setLoading } from "../../redux/reducer/commonSlice";
-import { exportFile, getSearchParamValue } from "../../utils/util";
+import { setDark, setLoading } from "../../redux/reducer/commonSlice";
+import {
+  exportFile,
+  getSearchParamValue,
+  isColorDark,
+  isImageDarkOrLight,
+} from "../../utils/util";
 import {
   getDoc,
   saveDoc,
@@ -17,6 +23,7 @@ import NodeToolbar from "./NodeToolbar";
 import qiniuUpload from "../../utils/qiniu";
 import api from "../../utils/api";
 import Config from "../../interface/Config";
+import ShortcutDialog from "./Shortcut";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -33,6 +40,7 @@ export default function Home() {
   const dispatch = useAppDispatch();
   const editorRef = useRef<any>(null);
   const [config, setConfig] = useState<Config | null>(null);
+  const [shortcutVisible, setShortcutVisible] = useState(false);
 
   useEffect(() => {
     editorRef?.current?.resetMove();
@@ -74,6 +82,25 @@ export default function Home() {
   useEffect(() => {
     if (docData?.config) {
       setConfig(docData.config);
+      if (localStorage.getItem("DARK") === null) {
+        const background = docData.config.background;
+        if (/^#[a-zA-Z0-9]*/gm.test(background)) {
+          const isDark = isColorDark(background);
+          if (isDark) {
+            dispatch(setDark(true));
+          } else {
+            dispatch(setDark(false));
+          }
+        } else {
+          isImageDarkOrLight(background, (isDark: boolean) => {
+            if (isDark) {
+              dispatch(setDark(true));
+            } else {
+              dispatch(setDark(false));
+            }
+          });
+        }
+      }
     }
   }, [docData]);
 
@@ -231,24 +258,89 @@ export default function Home() {
   return (
     <Box
       sx={{
+        position: "relative",
         width: "100%",
         height: "100%",
-        display: "grid",
-        gridTemplateRows: "48px 1fr",
+        // display: "grid",
+        // gridTemplateRows: "48px 1fr",
         overflow: "hidden",
+        background: config?.background
+          ? /^#[a-zA-Z0-9]*/gm.test(config.background)
+            ? config.background
+            : `url("${config.background}")`
+          : "unset",
+        backgroundColor: config?.background ? undefined : "background.paper",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
+      <Editor
+        ref={editorRef}
+        viewType={viewType}
+        config={config}
+        handleClickNode={handleClickNode}
+      />
       <Box
         sx={{
+          position: "absolute",
+          top: "48px",
+          left: 0,
+          width: "68px",
+          height: "calc(100% - 48px)",
+          overflow: "hidden",
+          backdropFilter: "blur(7px) brightness(0.9)",
+        }}
+      >
+        <Slide
+          direction="right"
+          in={selectedIds.length ? true : false}
+          mountOnEnter
+          unmountOnExit
+        >
+          <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+            <NodeToolbar
+              handleCheckBox={handleCheckBox}
+              handleAddChild={handleAddChild}
+              handleAddNext={handleAddNext}
+              handleAddNote={handleAddNote}
+              handleAddIcon={handleAddIcon}
+              handleAddIllustration={handleAddIllustration}
+              handleFileChange={(files: FileList) => handleFileChange(files)}
+              handleDelete={handleDelete}
+              handleExport={handleExport}
+              handleImport={handleChange}
+              handleLink={handleLink}
+              handleUpdateNode={handleUpdateNode}
+            />
+          </div>
+        </Slide>
+        <Slide
+          direction="right"
+          in={!selectedIds.length ? true : false}
+          timeout={500}
+        >
+          <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+            <Toolbar
+              viewType={viewType}
+              config={config}
+              handleSetViewType={setViewType}
+              handleSetConfig={handleSetConfig}
+            />
+          </div>
+        </Slide>
+      </Box>
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
           width: "100%",
-          height: "100%",
+          height: "48px",
           display: "flex",
           alignItems: "center",
           padding: "0 15px",
           boxSizing: "border-box",
-          borderBottom: "1px solid",
-          borderColor: "divider",
-          backgroundColor: "background.head",
+          backdropFilter: "blur(7px) brightness(0.9)",
         }}
       >
         <Typography variant="h5" sx={{ fontWeight: 800 }}>
@@ -261,59 +353,16 @@ export default function Home() {
           {changed ? t("mind.changed") : t("mind.saved")}
         </Typography>
       </Box>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "68px 1fr",
-          overflow: "hidden",
-        }}
+      <IconButton
+        sx={{ position: "absolute", bottom: "15px", right: "15px" }}
+        onClick={() => setShortcutVisible(true)}
       >
-        <Box sx={{ backgroundColor: "background.slide" }}>
-          <Slide
-            direction="right"
-            in={selectedIds.length ? true : false}
-            mountOnEnter
-            unmountOnExit
-          >
-            <div style={{ width: "100%", height: "100%" }}>
-              <NodeToolbar
-                handleCheckBox={handleCheckBox}
-                handleAddChild={handleAddChild}
-                handleAddNext={handleAddNext}
-                handleAddNote={handleAddNote}
-                handleAddIcon={handleAddIcon}
-                handleAddIllustration={handleAddIllustration}
-                handleFileChange={(files: FileList) => handleFileChange(files)}
-                handleDelete={handleDelete}
-                handleExport={handleExport}
-                handleImport={handleChange}
-                handleLink={handleLink}
-                handleUpdateNode={handleUpdateNode}
-              />
-            </div>
-          </Slide>
-          <Slide
-            direction="right"
-            in={!selectedIds.length ? true : false}
-            timeout={500}
-          >
-            <div style={{ width: "100%", height: "100%" }}>
-              <Toolbar
-                viewType={viewType}
-                config={config}
-                handleSetViewType={setViewType}
-                handleSetConfig={handleSetConfig}
-              />
-            </div>
-          </Slide>
-        </Box>
-        <Editor
-          ref={editorRef}
-          viewType={viewType}
-          config={config}
-          handleClickNode={handleClickNode}
-        />
-      </Box>
+        <KeyboardIcon />
+      </IconButton>
+      <ShortcutDialog
+        open={shortcutVisible}
+        handleClose={() => setShortcutVisible(false)}
+      />
     </Box>
   );
 }

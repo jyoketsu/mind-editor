@@ -9,7 +9,7 @@ interface CommonState {
 
 // Define the initial state using that type
 const initialState: CommonState = {
-  dark: localStorage.getItem("DARK") ? true : false,
+  dark: localStorage.getItem("DARK") === "1" ? true : false,
   theme: localStorage.getItem("THEME") || "#409eff",
   loading: false,
 };
@@ -21,6 +21,11 @@ export const commonSlice = createSlice({
   reducers: {
     setDark: (state, action: PayloadAction<boolean>) => {
       state.dark = action.payload;
+      if (action.payload) {
+        localStorage.setItem("DARK", "1");
+      } else {
+        localStorage.setItem("DARK", "0");
+      }
     },
     setTheme: (state, action: PayloadAction<string>) => {
       state.theme = action.payload;

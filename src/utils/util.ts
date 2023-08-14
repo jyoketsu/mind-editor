@@ -236,3 +236,62 @@ export function exportFile(data: any, fileName: string) {
     document.body.removeChild(link);
   }
 }
+
+export function isImageDarkOrLight(
+  imageSrc: string,
+  callback: (isDark: boolean) => void
+) {
+  const img = new Image();
+  img.crossOrigin = "anonymous"; // 设置允许跨域
+  img.src = imageSrc;
+
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    context.drawImage(img, 0, 0, img.width, img.height);
+
+    const imageData = context.getImageData(0, 0, img.width, img.height);
+    const pixels = imageData.data;
+
+    let totalBrightness = 0;
+
+    for (let i = 0; i < pixels.length; i += 4) {
+      const r = pixels[i];
+      const g = pixels[i + 1];
+      const b = pixels[i + 2];
+      const brightness = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      totalBrightness += brightness;
+    }
+
+    const averageBrightness = totalBrightness / (img.width * img.height);
+
+    if (averageBrightness < 0.5) {
+      callback(true); // 暗色
+    } else {
+      callback(false); // 亮色
+    }
+  };
+}
+
+export function isColorDark(color: string) {
+  // 将颜色字符串转换为十六进制RGB表示
+  let hex = color;
+  if (color.startsWith("#")) {
+    hex = color.slice(1);
+  }
+
+  // 将十六进制颜色转换为RGB值
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+
+  // 计算亮度（灰度值）
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  // 如果亮度小于阈值（一般取128），则判断为暗色
+  return brightness < 128;
+}

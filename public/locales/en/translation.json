@@ -56,11 +56,25 @@
     "fullScreen": "Full Screen",
     "theme": "Theme",
     "lineColor": "Line Color",
-  "nodeColor": "Node Color",
-  "backgroundColor": "Background Color",
-  "wallpaper": "Wallpaper",
-  "custom": "Custom",
-  "style": "Style",
-  "reset": "Reset"
+    "nodeColor": "Node Color",
+    "backgroundColor": "Background Color",
+    "wallpaper": "Wallpaper",
+    "custom": "Custom",
+    "style": "Style",
+    "reset": "Reset",
+    "more": "More"
+  },
+  "shortcut": {
+    "enter": "Silbing",
+    "tab": "Child",
+    "delete": "Delete",
+    "cut": "Cut",
+    "paste": "Paste",
+    "arrowUp": "Select Up",
+    "arrowDown": "Select Down",
+    "arrowRight": "Select Right",
+    "arrowLeft": "Select Left",
+    "shiftLeft": "Move Forward",
+    "shiftRight": "Move Backward"
   }
 }

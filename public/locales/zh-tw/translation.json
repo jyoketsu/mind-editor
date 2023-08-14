@@ -61,6 +61,20 @@
     "wallpaper": "壁紙",
     "custom": "自定義",
     "style": "樣式",
-    "reset": "還原"
+    "reset": "還原",
+    "more": "更多"
+  },
+  "shortcut": {
+    "enter": "弟節點",
+    "tab": "子節點",
+    "delete": "刪除",
+    "cut": "剪下",
+    "paste": "貼上",
+    "arrowUp": "向上選擇",
+    "arrowDown": "向下選擇",
+    "arrowRight": "向右選擇",
+    "arrowLeft": "向左選擇",
+    "shiftLeft": "向前交換位置",
+    "shiftRight": "向後交換位置"
   }
 }

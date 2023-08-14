@@ -11,6 +11,7 @@ import { Box, Typography } from "@mui/material";
 import Config from "../../interface/Config";
 import api from "../../utils/api";
 import qiniuUpload from "../../utils/qiniu";
+import { isColorDark, isImageDarkOrLight } from "../../utils/util";
 
 export default function Toolbar({
   viewType,
@@ -103,6 +104,22 @@ export default function Toolbar({
   const handleClickColor = (value: string, key: string) => {
     let data: { [_key: string]: string } = {};
     data[key] = value;
+    if (/^#[a-zA-Z0-9]*/gm.test(value)) {
+      const isDark = isColorDark(value);
+      if (isDark) {
+        dispatch(setDark(true));
+      } else {
+        dispatch(setDark(false));
+      }
+    } else {
+      isImageDarkOrLight(value, (isDark: boolean) => {
+        if (isDark) {
+          dispatch(setDark(true));
+        } else {
+          dispatch(setDark(false));
+        }
+      });
+    }
     // @ts-ignore
     handleSetConfig({ ...(config || {}), ...data });
   };
