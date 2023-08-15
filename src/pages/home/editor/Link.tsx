@@ -38,15 +38,17 @@ export default function Link({
     >
       <Box
         sx={{
-          width: "60vw",
+          width: "400px",
+          maxWidth: "90vw",
           padding: "15px",
         }}
       >
-        <Typography variant="h4" sx={{ marginBottom: "15px" }}>
+        <Typography variant="h5" sx={{ marginBottom: "15px" }}>
           {t("mind.link")}
         </Typography>
         <TextField
           fullWidth
+          size="small"
           label={t("mind.linkUrl")}
           sx={{ marginBottom: "15px" }}
           value={url}
@@ -54,6 +56,7 @@ export default function Link({
         />
         <TextField
           fullWidth
+          size="small"
           label={t("mind.linkText")}
           value={text}
           onChange={(e) => setText(e.target.value)}

@@ -185,6 +185,11 @@ export default function Home() {
     }
   };
 
+  const handleBack = () => {
+    editorRef.current.clearSelectedNodes();
+    setSelectedIds([]);
+  };
+
   const handleUpdateNode = (key: string, value?: string) => {
     if (selectedIds.length) {
       const res = editorRef.current.getNodes();
@@ -311,6 +316,7 @@ export default function Home() {
               handleImport={handleChange}
               handleLink={handleLink}
               handleUpdateNode={handleUpdateNode}
+              handleBack={handleBack}
             />
           </div>
         </Slide>
@@ -343,9 +349,6 @@ export default function Home() {
           backdropFilter: "blur(7px) brightness(0.9)",
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: 800 }}>
-          Mind
-        </Typography>
         <div style={{ flex: 1 }}></div>
         <Typography
           sx={{ color: "text.secondary", fontSize: "14px", padding: "0 5px" }}

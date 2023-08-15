@@ -17,6 +17,7 @@ export default function NodeToolbar({
   handleImport,
   handleLink,
   handleUpdateNode,
+  handleBack,
 }: {
   handleCheckBox: () => void;
   handleAddChild: () => void;
@@ -30,6 +31,7 @@ export default function NodeToolbar({
   handleImport: (e: any) => void;
   handleLink: () => void;
   handleUpdateNode: (key: string, value?: string) => void;
+  handleBack: () => void;
 }) {
   const { t } = useTranslation();
   const fullButtons = useMediaQuery("(min-height:960px)");
@@ -144,6 +146,13 @@ export default function NodeToolbar({
         alignItems: "center",
       }}
     >
+      <IconFontIconButton
+        title=""
+        iconName="chexiao"
+        fontSize={30}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        onClick={handleBack}
+      />
       <IconFontIconButton
         title={t("mind.addChild")}
         iconName="a-xiajijiedian1x"

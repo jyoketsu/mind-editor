@@ -105,6 +105,10 @@ const Editor = React.forwardRef(
       updateNodesByIds: (nodes: NodeMap, ids: string[], data: any) => {
         treeRef?.current?.updateNodesByIds(nodes, ids, data);
       },
+      clearSelectedNodes: () => {
+        treeRef?.current.setselectedId("");
+        treeRef?.current.setSelectedNodes([]);
+      },
     }));
 
     const handleChange = useCallback(() => {
@@ -259,6 +263,7 @@ const Editor = React.forwardRef(
       nodeName: string,
       files: FileList
     ) {
+      console.log("------");
       const file = files[0];
       if (file.type.startsWith("image/")) {
         if (getUptokenApi) {
