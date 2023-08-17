@@ -147,20 +147,20 @@ export default function Home() {
     editorRef?.current?.handleDelete();
   };
 
-  const handleAddNote = () => {
-    editorRef?.current?.addNote();
+  const handleAddNote = (anchorEl?: HTMLElement) => {
+    editorRef?.current?.addNote(anchorEl);
   };
 
-  const handleAddIcon = () => {
-    editorRef?.current?.addIcon();
+  const handleAddIcon = (anchorEl?: HTMLElement) => {
+    editorRef?.current?.addIcon(anchorEl);
   };
 
-  const handleLink = () => {
-    editorRef?.current?.addLink();
+  const handleLink = (anchorEl?: HTMLElement) => {
+    editorRef?.current?.addLink(anchorEl);
   };
 
-  const handleAddIllustration = () => {
-    editorRef?.current?.addIllustration();
+  const handleAddIllustration = (anchorEl?: HTMLElement) => {
+    editorRef?.current?.addIllustration(anchorEl);
   };
 
   const handleClickNode = (node: any) => {

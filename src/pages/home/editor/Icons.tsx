@@ -29,6 +29,10 @@ export default function Icons({
       anchorEl={anchorEl}
       sx={{ padding: "unset" }}
       open={Boolean(anchorEl)}
+      anchorOrigin={{
+        vertical: anchorEl?.tagName === "g" ? "bottom" : "top",
+        horizontal: anchorEl?.tagName === "g" ? "left" : "right",
+      }}
       onClose={handleClose}
     >
       <Box

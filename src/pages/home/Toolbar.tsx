@@ -174,6 +174,7 @@ export default function Toolbar({
         title={t("mind.changeView")}
         iconName={iconName}
         fontSize={30}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         disabled={changed ? true : false}
         onClick={handleClick}
       />
@@ -365,6 +366,7 @@ export default function Toolbar({
         title=""
         iconName="zhongyingwenqiehuan"
         fontSize={30}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         onClick={handleOpenLanguage}
       />
       <Popover

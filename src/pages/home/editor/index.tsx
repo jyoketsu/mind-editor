@@ -43,6 +43,7 @@ import { getStartAdornment, getEndAdornment } from "./components";
 import Illustrations from "./Illustrations";
 import Link from "./Link";
 import Config from "../../../interface/Config";
+import IconFontIconButton from "../../../components/common/IconFontIconButton";
 
 let timeout: NodeJS.Timeout;
 let configLoaded = false;
@@ -90,6 +91,14 @@ const Editor = React.forwardRef(
     const [linkAnchorEl, setLinkAnchorEl] = useState<null | HTMLElement>(null);
     const [initUrl, setInitUrl] = useState("");
     const [initText, setInitText] = useState("");
+    const contextMenuStyle: React.CSSProperties = {
+      padding: "10px 12px",
+      margin: "2px 0",
+      borderRadius: "unset",
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "flex-start",
+    };
 
     useImperativeHandle(ref, () => ({
       handleAddChild,
@@ -263,7 +272,6 @@ const Editor = React.forwardRef(
       nodeName: string,
       files: FileList
     ) {
-      console.log("------");
       const file = files[0];
       if (file.type.startsWith("image/")) {
         if (getUptokenApi) {
@@ -349,28 +357,28 @@ const Editor = React.forwardRef(
       handleCloseContextMenu();
     }
 
-    function addNote() {
+    function addNote(anchorEl?: HTMLElement) {
       const nodeKey =
         treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
       setContextMenuTargetNodeKey(nodeKey);
-      handleAddNote(nodeKey);
+      handleAddNote(nodeKey, anchorEl);
     }
 
-    function addIcon() {
+    function addIcon(anchorEl?: HTMLElement) {
       const nodeKey =
         treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
       setContextMenuTargetNodeKey(nodeKey);
-      handleOpenIcon(nodeKey);
+      handleOpenIcon(nodeKey, anchorEl);
     }
 
-    function addIllustration() {
+    function addIllustration(anchorEl?: HTMLElement) {
       const nodeKey =
         treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
       setContextMenuTargetNodeKey(nodeKey);
-      handleOpenIllustration(nodeKey);
+      handleOpenIllustration(nodeKey, anchorEl);
     }
 
-    function addLink() {
+    function addLink(anchorEl?: HTMLElement) {
       const nodeKey =
         treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
       const data = treeRef.current.saveNodes();
@@ -386,54 +394,79 @@ const Editor = React.forwardRef(
       }
       setContextMenuTargetNodeKey(nodeKey);
       setLinkAnchorEl(
-        document.getElementById(
-          `tree-node-${nodeKey || contextMenuTargetNodeKey}`
-        )
+        anchorEl ||
+          document.getElementById(
+            `tree-node-${nodeKey || contextMenuTargetNodeKey}`
+          )
       );
     }
 
-    function handleAddNote(nodeKey?: string) {
+    function handleAddNote(nodeKey?: string, anchorEl?: HTMLElement) {
       const data = treeRef.current.saveNodes();
       const node = data.data[nodeKey || contextMenuTargetNodeKey];
       if (!node) return;
       let endAdornmentContent = node.endAdornmentContent || {};
       if (!endAdornmentContent.note) {
         endAdornmentContent = { ...endAdornmentContent, note: <p></p> };
+        treeRef.current.updateNodeById(
+          data.data,
+          nodeKey || contextMenuTargetNodeKey,
+          {
+            endAdornment: getEndAdornment(endAdornmentContent, {
+              note: handleOpenNote,
+              link: handleOpenLink,
+            }),
+            endAdornmentWidth:
+              Object.keys(endAdornmentContent).length * (18 + 2),
+            endAdornmentHeight: 18,
+            endAdornmentContent,
+          }
+        );
       }
-      treeRef.current.updateNodeById(
-        data.data,
-        nodeKey || contextMenuTargetNodeKey,
-        {
-          endAdornment: getEndAdornment(endAdornmentContent, {
-            note: handleOpenNote,
-            link: handleOpenLink,
-          }),
-          endAdornmentWidth: Object.keys(endAdornmentContent).length * (18 + 2),
-          endAdornmentHeight: 18,
-          endAdornmentContent,
-        }
-      );
-      handleCloseContextMenu();
+
+      handleOpenNote(node._key, null, anchorEl);
+      setAnchorEl(null);
     }
 
     function handleDeleteNote() {
       const data = treeRef.current.saveNodes();
-      treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
-        endAdornment: undefined,
-        endAdornmentWidth: undefined,
-        endAdornmentHeight: undefined,
-        endAdornmentContent: null,
-      });
-      handleCloseContextMenu();
+      const node = data.data[contextMenuTargetNodeKey];
+      if (node) {
+        const endAdornmentContent = { ...node.endAdornmentContent };
+        if (endAdornmentContent) {
+          delete endAdornmentContent["note"];
+          treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
+            endAdornment: getEndAdornment(endAdornmentContent, {
+              note: handleOpenNote,
+              link: handleOpenLink,
+            }),
+            endAdornmentWidth:
+              Object.keys(endAdornmentContent).length * (18 + 2),
+            endAdornmentHeight: 18,
+            endAdornmentContent,
+          });
+          handleCloseContextMenu();
+        }
+      }
     }
 
-    function handleOpenNote(nodeKey: string, event: any) {
+    function handleOpenNote(
+      nodeKey: string,
+      event: any,
+      anchorEl?: HTMLElement
+    ) {
       const data = treeRef.current.saveNodes();
       const node = data.data[nodeKey];
       if (node) {
         setNote(node.endAdornmentContent?.note);
         setContextMenuTargetNodeKey(nodeKey);
-        setNoteAnchorEl(event.currentTarget);
+        setNoteAnchorEl(
+          anchorEl ||
+            document.getElementById(
+              `tree-node-${nodeKey || contextMenuTargetNodeKey}`
+            ) ||
+            event.currentTarget
+        );
       }
     }
 
@@ -469,11 +502,12 @@ const Editor = React.forwardRef(
       setContextMenuTargetNodeKey("");
     }
 
-    function handleOpenIcon(nodeKey?: string) {
+    function handleOpenIcon(nodeKey?: string, anchorEl?: HTMLElement) {
       setIconsAnchorEl(
-        document.getElementById(
-          `tree-node-${nodeKey || contextMenuTargetNodeKey}`
-        )
+        anchorEl ||
+          document.getElementById(
+            `tree-node-${nodeKey || contextMenuTargetNodeKey}`
+          )
       );
       setAnchorEl(null);
     }
@@ -532,11 +566,12 @@ const Editor = React.forwardRef(
       handleOpenIcon(nodeKey);
     }
 
-    function handleOpenIllustration(nodeKey?: string) {
+    function handleOpenIllustration(nodeKey?: string, anchorEl?: HTMLElement) {
       setIllustrationAnchorEl(
-        document.getElementById(
-          `tree-node-${nodeKey || contextMenuTargetNodeKey}`
-        )
+        anchorEl ||
+          document.getElementById(
+            `tree-node-${nodeKey || contextMenuTargetNodeKey}`
+          )
       );
       setAnchorEl(null);
     }
@@ -748,15 +783,46 @@ const Editor = React.forwardRef(
           </DialogActions>
         </Dialog>
         <Menu anchorEl={anchorEl} open={open} onClose={handleCloseContextMenu}>
-          <MenuItem onClick={handleAddChild}>{t("mind.addChild")}</MenuItem>
-          <MenuItem onClick={handleAddNext}>{t("mind.addNext")}</MenuItem>
+          <IconFontIconButton
+            title={t("mind.addChild")}
+            iconName="a-xiajijiedian1x"
+            fontSize={23}
+            dividerSize={5}
+            style={contextMenuStyle}
+            onClick={handleAddChild}
+          />
+          <IconFontIconButton
+            title={t("mind.addNext")}
+            iconName="a-tongjijiedian1x"
+            fontSize={23}
+            dividerSize={5}
+            style={contextMenuStyle}
+            onClick={handleAddNext}
+          />
           <Divider />
-          <MenuItem onClick={() => handleOpenIcon()}>{t("icon.icon")}</MenuItem>
-          <MenuItem onClick={() => handleOpenIllustration()}>
-            {t("illustration.illustration")}
-          </MenuItem>
-          <MenuItem>
-            <span>{t("mind.addNodeImage")}</span>
+          <IconFontIconButton
+            title={t("icon.icon")}
+            iconName="tubiao"
+            fontSize={23}
+            dividerSize={5}
+            style={contextMenuStyle}
+            onClick={() => handleOpenIcon()}
+          />
+          <IconFontIconButton
+            title={t("illustration.illustration")}
+            iconName="chatu"
+            fontSize={23}
+            dividerSize={5}
+            style={contextMenuStyle}
+            onClick={() => handleOpenIllustration()}
+          />
+          <IconFontIconButton
+            title={t("mind.addNodeImage")}
+            iconName="tupian1"
+            fontSize={23}
+            dividerSize={5}
+            style={contextMenuStyle}
+          >
             <input
               accept="image/*"
               type="file"
@@ -770,16 +836,41 @@ const Editor = React.forwardRef(
               }}
               onChange={handleInputFileChange}
             />
-          </MenuItem>
-          <MenuItem onClick={() => handleAddNote()}>
-            {t("mind.addNote")}
-          </MenuItem>
+          </IconFontIconButton>
+
+          <IconFontIconButton
+            title={t("mind.addNote")}
+            iconName="beizhu"
+            fontSize={23}
+            dividerSize={5}
+            style={contextMenuStyle}
+            onClick={() => handleAddNote()}
+          />
           <Divider />
-          <MenuItem onClick={handleDeleteNote}>{t("mind.deleteNote")}</MenuItem>
-          <MenuItem onClick={handleDeleteImage}>
-            {t("mind.deleteImage")}
-          </MenuItem>
-          <MenuItem onClick={handleDelete}>{t("mind.delete")}</MenuItem>
+          <IconFontIconButton
+            title={t("mind.deleteNote")}
+            iconName="a-shanchu1x"
+            fontSize={23}
+            dividerSize={5}
+            style={contextMenuStyle}
+            onClick={handleDeleteNote}
+          />
+          <IconFontIconButton
+            title={t("mind.deleteImage")}
+            iconName="a-shanchu1x"
+            fontSize={23}
+            dividerSize={5}
+            style={contextMenuStyle}
+            onClick={handleDeleteImage}
+          />
+          <IconFontIconButton
+            title={t("mind.delete")}
+            iconName="a-shanchu1x"
+            fontSize={23}
+            dividerSize={5}
+            style={contextMenuStyle}
+            onClick={handleDelete}
+          />
         </Menu>
         <ImageViewer url={url} handleClose={() => setUrl(null)} />
         {getUptokenApi ? (

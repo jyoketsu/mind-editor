@@ -1,4 +1,4 @@
-import { Box, Popover } from "@mui/material";
+import { Box, ButtonBase, Popover } from "@mui/material";
 import IconFontIconButton from "../../components/common/IconFontIconButton";
 import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
@@ -22,14 +22,14 @@ export default function NodeToolbar({
   handleCheckBox: () => void;
   handleAddChild: () => void;
   handleAddNext: () => void;
-  handleAddNote: () => void;
-  handleAddIcon: () => void;
-  handleAddIllustration: () => void;
+  handleAddNote: (anchorEl: HTMLElement) => void;
+  handleAddIcon: (anchorEl: HTMLElement) => void;
+  handleAddIllustration: (anchorEl: HTMLElement) => void;
   handleFileChange: (files: FileList) => void;
   handleDelete: () => void;
   handleExport: () => void;
   handleImport: (e: any) => void;
-  handleLink: () => void;
+  handleLink: (anchorEl: HTMLElement) => void;
   handleUpdateNode: (key: string, value?: string) => void;
   handleBack: () => void;
 }) {
@@ -69,7 +69,9 @@ export default function NodeToolbar({
         iconName="chatu"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={handleAddIllustration}
+        onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+          handleAddIllustration(event.currentTarget)
+        }
       />,
       <IconFontIconButton
         key="addNodeImage"
@@ -98,7 +100,9 @@ export default function NodeToolbar({
         iconName="lianjie"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={handleLink}
+        onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+          handleLink(event.currentTarget)
+        }
       />,
       <IconFontIconButton
         key="import"
@@ -140,17 +144,23 @@ export default function NodeToolbar({
       sx={{
         width: "100%",
         height: "100%",
-        padding: "15px 0",
+        paddingBottom: "15px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
       }}
     >
       <IconFontIconButton
-        title=""
-        iconName="chexiao"
-        fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        iconName="jiantou"
+        fontSize={18}
+        style={{
+          borderRadius: "unset",
+          width: "100%",
+          borderTop: "1px solid",
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          marginBottom: "15px",
+        }}
         onClick={handleBack}
       />
       <IconFontIconButton
@@ -242,14 +252,18 @@ export default function NodeToolbar({
         iconName="tubiao"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={handleAddIcon}
+        onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+          handleAddIcon(event.currentTarget)
+        }
       />
       <IconFontIconButton
         title={t("mind.addNote")}
         iconName="beizhu"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={handleAddNote}
+        onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+          handleAddNote(event.currentTarget)
+        }
       />
       {fullButtons ? [moreButtons] : null}
 

@@ -90,7 +90,7 @@ export const serviceSlice = createSlice({
       if (data) {
         state.docData = data;
       } else {
-        const defaultData = getDefaultData();
+        const defaultData = getDefaultData(response.name || "untitled");
         state.docData = defaultData;
       }
     });
@@ -111,7 +111,7 @@ export const { setApi, setChanged, setDocData } = serviceSlice.actions;
 
 export default serviceSlice.reducer;
 
-const getDefaultData = () => {
+const getDefaultData = (name: string) => {
   let data: any = {};
   const defaultRootKey = guid(8, 16);
   const childId1 = guid(8, 16);
@@ -119,7 +119,7 @@ const getDefaultData = () => {
   const childId3 = guid(8, 16);
   data[defaultRootKey] = {
     _key: defaultRootKey,
-    name: "untitled",
+    name,
     father: "",
     sortList: [childId1, childId2, childId3],
   };
