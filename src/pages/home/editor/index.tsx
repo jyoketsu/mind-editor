@@ -86,6 +86,7 @@ const Editor = React.forwardRef(
     const [iconsAnchorEl, setIconsAnchorEl] = useState<null | HTMLElement>(
       null
     );
+    const [iconCategory, setIconCategory] = useState("");
     const [illustrationAnchorEl, setIllustrationAnchorEl] =
       useState<null | HTMLElement>(null);
     const [linkAnchorEl, setLinkAnchorEl] = useState<null | HTMLElement>(null);
@@ -500,6 +501,9 @@ const Editor = React.forwardRef(
     function handleCloseIcons() {
       setIconsAnchorEl(null);
       setContextMenuTargetNodeKey("");
+      setTimeout(() => {
+        setIconCategory("");
+      }, 500);
     }
 
     function handleOpenIcon(nodeKey?: string, anchorEl?: HTMLElement) {
@@ -562,6 +566,7 @@ const Editor = React.forwardRef(
       index: number,
       event: any
     ) {
+      setIconCategory(category);
       setContextMenuTargetNodeKey(nodeKey);
       handleOpenIcon(nodeKey);
     }
@@ -886,6 +891,7 @@ const Editor = React.forwardRef(
           handleClickIcon={handleClickIcon}
           handleClose={handleCloseIcons}
           handleDelete={handleDeleteIcon}
+          iconCategory={iconCategory}
         />
         <Illustrations
           anchorEl={illustrationAnchorEl}

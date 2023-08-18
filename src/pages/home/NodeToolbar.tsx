@@ -152,10 +152,11 @@ export default function NodeToolbar({
     >
       <IconFontIconButton
         iconName="jiantou"
-        fontSize={18}
+        fontSize={16}
         style={{
           borderRadius: "unset",
           width: "100%",
+          height: "33px",
           borderTop: "1px solid",
           borderBottom: "1px solid",
           borderColor: "divider",
