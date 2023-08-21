@@ -680,7 +680,6 @@ const Editor = React.forwardRef(
               singleColumn={viewType.startsWith("single-")}
               handleChange={handleChange}
               itemHeight={35}
-              blockHeight={30}
               pathWidth={2}
               pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
               nodeColor={config?.nodeColor || undefined}
@@ -713,7 +712,6 @@ const Editor = React.forwardRef(
               // handleChangeNodeText={(nodeId: string, text: string) =>
               //   handleChangeNodeText(nodeId, text)
               // }
-              blockHeight={30}
               pathWidth={2}
               pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
               nodeColor={config?.nodeColor || undefined}
