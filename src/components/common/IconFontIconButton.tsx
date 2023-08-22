@@ -12,6 +12,7 @@ export default function IconFontIconButton({
   style,
   children,
   onClick,
+  onMouseEnter,
 }: {
   title?: string;
   iconName: string;
@@ -22,6 +23,7 @@ export default function IconFontIconButton({
   style?: React.CSSProperties;
   children?: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onMouseEnter?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   return (
     <ButtonBase
@@ -39,6 +41,7 @@ export default function IconFontIconButton({
       }}
       disabled={disabled}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
     >
       <IconFont name={iconName} fontSize={fontSize} color={color} />
       <div

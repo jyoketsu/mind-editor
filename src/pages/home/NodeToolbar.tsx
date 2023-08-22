@@ -166,14 +166,14 @@ export default function NodeToolbar({
       />
       <IconFontIconButton
         title={t("mind.addChild")}
-        iconName="a-xiajijiedian1x"
+        iconName="a-tongjijiedian1x"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         onClick={handleAddChild}
       />
       <IconFontIconButton
         title={t("mind.addNext")}
-        iconName="a-tongjijiedian1x"
+        iconName="a-xiajijiedian1x"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         onClick={handleAddNext}

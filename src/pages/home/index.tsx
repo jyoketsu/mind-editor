@@ -12,6 +12,7 @@ import {
   isImageDarkOrLight,
 } from "../../utils/util";
 import {
+  TreeData,
   getDoc,
   saveDoc,
   setApi,
@@ -24,6 +25,8 @@ import qiniuUpload from "../../utils/qiniu";
 import api from "../../utils/api";
 import Config from "../../interface/Config";
 import ShortcutDialog from "./Shortcut";
+
+const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 
 export default function Home() {
   const { t } = useTranslation();
@@ -41,6 +44,8 @@ export default function Home() {
   const editorRef = useRef<any>(null);
   const [config, setConfig] = useState<Config | null>(null);
   const [shortcutVisible, setShortcutVisible] = useState(false);
+  const [history, setHistory] = useState<TreeData[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
 
   useEffect(() => {
     editorRef?.current?.resetMove();
@@ -101,6 +106,10 @@ export default function Home() {
           });
         }
       }
+    }
+    if (docData && history.length === 0) {
+      setHistory([docData]);
+      setHistoryIndex(0);
     }
   }, [docData]);
 
@@ -260,6 +269,40 @@ export default function Home() {
     setConfig(config);
   };
 
+  const handleUndo = () => {
+    if (historyIndex > 0) {
+      console.log(
+        "---handleUndo---",
+        historyIndex,
+        history,
+        history[historyIndex - 1]
+      );
+      dispatch(setDocData(history[historyIndex - 1]));
+      setHistoryIndex(historyIndex - 1);
+    }
+  };
+
+  const handleRedo = () => {
+    console.log("---handleRedo---", historyIndex, history);
+    if (historyIndex < history.length - 1) {
+      dispatch(setDocData(history[historyIndex + 1]));
+      setHistoryIndex(historyIndex + 1);
+    }
+  };
+
+  function handleKeyDown(event: React.KeyboardEvent) {
+    const commandKey = isMac ? event.metaKey : event.ctrlKey;
+    if (commandKey) {
+      if (event.key === "z") {
+        if (event.shiftKey) {
+          handleRedo();
+        } else {
+          handleUndo();
+        }
+      }
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -279,93 +322,105 @@ export default function Home() {
         backgroundPosition: "center",
       }}
     >
-      <Editor
-        ref={editorRef}
-        viewType={viewType}
-        config={config}
-        handleClickNode={handleClickNode}
-      />
-      <Box
-        sx={{
-          position: "absolute",
-          top: "48px",
-          left: 0,
-          width: "68px",
-          height: "calc(100% - 48px)",
-          overflow: "hidden",
-          backdropFilter: "blur(7px) brightness(0.9)",
-        }}
-      >
-        <Slide
-          direction="right"
-          in={selectedIds.length ? true : false}
-          mountOnEnter
-          unmountOnExit
+      <div onKeyDown={handleKeyDown}>
+        <Editor
+          ref={editorRef}
+          viewType={viewType}
+          config={config}
+          history={history}
+          historyIndex={historyIndex}
+          handleSetHistory={setHistory}
+          handleSetHistoryIndex={setHistoryIndex}
+          handleClickNode={handleClickNode}
+        />
+        <Box
+          sx={{
+            position: "absolute",
+            top: "48px",
+            left: 0,
+            width: "68px",
+            height: "calc(100% - 48px)",
+            overflow: "hidden",
+            backdropFilter: "blur(7px) brightness(0.9)",
+          }}
         >
-          <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
-            <NodeToolbar
-              handleCheckBox={handleCheckBox}
-              handleAddChild={handleAddChild}
-              handleAddNext={handleAddNext}
-              handleAddNote={handleAddNote}
-              handleAddIcon={handleAddIcon}
-              handleAddIllustration={handleAddIllustration}
-              handleFileChange={(files: FileList) => handleFileChange(files)}
-              handleDelete={handleDelete}
-              handleExport={handleExport}
-              handleImport={handleChange}
-              handleLink={handleLink}
-              handleUpdateNode={handleUpdateNode}
-              handleBack={handleBack}
-            />
-          </div>
-        </Slide>
-        <Slide
-          direction="right"
-          in={!selectedIds.length ? true : false}
-          timeout={500}
+          <Slide
+            direction="right"
+            in={selectedIds.length ? true : false}
+            mountOnEnter
+            unmountOnExit
+          >
+            <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+              <NodeToolbar
+                handleCheckBox={handleCheckBox}
+                handleAddChild={handleAddChild}
+                handleAddNext={handleAddNext}
+                handleAddNote={handleAddNote}
+                handleAddIcon={handleAddIcon}
+                handleAddIllustration={handleAddIllustration}
+                handleFileChange={(files: FileList) => handleFileChange(files)}
+                handleDelete={handleDelete}
+                handleExport={handleExport}
+                handleImport={handleChange}
+                handleLink={handleLink}
+                handleUpdateNode={handleUpdateNode}
+                handleBack={handleBack}
+              />
+            </div>
+          </Slide>
+          <Slide
+            direction="right"
+            in={!selectedIds.length ? true : false}
+            timeout={500}
+          >
+            <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+              <Toolbar
+                viewType={viewType}
+                config={config}
+                undoDisabled={historyIndex === 0 ? true : false}
+                redoDisabled={
+                  historyIndex + 1 === history.length ? true : false
+                }
+                handleSetViewType={setViewType}
+                handleSetConfig={handleSetConfig}
+                handleUndo={handleUndo}
+                handleRedo={handleRedo}
+              />
+            </div>
+          </Slide>
+        </Box>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "48px",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 15px",
+            boxSizing: "border-box",
+            backdropFilter: "blur(7px) brightness(0.9)",
+          }}
         >
-          <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
-            <Toolbar
-              viewType={viewType}
-              config={config}
-              handleSetViewType={setViewType}
-              handleSetConfig={handleSetConfig}
-            />
-          </div>
-        </Slide>
-      </Box>
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "48px",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 15px",
-          boxSizing: "border-box",
-          backdropFilter: "blur(7px) brightness(0.9)",
-        }}
-      >
-        <div style={{ flex: 1 }}></div>
-        <Typography
-          sx={{ color: "text.secondary", fontSize: "14px", padding: "0 5px" }}
+          <div style={{ flex: 1 }}></div>
+          <Typography
+            sx={{ color: "text.secondary", fontSize: "14px", padding: "0 5px" }}
+          >
+            {changed ? t("mind.changed") : t("mind.saved")}
+          </Typography>
+        </Box>
+        <IconButton
+          sx={{ position: "absolute", bottom: "15px", right: "15px" }}
+          onClick={() => setShortcutVisible(true)}
         >
-          {changed ? t("mind.changed") : t("mind.saved")}
-        </Typography>
-      </Box>
-      <IconButton
-        sx={{ position: "absolute", bottom: "15px", right: "15px" }}
-        onClick={() => setShortcutVisible(true)}
-      >
-        <KeyboardIcon />
-      </IconButton>
-      <ShortcutDialog
-        open={shortcutVisible}
-        handleClose={() => setShortcutVisible(false)}
-      />
+          <KeyboardIcon />
+        </IconButton>
+        <ShortcutDialog
+          open={shortcutVisible}
+          handleClose={() => setShortcutVisible(false)}
+        />
+      </div>
     </Box>
   );
 }

@@ -16,15 +16,23 @@ import { isColorDark, isImageDarkOrLight } from "../../utils/util";
 export default function Toolbar({
   viewType,
   config,
+  undoDisabled,
+  redoDisabled,
   handleSetViewType,
   handleSetConfig,
+  handleUndo,
+  handleRedo,
 }: {
   viewType: string;
   config: Config | null;
+  undoDisabled: boolean;
+  redoDisabled: boolean;
   handleSetViewType: (
     viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind"
   ) => void;
   handleSetConfig: (config: Config) => void;
+  handleUndo: () => void;
+  handleRedo: () => void;
 }) {
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
@@ -164,7 +172,7 @@ export default function Toolbar({
       style={{
         width: "100%",
         height: "100%",
-        padding: "15px 0",
+        paddingBottom: "15px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -177,6 +185,7 @@ export default function Toolbar({
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         disabled={changed ? true : false}
         onClick={handleClick}
+        onMouseEnter={handleClick}
       />
       <Popover
         anchorEl={anchorEl}
@@ -362,6 +371,22 @@ export default function Toolbar({
         </div>
       </Popover>
       <div style={{ flex: 1 }} />
+      <IconFontIconButton
+        title=""
+        iconName="chexiao"
+        disabled={undoDisabled}
+        fontSize={30}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        onClick={handleUndo}
+      />
+      <IconFontIconButton
+        title=""
+        iconName="huifu"
+        disabled={redoDisabled}
+        fontSize={30}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        onClick={handleRedo}
+      />
       <IconFontIconButton
         title=""
         iconName="zhongyingwenqiehuan"

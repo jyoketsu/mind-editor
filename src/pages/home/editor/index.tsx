@@ -27,7 +27,11 @@ import {
   plainTextToNaotuFormat,
 } from "../../../utils/util";
 import { Moveable } from "../../../components/common/Moveable";
-import { saveDoc, setChanged } from "../../../redux/reducer/serviceSlice";
+import {
+  TreeData,
+  saveDoc,
+  setChanged,
+} from "../../../redux/reducer/serviceSlice";
 import CNode from "tree-graph-react/dist/interfaces/CNode";
 import NodeMap from "tree-graph-react/dist/interfaces/NodeMap";
 import Breadcrumbs from "../../../components/common/Breadcrumbs";
@@ -53,10 +57,18 @@ const Editor = React.forwardRef(
     {
       viewType,
       config,
+      history,
+      historyIndex,
+      handleSetHistory,
+      handleSetHistoryIndex,
       handleClickNode,
     }: {
       viewType: string;
       config: Config | null;
+      history: TreeData[];
+      historyIndex: number;
+      handleSetHistory: (history: TreeData[]) => void;
+      handleSetHistoryIndex: (index: number) => void;
       handleClickNode: (node: CNode) => void;
     },
     ref
@@ -92,6 +104,7 @@ const Editor = React.forwardRef(
     const [linkAnchorEl, setLinkAnchorEl] = useState<null | HTMLElement>(null);
     const [initUrl, setInitUrl] = useState("");
     const [initText, setInitText] = useState("");
+
     const contextMenuStyle: React.CSSProperties = {
       padding: "10px 12px",
       margin: "2px 0",
@@ -124,8 +137,17 @@ const Editor = React.forwardRef(
     const handleChange = useCallback(() => {
       clearTimeout(timeout);
       dispatch(setChanged(true));
+      const data = getData();
+      const historyArr = [...history, data];
+      if (history.length > 10) {
+        historyArr.shift();
+      }
+      console.log("---historyArr---", historyArr, historyArr.length - 1);
+
+      handleSetHistory(historyArr);
+      // handleSetHistory([...history.slice(0, historyIndex + 1), data]);
+      handleSetHistoryIndex(historyArr.length - 1);
       timeout = setTimeout(() => {
-        const data = getData();
         if (data && patchDataApi) {
           dispatch(
             saveDoc({
@@ -135,7 +157,7 @@ const Editor = React.forwardRef(
           );
         }
       }, 4000);
-    }, [treeData, config]);
+    }, [treeData, config, history, historyIndex]);
 
     const handleImport = useCallback((text?: string) => {
       let newData: NodeMap = {};
@@ -732,20 +754,12 @@ const Editor = React.forwardRef(
       } else {
         return <div></div>;
       }
-    }, [
-      rootKey,
-      treeData,
-      darkMode,
-      handleChange,
-      // handleChangeNodeText,
-      viewType,
-      handlePasteText,
-    ]);
+    }, [rootKey, treeData, darkMode, handleChange, viewType, handlePasteText]);
 
     return (
-      <Box
+      <div
         className="editor"
-        sx={{
+        style={{
           position: "relative",
           width: "100%",
           height: "100%",
@@ -904,7 +918,7 @@ const Editor = React.forwardRef(
           handleClose={() => setLinkAnchorEl(null)}
         />
         {loading ? <Loading /> : null}
-      </Box>
+      </div>
     );
   }
 );

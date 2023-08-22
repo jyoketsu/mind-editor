@@ -11,7 +11,7 @@ interface Api {
   docDataName?: string;
 }
 
-interface TreeData {
+export interface TreeData {
   rootKey: string;
   data: NodeMap;
   config?: Config | null;
