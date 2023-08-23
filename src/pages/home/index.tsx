@@ -16,6 +16,7 @@ import {
   getDoc,
   saveDoc,
   setApi,
+  setChanged,
   setDocData,
 } from "../../redux/reducer/serviceSlice";
 import Toolbar from "./Toolbar";
@@ -25,8 +26,10 @@ import qiniuUpload from "../../utils/qiniu";
 import api from "../../utils/api";
 import Config from "../../interface/Config";
 import ShortcutDialog from "./Shortcut";
+import _ from "lodash";
 
 const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+let timeout: NodeJS.Timeout;
 
 export default function Home() {
   const { t } = useTranslation();
@@ -108,7 +111,7 @@ export default function Home() {
       }
     }
     if (docData && history.length === 0) {
-      setHistory([docData]);
+      setHistory([_.cloneDeep(docData)]);
       setHistoryIndex(0);
     }
   }, [docData]);
@@ -269,24 +272,38 @@ export default function Home() {
     setConfig(config);
   };
 
+  const handleSave = () => {
+    clearTimeout(timeout);
+    dispatch(setChanged(true));
+    timeout = setTimeout(() => {
+      const data = editorRef.current.getNodes();
+      if (config) {
+        data.config = config;
+      }
+      if (data && patchDataApi) {
+        dispatch(
+          saveDoc({
+            patchDataApi,
+            data,
+          })
+        );
+      }
+    }, 2000);
+  };
+
   const handleUndo = () => {
     if (historyIndex > 0) {
-      console.log(
-        "---handleUndo---",
-        historyIndex,
-        history,
-        history[historyIndex - 1]
-      );
       dispatch(setDocData(history[historyIndex - 1]));
       setHistoryIndex(historyIndex - 1);
+      handleSave();
     }
   };
 
   const handleRedo = () => {
-    console.log("---handleRedo---", historyIndex, history);
     if (historyIndex < history.length - 1) {
       dispatch(setDocData(history[historyIndex + 1]));
       setHistoryIndex(historyIndex + 1);
+      handleSave();
     }
   };
 
@@ -377,9 +394,13 @@ export default function Home() {
               <Toolbar
                 viewType={viewType}
                 config={config}
-                undoDisabled={historyIndex === 0 ? true : false}
+                undoDisabled={
+                  historyIndex === 0 || historyIndex === -1 ? true : false
+                }
                 redoDisabled={
-                  historyIndex + 1 === history.length ? true : false
+                  historyIndex === -1 || historyIndex + 1 === history.length
+                    ? true
+                    : false
                 }
                 handleSetViewType={setViewType}
                 handleSetConfig={handleSetConfig}

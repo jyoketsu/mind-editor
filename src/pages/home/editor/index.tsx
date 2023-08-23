@@ -123,6 +123,7 @@ const Editor = React.forwardRef(
       addIcon,
       addIllustration,
       addLink,
+      handleChange,
       getSelectedIds: () => treeRef.current.getSelectedIds(),
       getNodes: () => treeRef.current.saveNodes(),
       updateNodesByIds: (nodes: NodeMap, ids: string[], data: any) => {
@@ -134,30 +135,36 @@ const Editor = React.forwardRef(
       },
     }));
 
-    const handleChange = useCallback(() => {
-      clearTimeout(timeout);
-      dispatch(setChanged(true));
-      const data = getData();
-      const historyArr = [...history, data];
-      if (history.length > 10) {
-        historyArr.shift();
-      }
-      console.log("---historyArr---", historyArr, historyArr.length - 1);
+    const handleChange = useCallback(
+      (skipHistory?: boolean) => {
+        clearTimeout(timeout);
+        dispatch(setChanged(true));
+        
 
-      handleSetHistory(historyArr);
-      // handleSetHistory([...history.slice(0, historyIndex + 1), data]);
-      handleSetHistoryIndex(historyArr.length - 1);
-      timeout = setTimeout(() => {
-        if (data && patchDataApi) {
-          dispatch(
-            saveDoc({
-              patchDataApi,
-              data,
-            })
-          );
+        if (!skipHistory) {
+          const data = getData();
+          const historyArr = [...history, data];
+          if (history.length > 10) {
+            historyArr.shift();
+          }
+          handleSetHistory(historyArr);
+          handleSetHistoryIndex(historyArr.length - 1);
         }
-      }, 4000);
-    }, [treeData, config, history, historyIndex]);
+
+        timeout = setTimeout(() => {
+          const data = getData();
+          if (data && patchDataApi) {
+            dispatch(
+              saveDoc({
+                patchDataApi,
+                data,
+              })
+            );
+          }
+        }, 4000);
+      },
+      [treeData, config, history, historyIndex]
+    );
 
     const handleImport = useCallback((text?: string) => {
       let newData: NodeMap = {};
@@ -239,7 +246,7 @@ const Editor = React.forwardRef(
     useEffect(() => {
       if (config) {
         if (configLoaded) {
-          handleChange();
+          handleChange(true);
         } else {
           configLoaded = true;
         }
