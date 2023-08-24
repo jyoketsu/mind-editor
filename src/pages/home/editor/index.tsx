@@ -139,7 +139,6 @@ const Editor = React.forwardRef(
       (skipHistory?: boolean) => {
         clearTimeout(timeout);
         dispatch(setChanged(true));
-        
 
         if (!skipHistory) {
           const data = getData();
@@ -717,6 +716,7 @@ const Editor = React.forwardRef(
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
               paddingLeft={1000}
               paddingTop={1000}
+              rainbowColor={config?.rainbowColor}
               showDeleteConform={handledeleteConform}
               handlePasteText={handlePasteText}
               handleFileChange={handleFileChange}
@@ -749,6 +749,7 @@ const Editor = React.forwardRef(
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
               paddingLeft={1000}
               paddingTop={1000}
+              rainbowColor={config?.rainbowColor}
               showDeleteConform={handledeleteConform}
               handlePasteText={handlePasteText}
               handleFileChange={handleFileChange}
@@ -761,7 +762,15 @@ const Editor = React.forwardRef(
       } else {
         return <div></div>;
       }
-    }, [rootKey, treeData, darkMode, handleChange, viewType, handlePasteText]);
+    }, [
+      rootKey,
+      treeData,
+      darkMode,
+      handleChange,
+      viewType,
+      handlePasteText,
+      config,
+    ]);
 
     return (
       <div

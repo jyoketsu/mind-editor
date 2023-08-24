@@ -62,7 +62,8 @@
     "custom": "自定义",
     "style": "样式",
     "reset": "还原",
-    "more": "更多"
+    "more": "更多",
+    "rainbowColor": "彩虹色"
   },
   "shortcut": {
     "enter": "弟节点",

@@ -62,7 +62,8 @@
     "custom": "カスタム",
     "style": "スタイル",
     "reset": "リセット",
-    "more": "もっと"
+    "more": "もっと",
+    "rainbowColor": "虹色"
   },
   "shortcut": {
     "enter": "次のノードを追加",

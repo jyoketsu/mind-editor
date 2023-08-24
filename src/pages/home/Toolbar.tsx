@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
 import IconFontIconButton from "../../components/common/IconFontIconButton";
 import Divider from "@mui/material/Divider";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Popover from "@mui/material/Popover";
 import screenfull from "screenfull";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setDark, setLoading } from "../../redux/reducer/commonSlice";
 import Button from "@mui/material/Button";
-import { Box, Typography } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import Config from "../../interface/Config";
 import api from "../../utils/api";
 import qiniuUpload from "../../utils/qiniu";
@@ -44,6 +44,7 @@ export default function Toolbar({
   const [languageAnchorEl, setLanguageAnchorEl] = useState<null | HTMLElement>(
     null
   );
+  const [rainbowColor, setRainbowColor] = useState(false);
   const languageOpen = Boolean(languageAnchorEl);
   const [themeAnchorEl, setThemeAnchorEl] = useState<null | HTMLElement>(null);
   const themeOpen = Boolean(themeAnchorEl);
@@ -71,6 +72,10 @@ export default function Toolbar({
         return "a-siweidaotu1";
     }
   }, [viewType]);
+
+  useEffect(() => {
+    setRainbowColor(config?.rainbowColor || false);
+  }, [config]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -165,6 +170,16 @@ export default function Toolbar({
   const handleReset = () => {
     // @ts-ignore
     handleSetConfig({});
+  };
+
+  const handleChangeRainbowColor = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    // @ts-ignore
+    handleSetConfig({
+      ...(config || {}),
+      ...{ rainbowColor: event.target.checked },
+    });
   };
 
   return (
@@ -271,41 +286,61 @@ export default function Toolbar({
           >
             {t("toolBar.reset")}
           </Button>
-          <Typography variant="h6">{t("toolBar.lineColor")}</Typography>
-          <div style={boxStyle}>
-            {["#535953", "#FFF", "#35a6f8", "#cb1b45"].map((color, index) => (
-              <ColorBox
-                key={index}
-                background={color}
-                selected={color === config?.lineColor ? true : false}
-                onClick={(val) => handleClickColor(val, "lineColor")}
+          {!rainbowColor
+            ? [
+                <Typography variant="h6" key="lineColorTitle">
+                  {t("toolBar.lineColor")}
+                </Typography>,
+                <div key="lineColor" style={boxStyle}>
+                  {["#535953", "#FFF", "#35a6f8", "#cb1b45"].map(
+                    (color, index) => (
+                      <ColorBox
+                        key={index}
+                        background={color}
+                        selected={color === config?.lineColor ? true : false}
+                        onClick={(val) => handleClickColor(val, "lineColor")}
+                      />
+                    )
+                  )}
+                </div>,
+                <Typography key="nodeColorTitle" variant="h6">
+                  {t("toolBar.nodeColor")}
+                </Typography>,
+                <div key="nodeColor" style={boxStyle}>
+                  {[
+                    "#DC9FB4",
+                    "#EEA9A9",
+                    "#D7C4BB",
+                    "#FAD689",
+                    "#D9CD90",
+                    "#FCFAF2",
+                    "#dfedf9",
+                    "#f2e7f9",
+                    "#ffe3e8",
+                    "#fae8cd",
+                    "#d5f2e6",
+                    "#e7ecf0",
+                  ].map((color, index) => (
+                    <ColorBox
+                      key={index}
+                      background={color}
+                      selected={color === config?.nodeColor ? true : false}
+                      onClick={(val) => handleClickColor(val, "nodeColor")}
+                    />
+                  ))}
+                </div>,
+              ]
+            : null}
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={rainbowColor}
+                onChange={handleChangeRainbowColor}
               />
-            ))}
-          </div>
-          <Typography variant="h6">{t("toolBar.nodeColor")}</Typography>
-          <div style={boxStyle}>
-            {[
-              "#DC9FB4",
-              "#EEA9A9",
-              "#D7C4BB",
-              "#FAD689",
-              "#D9CD90",
-              "#FCFAF2",
-              "#dfedf9",
-              "#f2e7f9",
-              "#ffe3e8",
-              "#fae8cd",
-              "#d5f2e6",
-              "#e7ecf0",
-            ].map((color, index) => (
-              <ColorBox
-                key={index}
-                background={color}
-                selected={color === config?.nodeColor ? true : false}
-                onClick={(val) => handleClickColor(val, "nodeColor")}
-              />
-            ))}
-          </div>
+            }
+            label={t("toolBar.rainbowColor")}
+          />
           <Typography variant="h6">{t("toolBar.backgroundColor")}</Typography>
           <div style={boxStyle}>
             {[

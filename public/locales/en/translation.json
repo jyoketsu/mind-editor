@@ -62,7 +62,8 @@
     "custom": "Custom",
     "style": "Style",
     "reset": "Reset",
-    "more": "More"
+    "more": "More",
+    "rainbowColor": "Rainbow color"
   },
   "shortcut": {
     "enter": "Silbing",
