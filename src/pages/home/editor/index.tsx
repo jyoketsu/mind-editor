@@ -92,6 +92,8 @@ const Editor = React.forwardRef(
     const open = Boolean(anchorEl);
     const [contextMenuTargetNodeKey, setContextMenuTargetNodeKey] =
       useState("");
+    const [contextMenuTargetNode, setContextMenuTargetNode] =
+      useState<CNode | null>(null);
     const [noteAnchorEl, setNoteAnchorEl] = useState<null | HTMLElement>(null);
     const [note, setNote] = useState<JSONContent>();
     const [loading, setLoading] = useState(false);
@@ -349,6 +351,9 @@ const Editor = React.forwardRef(
     }
 
     function handleContextMenu(nodeKey: string, event: any) {
+      const data = treeRef.current.saveNodes();
+      const node = data.data[nodeKey];
+      setContextMenuTargetNode(node);
       setContextMenuTargetNodeKey(nodeKey);
       setAnchorEl(event.currentTarget);
     }
@@ -356,6 +361,7 @@ const Editor = React.forwardRef(
     function handleCloseContextMenu() {
       setAnchorEl(null);
       setContextMenuTargetNodeKey("");
+      setContextMenuTargetNode(null);
     }
 
     function handleAddChild() {
@@ -630,44 +636,16 @@ const Editor = React.forwardRef(
       }
     }
 
-    function handleSetLink(url: string, text: string) {
+    async function handleSetLink(url: string, text: string) {
       const nodeKey = treeRef.current.getSelectedId();
       const data = treeRef.current.saveNodes();
       const node = data.data[nodeKey];
       if (!node) return;
-      let endAdornmentContent = node.endAdornmentContent || {};
-      endAdornmentContent = { ...endAdornmentContent, link: { url, text } };
-      treeRef.current.updateNodeById(
-        data.data,
-        nodeKey || contextMenuTargetNodeKey,
-        {
-          endAdornment: getEndAdornment(endAdornmentContent, {
-            note: handleOpenNote,
-            link: handleOpenLink,
-          }),
-          endAdornmentWidth: Object.keys(endAdornmentContent).length * (18 + 2),
-          endAdornmentHeight: 18,
-          endAdornmentContent,
-        }
-      );
-      setLinkAnchorEl(null);
-    }
-
-    function handleChangeNodeText(nodeKey: string, text: string) {
-      const urlReg =
-        /(([\w-]{1,}\.+)+(com|cn|org|net|info)(\/#\/)*\/*[\w\/\?=&%.]*)|(http:\/\/([\w-]{1,}\.+)+(com|cn|org|net|info)(\/#\/)*\/*[\w\/\?=&%.]*)|(https:\/\/([\w-]{1,}\.+)+(com|cn|org|net|info)(\/#\/)*\/*[\w\/\?=&%.]*)/g;
-      if (urlReg.test(text)) {
-        const matchList = text.match(urlReg);
-
-        const data = treeRef.current.saveNodes();
-        const node = data.data[nodeKey];
-        if (!node) return;
-        if (!matchList?.length) return;
+      const res: any = await api.getUrlInfo(url);
+      if (res.status === 200) {
+        const icon = res.icon;
         let endAdornmentContent = node.endAdornmentContent || {};
-        endAdornmentContent = {
-          ...endAdornmentContent,
-          link: { url: matchList[0], text: "" },
-        };
+        endAdornmentContent = { ...endAdornmentContent, link: { url, text } };
         treeRef.current.updateNodeById(
           data.data,
           nodeKey || contextMenuTargetNodeKey,
@@ -680,9 +658,52 @@ const Editor = React.forwardRef(
               Object.keys(endAdornmentContent).length * (18 + 2),
             endAdornmentHeight: 18,
             endAdornmentContent,
-            name: text.replace(matchList[0], ""),
+            imageUrl: icon,
+            imageWidth: 50,
+            imageHeight: 50,
           }
         );
+        setLinkAnchorEl(null);
+      }
+    }
+
+    async function handleChangeNodeText(nodeKey: string, text: string) {
+      const urlReg =
+        /(([\w-]{1,}\.+)+([a-zA-Z]+)(\/#\/)*\/*[\w\/\?=&%.]*)|(http:\/\/([\w-]{1,}\.+)+([a-zA-Z]+)(\/#\/)*\/*[\w\/\?=&%.]*)|(https:\/\/([\w-]{1,}\.+)+([a-zA-Z]+)(\/#\/)*\/*[\w\/\?=&%.]*)/gm;
+      if (urlReg.test(text)) {
+        const matchList = text.match(urlReg);
+        const data = treeRef.current.saveNodes();
+        const node = data.data[nodeKey];
+        if (!node) return;
+        if (!matchList?.length) return;
+        const url = matchList[0];
+        const res: any = await api.getUrlInfo(url);
+        if (res.status === 200) {
+          const icon = res.icon;
+          let endAdornmentContent = node.endAdornmentContent || {};
+          endAdornmentContent = {
+            ...endAdornmentContent,
+            link: { url, text: "" },
+          };
+          treeRef.current.updateNodeById(
+            data.data,
+            nodeKey || contextMenuTargetNodeKey,
+            {
+              endAdornment: getEndAdornment(endAdornmentContent, {
+                note: handleOpenNote,
+                link: handleOpenLink,
+              }),
+              endAdornmentWidth:
+                Object.keys(endAdornmentContent).length * (18 + 2),
+              endAdornmentHeight: 18,
+              endAdornmentContent,
+              name: text,
+              imageUrl: icon,
+              imageWidth: 50,
+              imageHeight: 50,
+            }
+          );
+        }
       }
     }
 
@@ -756,6 +777,9 @@ const Editor = React.forwardRef(
               handleContextMenu={handleContextMenu}
               handleClickNodeImage={(url) => setUrl(url || "")}
               handleClickNode={handleClickNode}
+              handleChangeNodeText={(nodeKey: string, text: string) =>
+                handleChangeNodeText(nodeKey, text)
+              }
             />
           );
         }
@@ -880,22 +904,28 @@ const Editor = React.forwardRef(
             onClick={() => handleAddNote()}
           />
           <Divider />
-          <IconFontIconButton
-            title={t("mind.deleteNote")}
-            iconName="a-shanchu1x"
-            fontSize={23}
-            dividerSize={5}
-            style={contextMenuStyle}
-            onClick={handleDeleteNote}
-          />
-          <IconFontIconButton
-            title={t("mind.deleteImage")}
-            iconName="a-shanchu1x"
-            fontSize={23}
-            dividerSize={5}
-            style={contextMenuStyle}
-            onClick={handleDeleteImage}
-          />
+
+          {contextMenuTargetNode?.endAdornmentContent?.note ? (
+            <IconFontIconButton
+              title={t("mind.deleteNote")}
+              iconName="a-shanchu1x"
+              fontSize={23}
+              dividerSize={5}
+              style={contextMenuStyle}
+              onClick={handleDeleteNote}
+            />
+          ) : null}
+          {contextMenuTargetNode?.imageUrl ? (
+            <IconFontIconButton
+              title={t("mind.deleteImage")}
+              iconName="a-shanchu1x"
+              fontSize={23}
+              dividerSize={5}
+              style={contextMenuStyle}
+              onClick={handleDeleteImage}
+            />
+          ) : null}
+
           <IconFontIconButton
             title={t("mind.delete")}
             iconName="a-shanchu1x"

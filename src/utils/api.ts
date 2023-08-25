@@ -90,6 +90,11 @@ const qiniu = {
 export default {
   request,
   qiniu,
+  getUrlInfo: (url: string) => {
+    return request.get("http://nodeserver.qingtime.cn/urlIconOrigin?=", {
+      linkUrl: url,
+    });
+  },
   setToken: (_token: string) => {
     localStorage.setItem("auth_token", _token);
     token = _token;

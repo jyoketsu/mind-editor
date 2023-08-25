@@ -56,6 +56,7 @@ export default function Link({
           label={t("mind.linkUrl")}
           sx={{ marginBottom: "15px" }}
           value={url}
+          onPaste={(e) => e.stopPropagation()}
           onChange={(e) => setUrl(e.target.value)}
         />
         <TextField

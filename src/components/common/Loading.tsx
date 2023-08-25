@@ -16,7 +16,7 @@ export default function Loading() {
         zIndex: 999,
       }}
     >
-      <CircularProgress size={28} color="primary" />
+      <img src="/logo/loading.gif" alt="Loading" width="50px" />
     </Box>
   );
 }

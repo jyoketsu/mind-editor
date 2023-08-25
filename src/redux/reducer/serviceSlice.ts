@@ -23,6 +23,7 @@ interface ServiceState {
   getUptokenApi: Api | null;
   docData: TreeData | null;
   changed: boolean;
+  loading: boolean;
 }
 
 const initialState: ServiceState = {
@@ -31,6 +32,7 @@ const initialState: ServiceState = {
   getUptokenApi: null,
   docData: null,
   changed: false,
+  loading: false,
 };
 
 export const getDoc = createAsyncThunk(
@@ -80,7 +82,11 @@ export const serviceSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(getDoc.pending, (state, action: PayloadAction<any>) => {
+      state.loading = true;
+    });
     builder.addCase(getDoc.fulfilled, (state, action: PayloadAction<any>) => {
+      state.loading = false;
       const responseName = state.getDataApi?.responseName;
       const docDataName = state.getDataApi?.docDataName;
       const response = responseName

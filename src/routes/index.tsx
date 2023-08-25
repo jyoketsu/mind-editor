@@ -13,6 +13,7 @@ const BASE = import.meta.env.VITE_BASE;
 export default function Router() {
   const isDark = useAppSelector((state) => state.common.dark);
   const loading = useAppSelector((state) => state.common.loading);
+  const serviceLoading = useAppSelector((state) => state.service.loading);
 
   // 配色
   // 默认颜色：https://mui.com/zh/material-ui/customization/default-theme/
@@ -74,7 +75,7 @@ export default function Router() {
           <Route path="preview" element={<Preview />} />
         </Routes>
       </BrowserRouter>
-      {loading ? <Loading /> : null}
+      {loading || serviceLoading ? <Loading /> : null}
     </ThemeProvider>
   );
 }
