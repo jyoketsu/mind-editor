@@ -3,6 +3,8 @@ import Menu from "@mui/material/Menu";
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import PushPinIcon from "@mui/icons-material/PushPin";
+import IconButton from "@mui/material/IconButton";
 
 const work = [
   "https://cdn-notes.qingtime.cn/D04CF33A.svg",
@@ -51,14 +53,18 @@ const others = [
   "https://cdn-notes.qingtime.cn/703E7980.svg",
 ];
 
-export default function Illustrations({
+export function IllustrationsMenu({
   anchorEl,
+  pin,
   handleClick,
   handleClose,
+  handleClickPin,
 }: {
   anchorEl: null | HTMLElement;
+  pin: boolean;
   handleClick: (url: string, width: number, height: number) => void;
   handleClose: () => void;
+  handleClickPin: () => void;
 }) {
   const { t } = useTranslation();
   const style = {
@@ -77,92 +83,131 @@ export default function Illustrations({
         vertical: anchorEl?.tagName === "g" ? "bottom" : "top",
         horizontal: anchorEl?.tagName === "g" ? "left" : "right",
       }}
+      // PaperProps={{
+      //   style: {
+      //     height: "100vh",
+      //   },
+      // }}
       onClose={handleClose}
     >
       <Box
         sx={{
-          width: "420px",
-          padding: "0 15px",
-          height: "900px",
-          overflow: "auto",
+          borderBottom: "1px solid",
+          borderBottomColor: "divider",
+          padding: "0px 15px 8px 15px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <Typography variant="h6" gutterBottom>
-          {t("illustration.work")}
-        </Typography>
-        <Box sx={style}>
-          {work.map((item, index) => (
-            <LazyLoadImage
-              key={index}
-              src={item}
-              width="100%"
-              height="100%"
-              draggable={false}
-              onClick={() => handleClick(item, 134, 134)}
-            />
-          ))}
-        </Box>
-        <Typography variant="h6" gutterBottom>
-          {t("illustration.travel")}
-        </Typography>
-        <Box sx={style}>
-          {travel.map((item, index) => (
-            <LazyLoadImage
-              key={index}
-              src={item}
-              width="100%"
-              height="100%"
-              draggable={false}
-              onClick={() => handleClick(item, 134, 134)}
-            />
-          ))}
-        </Box>
-        <Typography variant="h6" gutterBottom>
-          {t("illustration.holiday")}
-        </Typography>
-        <Box sx={style}>
-          {holiday.map((item, index) => (
-            <LazyLoadImage
-              key={index}
-              src={item}
-              width="100%"
-              height="100%"
-              draggable={false}
-              onClick={() => handleClick(item, 134, 134)}
-            />
-          ))}
-        </Box>
-        <Typography variant="h6" gutterBottom>
-          {t("illustration.food")}
-        </Typography>
-        <Box sx={style}>
-          {food.map((item, index) => (
-            <LazyLoadImage
-              key={index}
-              src={item}
-              width="100%"
-              height="100%"
-              draggable={false}
-              onClick={() => handleClick(item, 134, 134)}
-            />
-          ))}
-        </Box>
-        <Typography variant="h6" gutterBottom>
-          {t("illustration.others")}
-        </Typography>
-        <Box sx={style}>
-          {others.map((item, index) => (
-            <LazyLoadImage
-              key={index}
-              src={item}
-              width="100%"
-              height="100%"
-              draggable={false}
-              onClick={() => handleClick(item, 134, 134)}
-            />
-          ))}
-        </Box>
+        <Typography variant="h5">{t("illustration.illustration")}</Typography>
+        <IconButton onClick={handleClickPin}>
+          <PushPinIcon color={pin ? "primary" : undefined} />
+        </IconButton>
       </Box>
+      <Illustrations handleClick={handleClick} />
     </Menu>
+  );
+}
+
+export function Illustrations({
+  handleClick,
+}: {
+  handleClick: (url: string, width: number, height: number) => void;
+}) {
+  const { t } = useTranslation();
+  const style = {
+    display: "grid",
+    gridTemplateColumns: "repeat(4,1fr)",
+    columnGap: "12px",
+    rowGap: "12px",
+    marginBottom: "24px",
+  };
+  return (
+    <Box
+      sx={{
+        width: "420px",
+        padding: "0 15px",
+        height: "calc(100vh - 170px)",
+        // maxHeight: "calc(100vh - 120px)",
+        overflow: "auto",
+      }}
+    >
+      <Typography variant="h6" gutterBottom>
+        {t("illustration.work")}
+      </Typography>
+      <Box sx={style}>
+        {work.map((item, index) => (
+          <LazyLoadImage
+            key={index}
+            src={item}
+            width="100%"
+            height="100%"
+            draggable={false}
+            onClick={() => handleClick(item, 134, 134)}
+          />
+        ))}
+      </Box>
+      <Typography variant="h6" gutterBottom>
+        {t("illustration.travel")}
+      </Typography>
+      <Box sx={style}>
+        {travel.map((item, index) => (
+          <LazyLoadImage
+            key={index}
+            src={item}
+            width="100%"
+            height="100%"
+            draggable={false}
+            onClick={() => handleClick(item, 134, 134)}
+          />
+        ))}
+      </Box>
+      <Typography variant="h6" gutterBottom>
+        {t("illustration.holiday")}
+      </Typography>
+      <Box sx={style}>
+        {holiday.map((item, index) => (
+          <LazyLoadImage
+            key={index}
+            src={item}
+            width="100%"
+            height="100%"
+            draggable={false}
+            onClick={() => handleClick(item, 134, 134)}
+          />
+        ))}
+      </Box>
+      <Typography variant="h6" gutterBottom>
+        {t("illustration.food")}
+      </Typography>
+      <Box sx={style}>
+        {food.map((item, index) => (
+          <LazyLoadImage
+            key={index}
+            src={item}
+            width="100%"
+            height="100%"
+            draggable={false}
+            onClick={() => handleClick(item, 134, 134)}
+          />
+        ))}
+      </Box>
+      <Typography variant="h6" gutterBottom>
+        {t("illustration.others")}
+      </Typography>
+      <Box sx={style}>
+        {others.map((item, index) => (
+          <LazyLoadImage
+            key={index}
+            src={item}
+            width="100%"
+            height="100%"
+            draggable={false}
+            onClick={() => handleClick(item, 134, 134)}
+          />
+        ))}
+      </Box>
+    </Box>
   );
 }

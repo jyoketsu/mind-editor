@@ -6,8 +6,11 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  IconButton,
   Menu,
   MenuItem,
+  Paper,
+  Slide,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Mind, Tree } from "tree-graph-react";
@@ -42,12 +45,15 @@ import ImageViewer from "./ImageViewer";
 import Note from "./Note";
 import { JSONContent } from "@tiptap/react";
 import Loading from "../../../components/common/Loading";
-import Icons from "./Icons";
+import { Icons, IconsMenu } from "./Icons";
 import { getStartAdornment, getEndAdornment } from "./components";
-import Illustrations from "./Illustrations";
+import { IllustrationsMenu, Illustrations } from "./Illustrations";
 import Link from "./Link";
 import Config from "../../../interface/Config";
 import IconFontIconButton from "../../../components/common/IconFontIconButton";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import { Close } from "@mui/icons-material";
 
 let timeout: NodeJS.Timeout;
 let configLoaded = false;
@@ -106,6 +112,9 @@ const Editor = React.forwardRef(
     const [linkAnchorEl, setLinkAnchorEl] = useState<null | HTMLElement>(null);
     const [initUrl, setInitUrl] = useState("");
     const [initText, setInitText] = useState("");
+    const [iconPin, setIconPin] = useState(false);
+    const [illPin, setIllPin] = useState(false);
+    const [tabValue, setTabValue] = useState("");
 
     const contextMenuStyle: React.CSSProperties = {
       padding: "10px 12px",
@@ -550,15 +559,14 @@ const Editor = React.forwardRef(
       setAnchorEl(null);
     }
 
-    function handleClickIcon(category: string, index: number) {
+    function handleClickIcon(category: string, index: number, batch?: boolean) {
       let iconJson: any = {};
       iconJson[category] = index;
+      const selectedIds = treeRef.current.getSelectedIds();
       const data = treeRef.current.saveNodes();
-      const node = data.data[contextMenuTargetNodeKey];
-      if (node) {
-        let startAdornmentContent = node.startAdornmentContent || {};
-        startAdornmentContent = { ...startAdornmentContent, ...iconJson };
-        treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
+      if (batch && selectedIds.length > 1) {
+        const startAdornmentContent = { ...iconJson };
+        treeRef.current.updateNodesByIds(data.data, selectedIds, {
           startAdornment: getStartAdornment(
             startAdornmentContent,
             handleClickNodeIcon
@@ -568,8 +576,29 @@ const Editor = React.forwardRef(
           startAdornmentHeight: 18,
           startAdornmentContent,
         });
-        handleCloseIcons();
+      } else {
+        const id =
+          contextMenuTargetNodeKey ||
+          treeRef.current.getSelectedId() ||
+          treeRef.current.getSelectedIds()[0];
+        const node = data.data[id];
+        if (node) {
+          let startAdornmentContent = node.startAdornmentContent || {};
+          startAdornmentContent = { ...startAdornmentContent, ...iconJson };
+          treeRef.current.updateNodeById(data.data, id, {
+            startAdornment: getStartAdornment(
+              startAdornmentContent,
+              handleClickNodeIcon
+            ),
+            startAdornmentWidth:
+              Object.keys(startAdornmentContent).length * (18 + 2),
+            startAdornmentHeight: 18,
+            startAdornmentContent,
+          });
+        }
       }
+
+      handleCloseIcons();
     }
 
     function handleDeleteIcon(category: string) {
@@ -626,14 +655,25 @@ const Editor = React.forwardRef(
       imageHeight: number
     ) {
       const data = treeRef.current.saveNodes();
-      if (contextMenuTargetNodeKey) {
-        treeRef.current.updateNodeById(data.data, contextMenuTargetNodeKey, {
+      const selectedIds = treeRef.current.getSelectedIds();
+      if (selectedIds.length > 1) {
+        treeRef.current.updateNodesByIds(data.data, selectedIds, {
           imageUrl: url,
           imageWidth,
           imageHeight,
         });
-        handleCloseIllustration();
+      } else {
+        const id =
+          contextMenuTargetNodeKey ||
+          treeRef.current.getSelectedId() ||
+          treeRef.current.getSelectedIds()[0];
+        treeRef.current.updateNodeById(data.data, id, {
+          imageUrl: url,
+          imageWidth,
+          imageHeight,
+        });
       }
+      handleCloseIllustration();
     }
 
     async function handleSetLink(url: string, text: string) {
@@ -944,18 +984,83 @@ const Editor = React.forwardRef(
             handleClose={handleCloseNote}
           />
         ) : null}
-        <Icons
+        <IconsMenu
           anchorEl={iconsAnchorEl}
           handleClickIcon={handleClickIcon}
           handleClose={handleCloseIcons}
           handleDelete={handleDeleteIcon}
           iconCategory={iconCategory}
+          pin={iconPin}
+          handleClickPin={() => {
+            setIconPin(!iconPin);
+            if (!iconPin) {
+              setTabValue("icon");
+              setIconsAnchorEl(null);
+            }
+          }}
         />
-        <Illustrations
+        <IllustrationsMenu
           anchorEl={illustrationAnchorEl}
           handleClick={handleClickIllustration}
           handleClose={handleCloseIllustration}
+          pin={illPin}
+          handleClickPin={() => {
+            setIllPin(!illPin);
+            if (!illPin) {
+              setTabValue("ill");
+              setIllustrationAnchorEl(null);
+            }
+          }}
         />
+        <Slide
+          direction="right"
+          in={iconPin || illPin}
+          mountOnEnter
+          unmountOnExit
+        >
+          <Paper
+            elevation={3}
+            sx={{ position: "absolute", top: "55px", right: "15px" }}
+          >
+            <Tabs
+              value={tabValue}
+              onChange={(event: React.SyntheticEvent, newValue: string) =>
+                setTabValue(newValue)
+              }
+            >
+              {iconPin ? <Tab label={t("icon.icon")} value="icon" /> : null}
+              {illPin ? (
+                <Tab label={t("illustration.illustration")} value="ill" />
+              ) : null}
+            </Tabs>
+            <IconButton
+              sx={{ position: "absolute", top: "5px", right: "8px" }}
+              onClick={() => {
+                if (tabValue === "icon") {
+                  setTabValue("ill");
+                  setIconPin(false);
+                }
+                if (tabValue === "ill") {
+                  setTabValue("icon");
+                  setIllPin(false);
+                }
+              }}
+            >
+              <Close />
+            </IconButton>
+            {iconPin && tabValue === "icon" ? (
+              <Icons
+                handleClickIcon={handleClickIcon}
+                handleDelete={handleDeleteIcon}
+                iconCategory={iconCategory}
+              />
+            ) : null}
+            {illPin && tabValue === "ill" ? (
+              <Illustrations handleClick={handleClickIllustration} />
+            ) : null}
+          </Paper>
+        </Slide>
+
         <Link
           anchorEl={linkAnchorEl}
           initUrl={initUrl}

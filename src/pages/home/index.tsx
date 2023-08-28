@@ -369,6 +369,7 @@ export default function Home() {
           >
             <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
               <NodeToolbar
+                selectedIds={selectedIds}
                 handleCheckBox={handleCheckBox}
                 handleAddChild={handleAddChild}
                 handleAddNext={handleAddNext}

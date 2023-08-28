@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function NodeToolbar({
+  selectedIds,
   handleCheckBox,
   handleAddChild,
   handleAddNext,
@@ -19,6 +20,7 @@ export default function NodeToolbar({
   handleUpdateNode,
   handleBack,
 }: {
+  selectedIds: string[];
   handleCheckBox: () => void;
   handleAddChild: () => void;
   handleAddNext: () => void;
@@ -94,49 +96,55 @@ export default function NodeToolbar({
           onChange={handleInputFileChange}
         />
       </IconFontIconButton>,
-      <IconFontIconButton
-        key="link"
-        title={t("mind.link")}
-        iconName="lianjie"
-        fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
-          handleLink(event.currentTarget)
-        }
-      />,
-      <IconFontIconButton
-        key="import"
-        title={t("mind.import")}
-        iconName="daoru"
-        fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-      >
-        <input
-          type="file"
-          multiple
-          style={{
-            opacity: 0,
-            position: "absolute",
-            fontSize: "100px",
-            right: 0,
-            top: 0,
-            width: "100%",
-            height: "100%",
-            cursor: "pointer",
-          }}
-          onChange={(e: any) => handleImport(e)}
+      selectedIds.length === 1 ? (
+        <IconFontIconButton
+          key="link"
+          title={t("mind.link")}
+          iconName="lianjie"
+          fontSize={30}
+          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+            handleLink(event.currentTarget)
+          }
         />
-      </IconFontIconButton>,
-      <IconFontIconButton
-        key="export"
-        title={t("mind.export")}
-        iconName="daochu"
-        fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={handleExport}
-      />,
+      ) : null,
+      selectedIds.length === 1 ? (
+        <IconFontIconButton
+          key="import"
+          title={t("mind.import")}
+          iconName="daoru"
+          fontSize={30}
+          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        >
+          <input
+            type="file"
+            multiple
+            style={{
+              opacity: 0,
+              position: "absolute",
+              fontSize: "100px",
+              right: 0,
+              top: 0,
+              width: "100%",
+              height: "100%",
+              cursor: "pointer",
+            }}
+            onChange={(e: any) => handleImport(e)}
+          />
+        </IconFontIconButton>
+      ) : null,
+      selectedIds.length === 1 ? (
+        <IconFontIconButton
+          key="export"
+          title={t("mind.export")}
+          iconName="daochu"
+          fontSize={30}
+          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          onClick={handleExport}
+        />
+      ) : null,
     ],
-    []
+    [selectedIds]
   );
 
   return (
@@ -164,20 +172,24 @@ export default function NodeToolbar({
         }}
         onClick={handleBack}
       />
-      <IconFontIconButton
-        title={t("mind.addChild")}
-        iconName="a-tongjijiedian1x"
-        fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={handleAddChild}
-      />
-      <IconFontIconButton
-        title={t("mind.addNext")}
-        iconName="a-xiajijiedian1x"
-        fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={handleAddNext}
-      />
+      {selectedIds.length === 1 ? (
+        <IconFontIconButton
+          title={t("mind.addChild")}
+          iconName="a-tongjijiedian1x"
+          fontSize={30}
+          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          onClick={handleAddChild}
+        />
+      ) : null}
+      {selectedIds.length === 1 ? (
+        <IconFontIconButton
+          title={t("mind.addNext")}
+          iconName="a-xiajijiedian1x"
+          fontSize={30}
+          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          onClick={handleAddNext}
+        />
+      ) : null}
       <IconFontIconButton
         title={t("toolBar.task")}
         iconName="wancheng"
@@ -257,15 +269,18 @@ export default function NodeToolbar({
           handleAddIcon(event.currentTarget)
         }
       />
-      <IconFontIconButton
-        title={t("mind.addNote")}
-        iconName="beizhu"
-        fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
-          handleAddNote(event.currentTarget)
-        }
-      />
+      {selectedIds.length === 1 ? (
+        <IconFontIconButton
+          title={t("mind.addNote")}
+          iconName="beizhu"
+          fontSize={30}
+          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
+            handleAddNote(event.currentTarget)
+          }
+        />
+      ) : null}
+
       {fullButtons ? [moreButtons] : null}
 
       {!fullButtons ? (
