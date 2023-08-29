@@ -1,4 +1,4 @@
-import { Box, ButtonBase, Popover } from "@mui/material";
+import { Box, Button, ButtonBase, Popover } from "@mui/material";
 import IconFontIconButton from "../../components/common/IconFontIconButton";
 import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
@@ -19,6 +19,7 @@ export default function NodeToolbar({
   handleLink,
   handleUpdateNode,
   handleBack,
+  exportImage,
 }: {
   selectedIds: string[];
   handleCheckBox: () => void;
@@ -34,6 +35,7 @@ export default function NodeToolbar({
   handleLink: (anchorEl: HTMLElement) => void;
   handleUpdateNode: (key: string, value?: string) => void;
   handleBack: () => void;
+  exportImage: (type: "svg" | "png" | "pdf") => void;
 }) {
   const { t } = useTranslation();
   const fullButtons = useMediaQuery("(min-height:960px)");
@@ -41,6 +43,10 @@ export default function NodeToolbar({
   const styleOpen = Boolean(styleAnchorEl);
   const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
   const moreOpen = Boolean(moreAnchorEl);
+  const [exportAnchorEl, setExportAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const exportOpen = Boolean(exportAnchorEl);
 
   function handleInputFileChange(event: any) {
     const files = event.target.files;
@@ -61,6 +67,14 @@ export default function NodeToolbar({
 
   const handleCloseMore = () => {
     setMoreAnchorEl(null);
+  };
+
+  const handleOpenExport = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setExportAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseExport = () => {
+    setExportAnchorEl(null);
   };
 
   const moreButtons = useMemo(
@@ -140,7 +154,7 @@ export default function NodeToolbar({
           iconName="daochu"
           fontSize={30}
           style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-          onClick={handleExport}
+          onClick={handleOpenExport}
         />
       ) : null,
     ],
@@ -312,6 +326,30 @@ export default function NodeToolbar({
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         onClick={handleDelete}
       />
+      <Popover
+        anchorEl={exportAnchorEl}
+        open={exportOpen}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseExport}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Button color="inherit" onClick={handleExport}>
+            {t("mind.export")}
+          </Button>
+          <Button color="inherit" onClick={() => exportImage("svg")}>
+            SVG
+          </Button>
+          <Button color="inherit" onClick={() => exportImage("png")}>
+            PNG
+          </Button>
+          <Button color="inherit" onClick={() => exportImage("pdf")}>
+            PDF
+          </Button>
+        </div>
+      </Popover>
     </Box>
   );
 }

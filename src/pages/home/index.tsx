@@ -320,6 +320,10 @@ export default function Home() {
     }
   }
 
+  function exportImage(type: "svg" | "png" | "pdf") {
+    editorRef.current.exportImage(type);
+  }
+
   return (
     <Box
       sx={{
@@ -383,6 +387,7 @@ export default function Home() {
                 handleLink={handleLink}
                 handleUpdateNode={handleUpdateNode}
                 handleBack={handleBack}
+                exportImage={exportImage}
               />
             </div>
           </Slide>

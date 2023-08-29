@@ -144,6 +144,9 @@ const Editor = React.forwardRef(
         treeRef?.current.setselectedId("");
         treeRef?.current.setSelectedNodes([]);
       },
+      exportImage: (type: "svg" | "png" | "pdf") => {
+        treeRef?.current.exportImage(type);
+      },
     }));
 
     const handleChange = useCallback(
