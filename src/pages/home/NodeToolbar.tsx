@@ -19,7 +19,6 @@ export default function NodeToolbar({
   handleLink,
   handleUpdateNode,
   handleBack,
-  exportImage,
 }: {
   selectedIds: string[];
   handleCheckBox: () => void;
@@ -30,12 +29,11 @@ export default function NodeToolbar({
   handleAddIllustration: (anchorEl: HTMLElement) => void;
   handleFileChange: (files: FileList) => void;
   handleDelete: () => void;
-  handleExport: () => void;
-  handleImport: (e: any) => void;
+  handleExport: (type?: string) => void;
+  handleImport: (type: string, e: any) => void;
   handleLink: (anchorEl: HTMLElement) => void;
   handleUpdateNode: (key: string, value?: string) => void;
   handleBack: () => void;
-  exportImage: (type: "svg" | "png" | "pdf") => void;
 }) {
   const { t } = useTranslation();
   const fullButtons = useMediaQuery("(min-height:960px)");
@@ -47,6 +45,10 @@ export default function NodeToolbar({
     null
   );
   const exportOpen = Boolean(exportAnchorEl);
+  const [importAnchorEl, setImportAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const importOpen = Boolean(importAnchorEl);
 
   function handleInputFileChange(event: any) {
     const files = event.target.files;
@@ -77,6 +79,25 @@ export default function NodeToolbar({
     setExportAnchorEl(null);
   };
 
+  const handleOpenImport = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setImportAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseImport = () => {
+    setImportAnchorEl(null);
+  };
+
+  const inputStype: React.CSSProperties = {
+    opacity: 0,
+    position: "absolute",
+    fontSize: "100px",
+    right: 0,
+    top: 0,
+    width: "100%",
+    height: "100%",
+    cursor: "pointer",
+  };
+
   const moreButtons = useMemo(
     () => [
       <IconFontIconButton
@@ -99,14 +120,7 @@ export default function NodeToolbar({
         <input
           accept="image/*"
           type="file"
-          style={{
-            opacity: 0,
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-          }}
+          style={inputStype}
           onChange={handleInputFileChange}
         />
       </IconFontIconButton>,
@@ -129,23 +143,8 @@ export default function NodeToolbar({
           iconName="daoru"
           fontSize={30}
           style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        >
-          <input
-            type="file"
-            multiple
-            style={{
-              opacity: 0,
-              position: "absolute",
-              fontSize: "100px",
-              right: 0,
-              top: 0,
-              width: "100%",
-              height: "100%",
-              cursor: "pointer",
-            }}
-            onChange={(e: any) => handleImport(e)}
-          />
-        </IconFontIconButton>
+          onClick={handleOpenImport}
+        ></IconFontIconButton>
       ) : null,
       selectedIds.length === 1 ? (
         <IconFontIconButton
@@ -336,17 +335,41 @@ export default function NodeToolbar({
         onClose={handleCloseExport}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Button color="inherit" onClick={handleExport}>
-            {t("mind.export")}
+          <Button color="inherit" onClick={() => handleExport()}>
+            {t("mind.file")}
           </Button>
-          <Button color="inherit" onClick={() => exportImage("svg")}>
-            SVG
+          <Button color="inherit" onClick={() => handleExport("opml")}>
+            OPML
           </Button>
-          <Button color="inherit" onClick={() => exportImage("png")}>
-            PNG
+        </div>
+      </Popover>
+      <Popover
+        anchorEl={importAnchorEl}
+        open={importOpen}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseImport}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Button color="inherit">
+            {t("mind.file")}
+            <input
+              type="file"
+              accept=".mind"
+              style={inputStype}
+              onChange={(e: any) => handleImport("file", e)}
+            />
           </Button>
-          <Button color="inherit" onClick={() => exportImage("pdf")}>
-            PDF
+          <Button color="inherit">
+            OPML
+            <input
+              type="file"
+              accept=".opml"
+              style={inputStype}
+              onChange={(e: any) => handleImport("opml", e)}
+            />
           </Button>
         </div>
       </Popover>

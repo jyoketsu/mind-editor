@@ -1150,6 +1150,11 @@
     "@types/react" "*"
     hoist-non-react-statics "^3.3.0"
 
+"@types/jstoxml@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@types/jstoxml/-/jstoxml-2.0.2.tgz#7ccfe12412857cc541a737ae56ce2559bd9b8ef4"
+  integrity sha512-60VaXPlZbd7tEhloAkE2E0lg+QoWpnGusdy+2pGMGFFpdsyxm/1GKs0o/nLJJKWXci92cnq2utmqaV5L7Zjqxw==
+
 "@types/node@^17.0.41":
   version "17.0.41"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.41.tgz#1607b2fd3da014ae5d4d1b31bc792a39348dfb9b"
@@ -1861,6 +1866,11 @@ jspdf@^2.5.1:
     dompurify "^2.2.0"
     html2canvas "^1.0.0-rc.5"
 
+jstoxml@^3.2.8:
+  version "3.2.8"
+  resolved "https://registry.yarnpkg.com/jstoxml/-/jstoxml-3.2.8.tgz#62b79943836bf02cfa418d91a3875d90a5064ac6"
+  integrity sha512-U/TYY7dFjfn6bvaix5WHLss4lSsZ0ER1LU6DqrQfCTkhwWADMuc4L5bKPTiXA2YzL58NcS8sRioQRPGR2p5J5g==
+
 lines-and-columns@^1.1.6:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
@@ -2553,10 +2563,10 @@ tr46@~0.0.3:
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=
 
-tree-graph-react@2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/tree-graph-react/-/tree-graph-react-2.3.3.tgz#163b8ad1ddb1bc75f441c37ef332904a81f3c7dc"
-  integrity sha512-3dTX2hKjCVi1S8EdMvZU+kgwyQGokl9UBDKIF+rtfVn+I3L4ZHGQfKLPZnxwyUE3ugf0Gu3vOpLUFzn35mD6Yg==
+tree-graph-react@2.3.4:
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/tree-graph-react/-/tree-graph-react-2.3.4.tgz#1c80961501857c7788aeb21f5d430a1f17dfbcb8"
+  integrity sha512-YvaqfJqNujJRPEhhqaetU6LA/fYnEWWhLF0KPXRjfdROGZ4mwOVadrWkZSydN+QAciUldq9vVV3HNHmwC79sbA==
   dependencies:
     jspdf "^2.5.1"
     lodash "^4.17.21"

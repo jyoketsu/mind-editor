@@ -93,7 +93,7 @@ export function Icons({
       sx={{
         maxWidth: "420px",
         padding: "0 15px",
-        height: "calc(100vh - 170px)",
+        height: iconCategory ? undefined : "calc(100vh - 170px)",
         overflow: "auto",
       }}
     >

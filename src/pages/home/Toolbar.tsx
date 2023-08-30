@@ -22,6 +22,9 @@ export default function Toolbar({
   handleSetConfig,
   handleUndo,
   handleRedo,
+  handleExport,
+  handleImport,
+  exportImage,
 }: {
   viewType: string;
   config: Config | null;
@@ -33,6 +36,9 @@ export default function Toolbar({
   handleSetConfig: (config: Config) => void;
   handleUndo: () => void;
   handleRedo: () => void;
+  handleExport: (type?: string) => void;
+  handleImport: (type: string, e: any) => void;
+  exportImage: (type: "svg" | "png" | "pdf") => void;
 }) {
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
@@ -48,6 +54,14 @@ export default function Toolbar({
   const languageOpen = Boolean(languageAnchorEl);
   const [themeAnchorEl, setThemeAnchorEl] = useState<null | HTMLElement>(null);
   const themeOpen = Boolean(themeAnchorEl);
+  const [exportAnchorEl, setExportAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const exportOpen = Boolean(exportAnchorEl);
+  const [importAnchorEl, setImportAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const importOpen = Boolean(importAnchorEl);
 
   const boxStyle: React.CSSProperties = {
     position: "relative",
@@ -56,6 +70,17 @@ export default function Toolbar({
     columnGap: "12px",
     rowGap: "12px",
     margin: "15px 0",
+  };
+
+  const inputStype: React.CSSProperties = {
+    opacity: 0,
+    position: "absolute",
+    fontSize: "100px",
+    right: 0,
+    top: 0,
+    width: "100%",
+    height: "100%",
+    cursor: "pointer",
   };
 
   const iconName = useMemo(() => {
@@ -180,6 +205,22 @@ export default function Toolbar({
       ...(config || {}),
       ...{ rainbowColor: event.target.checked },
     });
+  };
+
+  const handleOpenExport = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setExportAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseExport = () => {
+    setExportAnchorEl(null);
+  };
+
+  const handleOpenImport = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setImportAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseImport = () => {
+    setImportAnchorEl(null);
   };
 
   return (
@@ -388,21 +429,85 @@ export default function Toolbar({
               {`+${t("toolBar.custom")}`}
               <input
                 type="file"
-                multiple
-                style={{
-                  opacity: 0,
-                  position: "absolute",
-                  fontSize: "100px",
-                  right: 0,
-                  top: 0,
-                  width: "100%",
-                  height: "100%",
-                  cursor: "pointer",
-                }}
+                accept="image/jpeg,image/png"
+                style={inputStype}
                 onChange={(e: any) => customBackground(e)}
               />
             </Button>
           </div>
+        </div>
+      </Popover>
+      <IconFontIconButton
+        key="import"
+        title={t("mind.import")}
+        iconName="daoru"
+        fontSize={30}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        onClick={handleOpenImport}
+      ></IconFontIconButton>
+      <Popover
+        anchorEl={importAnchorEl}
+        open={importOpen}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseImport}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Button color="inherit">
+            {t("mind.file")}
+            <input
+              type="file"
+              accept=".mind"
+              style={inputStype}
+              onChange={(e: any) => handleImport("file", e)}
+            />
+          </Button>
+          <Button color="inherit">
+            OPML
+            <input
+              type="file"
+              accept=".opml"
+              style={inputStype}
+              onChange={(e: any) => handleImport("opml", e)}
+            />
+          </Button>
+        </div>
+      </Popover>
+      <IconFontIconButton
+        key="export"
+        title={t("mind.export")}
+        iconName="daochu"
+        fontSize={30}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        onClick={handleOpenExport}
+      />
+      <Popover
+        anchorEl={exportAnchorEl}
+        open={exportOpen}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseExport}
+      >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Button color="inherit" onClick={() => handleExport()}>
+            {t("mind.file")}
+          </Button>
+          <Button color="inherit" onClick={() => handleExport("opml")}>
+            OPML
+          </Button>
+          <Button color="inherit" onClick={() => exportImage("svg")}>
+            SVG
+          </Button>
+          <Button color="inherit" onClick={() => exportImage("png")}>
+            PNG
+          </Button>
+          <Button color="inherit" onClick={() => exportImage("pdf")}>
+            PDF
+          </Button>
         </div>
       </Popover>
       <div style={{ flex: 1 }} />

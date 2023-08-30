@@ -1,5 +1,7 @@
 import NodeMap from "tree-graph-react/dist/interfaces/NodeMap";
-import Node from "tree-graph-react/dist/interfaces/Node";
+import { default as TreeNode } from "tree-graph-react/dist/interfaces/Node";
+import { TreeData } from "../redux/reducer/serviceSlice";
+import { toXML } from "jstoxml";
 
 export const is_mobile = () => {
   let regex_match =
@@ -193,26 +195,28 @@ export const plainTextToNaotuFormat = (text: string) => {
  * @returns
  */
 export const getAncestor = (
-  node: Node,
+  node: TreeNode,
   nodeMap: NodeMap,
   includeSelf?: boolean
 ) => {
-  const getFather = (node: Node) => {
-    const father = nodeMap[node.father];
+  const getFather = (node: TreeNode) => {
+    const father: TreeNode = nodeMap[node.father];
     if (father) {
       ancestorList.unshift(father);
       getFather(father);
     }
   };
 
-  let ancestorList: Node[] = includeSelf ? [node] : [];
+  let ancestorList: TreeNode[] = includeSelf ? [node] : [];
   getFather(node);
   return ancestorList;
 };
 
-export function exportFile(data: any, fileName: string) {
+export function exportFile(data: any, fileName: string, type?: string) {
   // 声明blob对象
-  const streamData = new Blob([data], { type: "application/octet-stream" });
+  const streamData = new Blob([data], {
+    type: type || "application/octet-stream",
+  });
   // ie || edge 浏览器
   // @ts-ignore
   if (window.navigator && window.navigator.msSaveOrOpenBlob) {
@@ -294,4 +298,115 @@ export function isColorDark(color: string) {
 
   // 如果亮度小于阈值（一般取128），则判断为暗色
   return brightness < 128;
+}
+
+export function convert2Opml(treeData: TreeData) {
+  const root = treeData.data[treeData.rootKey];
+  let data = {};
+  if (root) {
+    data = convert2XmlObj(root);
+  }
+
+  function convert2XmlObj(node: TreeNode) {
+    let data: any = {};
+    let children = [];
+    for (let index = 0; index < node.sortList.length; index++) {
+      const childKey = node.sortList[index];
+      const child = treeData.data[childKey];
+      if (child) {
+        const childData = convert2XmlObj(child);
+        children.push(childData);
+      }
+    }
+    (data._name = "outline"),
+      (data._attrs = { text: node.name }),
+      (data._content = [children]);
+    return data;
+  }
+
+  const xml = toXML(
+    {
+      _name: "opml",
+      _attrs: {
+        version: "2.0",
+      },
+      _content: {
+        head: [
+          {
+            dateCreated: () => new Date(),
+          },
+          {
+            dateModified: () => new Date(),
+          },
+        ],
+
+        body: data,
+      },
+    },
+    {
+      header: true,
+      indent: "  ",
+    }
+  );
+  return xml;
+}
+
+export function opml2json(opml: string) {
+  // 创建 DOMParser 实例
+  const parser = new DOMParser();
+  // 解析 XML 字符串为 DOM 文档
+  const xmlDoc = parser.parseFromString(opml, "text/xml");
+  const body = xmlDoc.querySelector("body");
+  let json;
+  for (const childNode of body?.childNodes || []) {
+    if (childNode.nodeType === Node.ELEMENT_NODE) {
+      json = xmlToJSON(childNode);
+      break;
+    }
+  }
+
+  let rootKey: string = "";
+  let data: NodeMap = {};
+  if (json) {
+    json2nodeMap(json);
+    return { rootKey, data };
+  } else {
+    return null;
+  }
+
+  function json2nodeMap(node: any, fatherKey?: string) {
+    const _key = guid(8, 16);
+    if (!rootKey) {
+      rootKey = _key;
+    }
+    let sortList = [];
+    for (
+      let index = 0;
+      node.sortList && index < node.sortList.length;
+      index++
+    ) {
+      const childNode = node.sortList[index];
+      const childKey = json2nodeMap(childNode, _key);
+      sortList.push(childKey);
+    }
+    data[_key] = { _key, name: node.name, father: fatherKey || "", sortList };
+    return _key;
+  }
+
+  function xmlToJSON(node: any) {
+    const result: any = {};
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      result.name = node.getAttribute("text");
+      const childNodes = node.childNodes;
+      const childElements = Array.from(childNodes).filter(
+        (childNode: any) => childNode.nodeType === Node.ELEMENT_NODE
+      );
+      if (childElements.length > 0) {
+        result.sortList = childElements.map((childElement) =>
+          xmlToJSON(childElement)
+        );
+      }
+    }
+    return result;
+  }
 }

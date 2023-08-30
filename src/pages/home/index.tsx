@@ -6,10 +6,12 @@ import { useLocation } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { setDark, setLoading } from "../../redux/reducer/commonSlice";
 import {
+  convert2Opml,
   exportFile,
   getSearchParamValue,
   isColorDark,
   isImageDarkOrLight,
+  opml2json,
 } from "../../utils/util";
 import {
   TreeData,
@@ -116,32 +118,45 @@ export default function Home() {
     }
   }, [docData]);
 
-  const handleExport = () => {
-    if (docData) {
-      const root = docData.data[docData.rootKey];
-      exportFile(JSON.stringify(docData), `${root.name}.mind`);
+  const handleExport = (type?: string) => {
+    const data = editorRef.current.getNodes();
+    // if (config) {
+    //   data.config = config;
+    // }
+    if (data) {
+      const root = data.data[data.rootKey];
+      if (type === "opml") {
+        const xml = convert2Opml(data);
+        exportFile(xml, `${root.name}.opml`);
+      } else {
+        exportFile(JSON.stringify(data), `${root.name}.mind`, "text/xml");
+      }
     }
   };
 
-  const handleChange = (event: any) => {
+  const handleChange = (type: string, event: any) => {
     const file = event.target.files[0];
     if (!file || !patchDataApi) return;
     const reader = new FileReader();
     reader.onload = function fileReadCompleted() {
       // console.log(reader.result);
-      if (
-        reader.result &&
-        typeof reader.result === "string" &&
-        reader.result.includes("rootKey")
-      ) {
-        const data = JSON.parse(reader.result);
-        dispatch(setDocData(data));
-        dispatch(
-          saveDoc({
-            patchDataApi,
-            data,
-          })
-        );
+      if (reader.result && typeof reader.result === "string") {
+        let data;
+        if (type === "file" && reader.result.includes("rootKey")) {
+          data = JSON.parse(reader.result);
+        }
+        if (type === "opml") {
+          data = opml2json(reader.result);
+        }
+        if (data) {
+          dispatch(setDocData(data));
+          dispatch(
+            saveDoc({
+              patchDataApi,
+              data,
+            })
+          );
+        }
       }
     };
     reader.readAsText(file);
@@ -387,7 +402,6 @@ export default function Home() {
                 handleLink={handleLink}
                 handleUpdateNode={handleUpdateNode}
                 handleBack={handleBack}
-                exportImage={exportImage}
               />
             </div>
           </Slide>
@@ -412,6 +426,9 @@ export default function Home() {
                 handleSetConfig={handleSetConfig}
                 handleUndo={handleUndo}
                 handleRedo={handleRedo}
+                handleExport={handleExport}
+                handleImport={handleChange}
+                exportImage={exportImage}
               />
             </div>
           </Slide>
