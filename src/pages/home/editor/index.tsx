@@ -220,6 +220,11 @@ const Editor = React.forwardRef(
 
     const handlePasteText = useCallback(
       (text: string) => {
+        // 打开note后，屏蔽fileChange，不然在note中黏贴也会触发
+        const noteEl = document.getElementById("note-editor");
+        if (noteEl) {
+          return;
+        }
         if (text) {
           handleImport(text);
         }
@@ -315,6 +320,12 @@ const Editor = React.forwardRef(
       nodeName: string,
       files: FileList
     ) {
+      // 打开note后，屏蔽fileChange，不然在note中黏贴也会触发
+      const noteEl = document.getElementById("note-editor");
+      if (noteEl) {
+        return;
+      }
+
       const file = files[0];
       if (file.type.startsWith("image/")) {
         if (getUptokenApi) {
@@ -843,9 +854,8 @@ const Editor = React.forwardRef(
       <div
         className="editor"
         style={{
-          position: "relative",
           width: "100%",
-          height: "100%",
+          height: "100vh",
           overflow: "hidden",
         }}
       >

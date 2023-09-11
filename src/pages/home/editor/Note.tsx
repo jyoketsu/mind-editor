@@ -308,7 +308,7 @@ export default function Note({
             </button> */}
           </Box>
         ) : null}
-        <div style={{ flex: 1, overflow: "auto" }}>
+        <div id="note-editor" style={{ flex: 1, overflow: "auto" }}>
           <EditorContent editor={editor} />
         </div>
 
