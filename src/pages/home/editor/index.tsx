@@ -613,6 +613,12 @@ const Editor = React.forwardRef(
       }
 
       handleCloseIcons();
+      setTimeout(() => {
+        const svgWrapperElement: any = document.querySelector(".svg-wrapper");
+        if (svgWrapperElement) {
+          svgWrapperElement.focus();
+        }
+      }, 500);
     }
 
     function handleDeleteIcon(category: string) {
@@ -688,6 +694,12 @@ const Editor = React.forwardRef(
         });
       }
       handleCloseIllustration();
+      setTimeout(() => {
+        const svgWrapperElement: any = document.querySelector(".svg-wrapper");
+        if (svgWrapperElement) {
+          svgWrapperElement.focus();
+        }
+      }, 500);
     }
 
     async function handleSetLink(url: string, text: string) {
@@ -873,6 +885,9 @@ const Editor = React.forwardRef(
             display: "flex",
             justifyContent: "center",
             alignItems: "flex-start",
+            position: "absolute",
+            left: 0,
+            top: 0,
           }}
           rightClickToStart={true}
         >
