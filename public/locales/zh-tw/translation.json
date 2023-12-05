@@ -64,7 +64,11 @@
     "style": "樣式",
     "reset": "還原",
     "more": "更多",
-    "rainbowColor": "彩虹色"
+    "rainbowColor": "彩虹色",
+    "taskStat": "任務統計",
+    "language": "切換語言",
+    "totalTask": "總任務",
+    "completed": "已完成"
   },
   "shortcut": {
     "enter": "弟節點",

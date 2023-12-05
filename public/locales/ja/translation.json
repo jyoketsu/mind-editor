@@ -64,7 +64,11 @@
     "style": "スタイル",
     "reset": "リセット",
     "more": "もっと",
-    "rainbowColor": "虹色"
+    "rainbowColor": "虹色",
+    "taskStat": "タスク統計",
+    "language": "言語切り替え",
+    "totalTask": "総タスク",
+    "completed": "完了済み"
   },
   "shortcut": {
     "enter": "次のノードを追加",

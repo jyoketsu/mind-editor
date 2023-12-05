@@ -12,6 +12,7 @@ import Config from "../../interface/Config";
 import api from "../../utils/api";
 import qiniuUpload from "../../utils/qiniu";
 import { isColorDark, isImageDarkOrLight } from "../../utils/util";
+import TaskStat from "./TaskStat";
 
 export default function Toolbar({
   viewType,
@@ -50,7 +51,11 @@ export default function Toolbar({
   const [languageAnchorEl, setLanguageAnchorEl] = useState<null | HTMLElement>(
     null
   );
+  const [optionsAnchorEl, setOptionsAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
   const [rainbowColor, setRainbowColor] = useState(false);
+  const [taskStatOpen, setTaskStatOpen] = useState(false);
   const languageOpen = Boolean(languageAnchorEl);
   const [themeAnchorEl, setThemeAnchorEl] = useState<null | HTMLElement>(null);
   const themeOpen = Boolean(themeAnchorEl);
@@ -112,6 +117,14 @@ export default function Toolbar({
 
   const handleOpenLanguage = (event: React.MouseEvent<HTMLButtonElement>) => {
     setLanguageAnchorEl(event.currentTarget);
+  };
+
+  const handleOpenOptions = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setOptionsAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseOptions = () => {
+    setOptionsAnchorEl(null);
   };
 
   const handleCloseLanguage = () => {
@@ -529,11 +542,18 @@ export default function Toolbar({
       />
       <IconFontIconButton
         title=""
+        iconName="a-gengduo1"
+        fontSize={30}
+        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        onClick={handleOpenOptions}
+      />
+      {/* <IconFontIconButton
+        title=""
         iconName="zhongyingwenqiehuan"
         fontSize={30}
         style={{ borderRadius: "unset", width: "100%", height: "68px" }}
         onClick={handleOpenLanguage}
-      />
+      /> */}
       <Popover
         anchorEl={languageAnchorEl}
         open={languageOpen}
@@ -570,6 +590,67 @@ export default function Toolbar({
           </Button>
         </div>
       </Popover>
+      <Popover
+        anchorEl={optionsAnchorEl}
+        open={Boolean(optionsAnchorEl)}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        onClose={handleCloseOptions}
+      >
+        <div
+          style={{ width: "130px", display: "flex", flexDirection: "column" }}
+        >
+          <Button
+            color="inherit"
+            onClick={() => {
+              setOptionsAnchorEl(null);
+              setTaskStatOpen(true);
+            }}
+          >
+            {t("toolBar.taskStat")}
+          </Button>
+          <Button color="inherit">{t("toolBar.language")}</Button>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "start",
+              marginLeft: "35px",
+            }}
+          >
+            <Button
+              color={i18n.language === "zh-CN" ? "primary" : "inherit"}
+              onClick={() => changeLanguage("zh-CN")}
+            >
+              简化字
+            </Button>
+            <Button
+              color={i18n.language === "zh-TW" ? "primary" : "inherit"}
+              onClick={() => changeLanguage("zh-TW")}
+            >
+              繁體字
+            </Button>
+            <Button
+              color={i18n.language === "en" ? "primary" : "inherit"}
+              onClick={() => changeLanguage("en")}
+            >
+              English
+            </Button>
+            <Button
+              color={i18n.language === "ja" ? "primary" : "inherit"}
+              onClick={() => changeLanguage("ja")}
+            >
+              日本語
+            </Button>
+          </div>
+        </div>
+      </Popover>
+      <TaskStat
+        open={taskStatOpen}
+        handleClose={() => setTaskStatOpen(false)}
+      />
     </div>
   );
 }

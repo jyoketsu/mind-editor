@@ -64,7 +64,11 @@
     "style": "Style",
     "reset": "Reset",
     "more": "More",
-    "rainbowColor": "Rainbow color"
+    "rainbowColor": "Rainbow color",
+    "taskStat": "Statistics",
+    "language": "Language",
+    "totalTask": "Total Tasks",
+    "completed": "Completed"
   },
   "shortcut": {
     "enter": "Silbing",
