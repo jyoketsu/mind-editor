@@ -1,9 +1,10 @@
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { useEffect, useState } from "react";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { getDoc } from "../../redux/reducer/serviceSlice";
 
 export default function TaskStat({
   open,
@@ -13,9 +14,18 @@ export default function TaskStat({
   handleClose: () => void;
 }) {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const docData = useAppSelector((state) => state.service.docData);
+  const getDataApi = useAppSelector((state) => state.service.getDataApi);
+  const changed = useAppSelector((state) => state.service.changed);
   const [totalTask, setTotalTask] = useState(0);
   const [completed, setCompleted] = useState(0);
+
+  useEffect(() => {
+    if (getDataApi && open && !changed) {
+      dispatch(getDoc(getDataApi));
+    }
+  }, [getDataApi, open, changed]);
 
   useEffect(() => {
     let totalTask = 0;
@@ -35,7 +45,7 @@ export default function TaskStat({
     }
     setTotalTask(totalTask);
     setCompleted(completed);
-  }, [open]);
+  }, [docData]);
 
   return (
     <Modal open={open} onClose={handleClose}>
