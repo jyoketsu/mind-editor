@@ -342,12 +342,14 @@ export default function Home() {
   return (
     <Box
       sx={{
-        position: "relative",
+        position: "fixed",
+        top: 0,
+        left: 0,
         width: "100%",
         height: "100%",
         // display: "grid",
         // gridTemplateRows: "48px 1fr",
-        overflow: "hidden",
+        // overflow: "hidden",
         background: config?.background
           ? /^#[a-zA-Z0-9]*/gm.test(config.background)
             ? config.background
@@ -361,6 +363,7 @@ export default function Home() {
       <div onKeyDown={handleKeyDown}>
         <Editor
           ref={editorRef}
+          readonly={false}
           viewType={viewType}
           config={config}
           history={history}

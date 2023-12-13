@@ -61,20 +61,24 @@ let configLoaded = false;
 const Editor = React.forwardRef(
   (
     {
+      readonly,
       viewType,
       config,
       history,
       historyIndex,
+      zoomRatio,
       handleSetHistory,
       handleSetHistoryIndex,
       handleClickNode,
     }: {
+      readonly: boolean;
       viewType: string;
       config: Config | null;
-      history: TreeData[];
-      historyIndex: number;
-      handleSetHistory: (history: TreeData[]) => void;
-      handleSetHistoryIndex: (index: number) => void;
+      history?: TreeData[];
+      historyIndex?: number;
+      zoomRatio?: number;
+      handleSetHistory?: (history: TreeData[]) => void;
+      handleSetHistoryIndex?: (index: number) => void;
       handleClickNode: (node: CNode) => void;
     },
     ref
@@ -154,14 +158,18 @@ const Editor = React.forwardRef(
         clearTimeout(timeout);
         dispatch(setChanged(true));
 
-        if (!skipHistory) {
+        if (!skipHistory && history) {
           const data = getData();
           const historyArr = [...history, data];
           if (history.length > 10) {
             historyArr.shift();
           }
-          handleSetHistory(historyArr);
-          handleSetHistoryIndex(historyArr.length - 1);
+          if (handleSetHistory) {
+            handleSetHistory(historyArr);
+          }
+          if (handleSetHistoryIndex) {
+            handleSetHistoryIndex(historyArr.length - 1);
+          }
         }
 
         timeout = setTimeout(() => {
@@ -791,6 +799,7 @@ const Editor = React.forwardRef(
               // handleChangeNodeText={(nodeId: string, text: string) =>
               //   handleChangeNodeText(nodeId, text)
               // }
+              disabled={readonly}
               showChildNum={true}
               singleColumn={viewType.startsWith("single-")}
               handleChange={handleChange}
@@ -828,6 +837,7 @@ const Editor = React.forwardRef(
               // handleChangeNodeText={(nodeId: string, text: string) =>
               //   handleChangeNodeText(nodeId, text)
               // }
+              disabled={readonly}
               pathWidth={2}
               pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
               nodeColor={config?.nodeColor || undefined}
@@ -891,7 +901,7 @@ const Editor = React.forwardRef(
           }}
           rightClickToStart={true}
         >
-          {tree}
+          <div style={{ transform: `scale(${zoomRatio || 1})` }}>{tree}</div>
         </Moveable>
         <Dialog
           sx={{ "& .MuiDialog-paper": { width: "80%", maxHeight: 435 } }}
@@ -910,7 +920,7 @@ const Editor = React.forwardRef(
         <Menu anchorEl={anchorEl} open={open} onClose={handleCloseContextMenu}>
           <IconFontIconButton
             title={t("mind.addChild")}
-            iconName="a-xiajijiedian1x"
+            iconName="a-tongjijiedian1x"
             fontSize={23}
             dividerSize={5}
             style={contextMenuStyle}
@@ -918,7 +928,7 @@ const Editor = React.forwardRef(
           />
           <IconFontIconButton
             title={t("mind.addNext")}
-            iconName="a-tongjijiedian1x"
+            iconName="a-xiajijiedian1x"
             fontSize={23}
             dividerSize={5}
             style={contextMenuStyle}

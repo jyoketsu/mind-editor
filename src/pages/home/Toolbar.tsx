@@ -13,6 +13,7 @@ import api from "../../utils/api";
 import qiniuUpload from "../../utils/qiniu";
 import { isColorDark, isImageDarkOrLight } from "../../utils/util";
 import TaskStat from "./TaskStat";
+import IconFont from "../../components/common/IconFont";
 
 export default function Toolbar({
   viewType,
@@ -157,10 +158,20 @@ export default function Toolbar({
     data[key] = value;
     if (/^#[a-zA-Z0-9]*/gm.test(value)) {
       const isDark = isColorDark(value);
-      if (isDark) {
-        dispatch(setDark(true));
+      if (key === "lineColor") {
+        if (!config?.background) {
+          if (isDark) {
+            dispatch(setDark(false));
+          } else {
+            dispatch(setDark(true));
+          }
+        }
       } else {
-        dispatch(setDark(false));
+        if (isDark) {
+          dispatch(setDark(true));
+        } else {
+          dispatch(setDark(false));
+        }
       }
     } else {
       isImageDarkOrLight(value, (isDark: boolean) => {
@@ -350,6 +361,7 @@ export default function Toolbar({
                     (color, index) => (
                       <ColorBox
                         key={index}
+                        isLine
                         background={color}
                         selected={color === config?.lineColor ? true : false}
                         onClick={(val) => handleClickColor(val, "lineColor")}
@@ -611,40 +623,9 @@ export default function Toolbar({
           >
             {t("toolBar.taskStat")}
           </Button>
-          <Button color="inherit">{t("toolBar.language")}</Button>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "start",
-              marginLeft: "35px",
-            }}
-          >
-            <Button
-              color={i18n.language === "zh-CN" ? "primary" : "inherit"}
-              onClick={() => changeLanguage("zh-CN")}
-            >
-              简化字
-            </Button>
-            <Button
-              color={i18n.language === "zh-TW" ? "primary" : "inherit"}
-              onClick={() => changeLanguage("zh-TW")}
-            >
-              繁體字
-            </Button>
-            <Button
-              color={i18n.language === "en" ? "primary" : "inherit"}
-              onClick={() => changeLanguage("en")}
-            >
-              English
-            </Button>
-            <Button
-              color={i18n.language === "ja" ? "primary" : "inherit"}
-              onClick={() => changeLanguage("ja")}
-            >
-              日本語
-            </Button>
-          </div>
+          <Button color="inherit" onClick={handleOpenLanguage}>
+            {t("toolBar.language")}
+          </Button>
         </div>
       </Popover>
       <TaskStat
@@ -658,10 +639,12 @@ export default function Toolbar({
 function ColorBox({
   background,
   selected,
+  isLine,
   onClick,
 }: {
   background: string;
   selected?: boolean;
+  isLine?: boolean;
   onClick: (value: string) => void;
 }) {
   return (
@@ -669,17 +652,27 @@ function ColorBox({
       sx={{
         width: "66px",
         height: "40px",
-        background: /^#[a-zA-Z0-9]*/gm.test(background)
+        background: isLine
+          ? "unset"
+          : /^#[a-zA-Z0-9]*/gm.test(background)
           ? background
           : `url("${background}?imageView2/2/h/132")`,
+        backgroundColor: isLine ? "grey.200" : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center",
         borderRadius: "8px",
-        border: selected || background === "#FFF" ? "3px solid" : "unset",
+        border: selected ? "3px solid" : "unset",
         borderColor: "primary.main",
         cursor: "pointer",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
       onClick={() => onClick(background)}
-    ></Box>
+    >
+      {isLine ? (
+        <IconFont name="buju" fontSize={28} color={background} />
+      ) : null}
+    </Box>
   );
 }

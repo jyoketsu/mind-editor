@@ -71,8 +71,8 @@ export default function Router() {
       <CssBaseline />
       <BrowserRouter>
         <Routes>
-          <Route path={BASE} element={<Home />} />
-          <Route path="preview" element={<Preview />} />
+          <Route path={BASE} element={<Preview />} />
+          <Route path="editor" element={<Home />} />
         </Routes>
       </BrowserRouter>
       {loading || serviceLoading ? <Loading /> : null}

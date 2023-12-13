@@ -52,7 +52,7 @@ export const saveDoc = createAsyncThunk(
       ...params.patchDataApi.params,
       ...dataParam,
     });
-    return res;
+    return { res, data: params.data };
   }
 );
 
@@ -102,12 +102,13 @@ export const serviceSlice = createSlice({
     });
     builder.addCase(saveDoc.fulfilled, (state, action: PayloadAction<any>) => {
       if (
-        action.payload.status === 200 ||
-        action.payload.statusCode === "200"
+        action.payload.res.status === 200 ||
+        action.payload.res.statusCode === "200"
       ) {
         state.changed = false;
+        state.docData = action.payload.data;
       } else {
-        alert(action.payload.msg);
+        alert(action.payload.res.msg);
       }
     });
   },
