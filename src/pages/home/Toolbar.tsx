@@ -67,6 +67,7 @@ export default function Toolbar({
   const [importAnchorEl, setImportAnchorEl] = useState<null | HTMLElement>(
     null
   );
+  const [wallpapers, setWallpapers] = useState([]);
   const importOpen = Boolean(importAnchorEl);
 
   const boxStyle: React.CSSProperties = {
@@ -107,6 +108,19 @@ export default function Toolbar({
   useEffect(() => {
     setRainbowColor(config?.rainbowColor || false);
   }, [config]);
+
+  useEffect(() => {
+    if (themeOpen) {
+      getWallpapers(1);
+    }
+  }, [themeOpen]);
+
+  async function getWallpapers(page: number) {
+    const res: any = await api.wallpaper.get(1, 30);
+    if (res.status === 200) {
+      setWallpapers(res.data);
+    }
+  }
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -252,12 +266,23 @@ export default function Toolbar({
       style={{
         width: "100%",
         height: "100%",
-        paddingBottom: "15px",
+        padding: "15px 0",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
       }}
     >
+      <i
+        style={{
+          width: "32px",
+          height: "32px",
+          backgroundImage: "url('/logo/logo.svg')",
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+          marginTop: "4px",
+          marginBottom: "8px",
+        }}
+      />
       <IconFontIconButton
         title={t("mind.changeView")}
         iconName={iconName}
@@ -341,7 +366,14 @@ export default function Toolbar({
         }}
         onClose={handleCloseTheme}
       >
-        <div style={{ padding: "15px", width: "300px", position: "relative" }}>
+        <div
+          style={{
+            padding: "15px",
+            width: "300px",
+            height: "100%",
+            position: "relative",
+          }}
+        >
           <Typography variant="h4" sx={{ margin: "8px 0" }}>
             {t("toolBar.theme")}
           </Typography>
@@ -435,18 +467,11 @@ export default function Toolbar({
           </div>
           <Typography variant="h6">{t("toolBar.wallpaper")}</Typography>
           <div style={boxStyle}>
-            {[
-              "https://cdn-icare.qingtime.cn/2D37A392.jpg",
-              "https://cdn-icare.qingtime.cn/1603628714015_20151118230621.jpg",
-              "https://cdn-icare.qingtime.cn/1603620783103_v2-9c9c335fde1b23ede0a32f542330e9eb_r.jpg",
-              "https://cdn-icare.qingtime.cn/1603505755074_android-3840x2160-5k-4k-hd-wallpaper-pattern-landscape-orange-yellow-3431.jpg",
-              "https://cdn-icare.qingtime.cn/1603505758598_android-3840x2160-4k-hd-wallpaper-5k-wallpaper-underwater-fish-3432.jpg",
-              "https://cdn-icare.qingtime.cn/1603505756891_android-3840x2160-5k-4k-hd-wallpaper-wallpaper-pattern-landscape-3433.jpg",
-            ].map((url, index) => (
+            {wallpapers.map((wallpaper: any, index) => (
               <ColorBox
                 key={index}
-                background={url}
-                selected={url === config?.background ? true : false}
+                background={wallpaper.url}
+                selected={wallpaper.url === config?.background ? true : false}
                 onClick={(val) => handleClickColor(val, "background")}
               />
             ))}
@@ -580,7 +605,7 @@ export default function Toolbar({
             color={i18n.language === "zh-CN" ? "primary" : "inherit"}
             onClick={() => changeLanguage("zh-CN")}
           >
-            简化字
+            简体字
           </Button>
           <Button
             color={i18n.language === "zh-TW" ? "primary" : "inherit"}

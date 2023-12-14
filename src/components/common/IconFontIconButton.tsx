@@ -27,6 +27,7 @@ export default function IconFontIconButton({
 }) {
   return (
     <ButtonBase
+      className="iconfont-button"
       sx={{
         borderRadius: "8px",
         padding: "5px",

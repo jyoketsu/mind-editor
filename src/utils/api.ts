@@ -87,9 +87,21 @@ const qiniu = {
   },
 };
 
+const wallpaper = {
+  get(page: number, limit: number) {
+    return request.get("https://timeosdata.qingtime.cn/wallPaper", {
+      tagKey: "2102224858",
+      style: "web",
+      page,
+      limit,
+    });
+  },
+};
+
 export default {
   request,
   qiniu,
+  wallpaper,
   getUrlInfo: (url: string) => {
     return request.get("https://nodeserver.qingtime.cn/urlIconOrigin?=", {
       linkUrl: url,

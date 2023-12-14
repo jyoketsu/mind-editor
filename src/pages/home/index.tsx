@@ -355,7 +355,7 @@ export default function Home() {
             ? config.background
             : `url("${config.background}")`
           : "unset",
-        backgroundColor: config?.background ? undefined : "background.paper",
+        backgroundColor: config?.background ? undefined : "background.default",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -375,12 +375,15 @@ export default function Home() {
         <Box
           sx={{
             position: "absolute",
-            top: "48px",
-            left: 0,
-            width: "68px",
-            height: "calc(100% - 48px)",
+            top: "14px",
+            left: "17px",
+            width: "58px",
+            height: "calc(100% - 28px)",
             overflow: "hidden",
-            backdropFilter: "blur(7px) brightness(0.9)",
+            backgroundColor: "background.paper",
+            backdropFilter: "blur(18px) brightness(0.9)",
+            boxShadow: 2,
+            borderRadius: "8px",
           }}
         >
           <Slide
@@ -436,21 +439,7 @@ export default function Home() {
             </div>
           </Slide>
         </Box>
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "48px",
-            display: "flex",
-            alignItems: "center",
-            padding: "0 15px",
-            boxSizing: "border-box",
-            backdropFilter: "blur(7px) brightness(0.9)",
-          }}
-        >
-          <div style={{ flex: 1 }}></div>
+        <Box sx={{ position: "absolute", top: "15px", right: "15px" }}>
           <Typography
             sx={{ color: "text.secondary", fontSize: "14px", padding: "0 5px" }}
           >

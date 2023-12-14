@@ -28,7 +28,7 @@ export default function Router() {
               main: blue[500],
             },
             background: {
-              default: grey[100],
+              default: "#F3F3F5",
               paper: "#FFF",
               slide: "#F5F5F5",
               head: "#F9F9F9",

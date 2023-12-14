@@ -80,6 +80,9 @@ export const serviceSlice = createSlice({
     setDocData: (state, action: PayloadAction<TreeData>) => {
       state.docData = action.payload;
     },
+    setDocTreeData: (state, action: PayloadAction<TreeData>) => {
+      state.docData = { ...state.docData, ...action.payload };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getDoc.pending, (state, action: PayloadAction<any>) => {
@@ -106,7 +109,7 @@ export const serviceSlice = createSlice({
         action.payload.res.statusCode === "200"
       ) {
         state.changed = false;
-        state.docData = action.payload.data;
+        // state.docData = action.payload.data;
       } else {
         alert(action.payload.res.msg);
       }
@@ -114,7 +117,8 @@ export const serviceSlice = createSlice({
   },
 });
 
-export const { setApi, setChanged, setDocData } = serviceSlice.actions;
+export const { setApi, setChanged, setDocData, setDocTreeData } =
+  serviceSlice.actions;
 
 export default serviceSlice.reducer;
 

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import NodeMap from "tree-graph-react/dist/interfaces/NodeMap";
 import Node from "tree-graph-react/dist/interfaces/Node";
 import { getAncestor } from "../../utils/util";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   nodeKey: string;
@@ -12,6 +13,7 @@ interface Props {
 
 export default function BreadNav({ nodeKey, nodeMap, handleClick }: Props) {
   const [nodePath, setNodePath] = useState<Node[]>([]);
+  const location = useLocation();
 
   useEffect(() => {
     const node = nodeMap[nodeKey];
@@ -30,7 +32,7 @@ export default function BreadNav({ nodeKey, nodeMap, handleClick }: Props) {
         alignItems: "center",
         position: "absolute",
         top: "10px",
-        left: "15px",
+        left: location.pathname === "/editor" ? "84px" : "15px",
         zIndex: 2,
       }}
     >
@@ -38,7 +40,6 @@ export default function BreadNav({ nodeKey, nodeMap, handleClick }: Props) {
         <Button
           key="path"
           variant="text"
-          size="small"
           color="inherit"
           sx={{ minWidth: "unset" }}
           onClick={() => handleClick(node)}

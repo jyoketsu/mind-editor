@@ -10,3 +10,6 @@ body,
   height: 100%;
   overflow: hidden;
 }
+.iconfont-button.Mui-disabled {
+  filter: opacity(0.2);
+}

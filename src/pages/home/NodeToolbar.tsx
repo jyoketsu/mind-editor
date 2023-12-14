@@ -178,10 +178,10 @@ export default function NodeToolbar({
           borderRadius: "unset",
           width: "100%",
           height: "33px",
-          borderTop: "1px solid",
-          borderBottom: "1px solid",
-          borderColor: "divider",
-          marginBottom: "15px",
+          // borderTop: "1px solid",
+          // borderBottom: "1px solid",
+          // borderColor: "divider",
+          margin: "12px 0",
         }}
         onClick={handleBack}
       />

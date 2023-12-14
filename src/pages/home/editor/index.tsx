@@ -34,6 +34,7 @@ import {
   TreeData,
   saveDoc,
   setChanged,
+  setDocTreeData,
 } from "../../../redux/reducer/serviceSlice";
 import CNode from "tree-graph-react/dist/interfaces/CNode";
 import NodeMap from "tree-graph-react/dist/interfaces/NodeMap";
@@ -293,8 +294,12 @@ const Editor = React.forwardRef(
     }
 
     function handleClickDot(node: CNode) {
-      setRootKey(node._key);
-      resetMove();
+      let data = treeRef.current.saveNodes();
+      dispatch(setDocTreeData(data));
+      setTimeout(() => {
+        setRootKey(node._key);
+        resetMove();
+      }, 500);
     }
 
     function resetMove() {
@@ -806,7 +811,7 @@ const Editor = React.forwardRef(
               itemHeight={35}
               pathWidth={2}
               pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
-              nodeColor={config?.nodeColor || undefined}
+              nodeColor={config?.nodeColor || "#e3e3e3"}
               // backgroundColor={undefined}
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
@@ -840,7 +845,7 @@ const Editor = React.forwardRef(
               disabled={readonly}
               pathWidth={2}
               pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
-              nodeColor={config?.nodeColor || undefined}
+              nodeColor={config?.nodeColor || "#e3e3e3"}
               // backgroundColor={darkMode ? "#212121" : undefined}
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
               selectedBorderColor={darkMode ? "#FF0000" : undefined}
