@@ -67,7 +67,8 @@ export default function Toolbar({
   const [importAnchorEl, setImportAnchorEl] = useState<null | HTMLElement>(
     null
   );
-  const [wallpapers, setWallpapers] = useState([]);
+  const [wallpapers, setWallpapers] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
   const importOpen = Boolean(importAnchorEl);
 
   const boxStyle: React.CSSProperties = {
@@ -77,6 +78,7 @@ export default function Toolbar({
     columnGap: "12px",
     rowGap: "12px",
     margin: "15px 0",
+    width: "100%",
   };
 
   const inputStype: React.CSSProperties = {
@@ -110,15 +112,13 @@ export default function Toolbar({
   }, [config]);
 
   useEffect(() => {
-    if (themeOpen) {
-      getWallpapers(1);
-    }
-  }, [themeOpen]);
+    getWallpapers(page);
+  }, [page]);
 
   async function getWallpapers(page: number) {
     const res: any = await api.wallpaper.get(1, 30);
     if (res.status === 200) {
-      setWallpapers(res.data);
+      setWallpapers([...wallpapers, ...res.data]);
     }
   }
 
@@ -485,6 +485,9 @@ export default function Toolbar({
               />
             </Button>
           </div>
+          <Button fullWidth onClick={() => setPage(page + 1)}>
+            更多
+          </Button>
         </div>
       </Popover>
       <IconFontIconButton

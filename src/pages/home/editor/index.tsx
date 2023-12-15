@@ -805,16 +805,13 @@ const Editor = React.forwardRef(
               //   handleChangeNodeText(nodeId, text)
               // }
               disabled={readonly}
-              showChildNum={true}
               singleColumn={viewType.startsWith("single-")}
               handleChange={handleChange}
               itemHeight={35}
               pathWidth={2}
               pathColor={config?.lineColor || (darkMode ? "#FFF" : "#535953")}
               nodeColor={config?.nodeColor || "#e3e3e3"}
-              // backgroundColor={undefined}
               hoverBorderColor={darkMode ? "#FFE4E1" : undefined}
-              selectedBorderColor={darkMode ? "#FF0000" : undefined}
               paddingLeft={1000}
               paddingTop={1000}
               rainbowColor={config?.rainbowColor}
@@ -837,7 +834,6 @@ const Editor = React.forwardRef(
               startId={rootKey}
               nodes={treeData.data}
               handleClickDot={(node: CNode) => handleClickDot(node)}
-              showChildNum={true}
               handleChange={handleChange}
               // handleChangeNodeText={(nodeId: string, text: string) =>
               //   handleChangeNodeText(nodeId, text)
