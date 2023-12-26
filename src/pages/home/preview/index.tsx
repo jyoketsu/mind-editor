@@ -164,6 +164,13 @@ export default function Preview() {
     }
   };
 
+  function handleOpen() {
+    window.open(
+      `${window.location.origin}${BASE}editor${location.search}`,
+      "_blank"
+    );
+  }
+
   return (
     <Box
       className="preview"
@@ -279,6 +286,20 @@ export default function Preview() {
           />
         </div>
       </Popover>
+      <IconFontIconButton
+        className="new-open-button"
+        iconName="xin"
+        fontSize={20}
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 15,
+          borderRadius: "unset",
+          // width: "24px",
+          // height: "24px",
+        }}
+        onClick={handleOpen}
+      />
     </Box>
   );
 }

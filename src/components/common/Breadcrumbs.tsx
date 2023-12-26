@@ -27,6 +27,7 @@ export default function BreadNav({ nodeKey, nodeMap, handleClick }: Props) {
 
   return (
     <Box
+      className="bread-nav"
       sx={{
         display: "flex",
         alignItems: "center",

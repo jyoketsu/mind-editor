@@ -13,3 +13,24 @@ body,
 .iconfont-button.Mui-disabled {
   filter: opacity(0.2);
 }
+.preview-actions {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.preview:hover > .preview-actions {
+  opacity: 1;
+}
+.preview > div > .editor > .bread-nav {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.preview:hover > div > .editor > .bread-nav {
+  opacity: 1;
+}
+.preview > .new-open-button {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.preview:hover > .new-open-button {
+  opacity: 1;
+}

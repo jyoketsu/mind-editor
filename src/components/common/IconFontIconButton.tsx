@@ -11,6 +11,7 @@ export default function IconFontIconButton({
   dividerSize = 0,
   style,
   children,
+  className,
   onClick,
   onMouseEnter,
 }: {
@@ -22,12 +23,13 @@ export default function IconFontIconButton({
   dividerSize?: number;
   style?: React.CSSProperties;
   children?: React.ReactNode;
+  className?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   return (
     <ButtonBase
-      className="iconfont-button"
+      className={className || "iconfont-button"}
       sx={{
         borderRadius: "8px",
         padding: "5px",
