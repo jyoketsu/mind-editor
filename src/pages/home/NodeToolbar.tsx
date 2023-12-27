@@ -19,6 +19,7 @@ export default function NodeToolbar({
   handleLink,
   handleUpdateNode,
   handleBack,
+  horizontal,
 }: {
   selectedIds: string[];
   handleCheckBox: () => void;
@@ -34,6 +35,7 @@ export default function NodeToolbar({
   handleLink: (anchorEl: HTMLElement) => void;
   handleUpdateNode: (key: string, value?: string) => void;
   handleBack: () => void;
+  horizontal?: boolean;
 }) {
   const { t } = useTranslation();
   const fullButtons = useMediaQuery("(min-height:960px)");
@@ -105,7 +107,12 @@ export default function NodeToolbar({
         title={t("illustration.illustration")}
         iconName="chatu"
         fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        style={{
+          borderRadius: "unset",
+           width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+        }}
+        hideText={horizontal}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
           handleAddIllustration(event.currentTarget)
         }
@@ -115,7 +122,12 @@ export default function NodeToolbar({
         title={t("mind.addNodeImage")}
         iconName="tupian1"
         fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        hideText={horizontal}
+        style={{
+          borderRadius: "unset",
+           width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+        }}
       >
         <input
           accept="image/*"
@@ -130,7 +142,12 @@ export default function NodeToolbar({
           title={t("mind.link")}
           iconName="lianjie"
           fontSize={30}
-          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          style={{
+            borderRadius: "unset",
+            width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+          }}
+          hideText={horizontal}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
             handleLink(event.currentTarget)
           }
@@ -142,7 +159,12 @@ export default function NodeToolbar({
           title={t("mind.import")}
           iconName="daoru"
           fontSize={30}
-          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          style={{
+            borderRadius: "unset",
+            width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+          }}
+          hideText={horizontal}
           onClick={handleOpenImport}
         ></IconFontIconButton>
       ) : null,
@@ -152,7 +174,12 @@ export default function NodeToolbar({
           title={t("mind.export")}
           iconName="daochu"
           fontSize={30}
-          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          style={{
+            borderRadius: "unset",
+            width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+          }}
+          hideText={horizontal}
           onClick={handleOpenExport}
         />
       ) : null,
@@ -165,32 +192,39 @@ export default function NodeToolbar({
       sx={{
         width: "100%",
         height: "100%",
-        paddingBottom: "15px",
+        paddingBottom: horizontal ? "unset" : "15px",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: horizontal ? "row" : "column",
         alignItems: "center",
       }}
     >
-      <IconFontIconButton
-        iconName="jiantou"
-        fontSize={16}
-        style={{
-          borderRadius: "unset",
-          width: "100%",
-          height: "33px",
-          // borderTop: "1px solid",
-          // borderBottom: "1px solid",
-          // borderColor: "divider",
-          margin: "12px 0",
-        }}
-        onClick={handleBack}
-      />
+      {!horizontal ? (
+        <IconFontIconButton
+          iconName="jiantou"
+          fontSize={16}
+          style={{
+            borderRadius: "unset",
+            width: "100%",
+            height: "33px",
+            // borderTop: "1px solid",
+            // borderBottom: "1px solid",
+            // borderColor: "divider",
+            margin: "12px 0",
+          }}
+          onClick={handleBack}
+        />
+      ) : null}
       {selectedIds.length === 1 ? (
         <IconFontIconButton
           title={t("mind.addChild")}
           iconName="a-tongjijiedian1x"
           fontSize={30}
-          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          style={{
+            borderRadius: "unset",
+            width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+          }}
+          hideText={horizontal}
           onClick={handleAddChild}
         />
       ) : null}
@@ -199,7 +233,12 @@ export default function NodeToolbar({
           title={t("mind.addNext")}
           iconName="a-xiajijiedian1x"
           fontSize={30}
-          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          style={{
+            borderRadius: "unset",
+            width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+          }}
+          hideText={horizontal}
           onClick={handleAddNext}
         />
       ) : null}
@@ -207,14 +246,24 @@ export default function NodeToolbar({
         title={t("toolBar.task")}
         iconName="wancheng"
         fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        style={{
+          borderRadius: "unset",
+           width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+        }}
+        hideText={horizontal}
         onClick={handleCheckBox}
       />
       <IconFontIconButton
         title={t("toolBar.style")}
         iconName="yangshi"
         fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        style={{
+          borderRadius: "unset",
+           width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+        }}
+        hideText={horizontal}
         onClick={handleOpenStyle}
       />
       <Popover
@@ -231,18 +280,21 @@ export default function NodeToolbar({
             title=""
             iconName="B1"
             fontSize={30}
+            hideText={horizontal}
             onClick={() => handleUpdateNode("bold")}
           />
           <IconFontIconButton
             title=""
             iconName="I"
             fontSize={30}
+            hideText={horizontal}
             onClick={() => handleUpdateNode("italic")}
           />
           <IconFontIconButton
             title=""
             iconName="u"
             fontSize={30}
+            hideText={horizontal}
             onClick={() => handleUpdateNode("textDecoration")}
           />
           {[
@@ -277,7 +329,12 @@ export default function NodeToolbar({
         title={t("icon.icon")}
         iconName="tubiao"
         fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        style={{
+          borderRadius: "unset",
+           width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+        }}
+        hideText={horizontal}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
           handleAddIcon(event.currentTarget)
         }
@@ -287,7 +344,12 @@ export default function NodeToolbar({
           title={t("mind.addNote")}
           iconName="beizhu"
           fontSize={30}
-          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          style={{
+            borderRadius: "unset",
+            width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+          }}
+          hideText={horizontal}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
             handleAddNote(event.currentTarget)
           }
@@ -301,7 +363,12 @@ export default function NodeToolbar({
           title={t("toolBar.more")}
           iconName="gengduo"
           fontSize={30}
-          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          style={{
+            borderRadius: "unset",
+            width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+          }}
+          hideText={horizontal}
           onClick={handleOpenMore}
         />
       ) : null}
@@ -322,7 +389,12 @@ export default function NodeToolbar({
         title={t("mind.delete")}
         iconName="a-shanchu1x"
         fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+        style={{
+          borderRadius: "unset",
+           width: horizontal ? "48px" : "100%",
+            height: horizontal ? "48px" : "68px",
+        }}
+        hideText={horizontal}
         onClick={handleDelete}
       />
       <Popover

@@ -1,6 +1,7 @@
 import ButtonBase from "@mui/material/ButtonBase";
 import IconFont from "./IconFont";
 import React from "react";
+import { Tooltip } from "@mui/material";
 
 export default function IconFontIconButton({
   title,
@@ -14,6 +15,7 @@ export default function IconFontIconButton({
   className,
   onClick,
   onMouseEnter,
+  hideText,
 }: {
   title?: string;
   iconName: string;
@@ -26,8 +28,9 @@ export default function IconFontIconButton({
   className?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  hideText?: boolean;
 }) {
-  return (
+  const button = (
     <ButtonBase
       className={className || "iconfont-button"}
       sx={{
@@ -50,8 +53,15 @@ export default function IconFontIconButton({
       <div
         style={{ width: `${dividerSize}px`, height: `${dividerSize}px` }}
       ></div>
-      {title ? <span>{title}</span> : null}
+      {title && !hideText ? <span>{title}</span> : null}
       {children}
     </ButtonBase>
+  );
+  return hideText && title ? (
+    <Tooltip title={title} placement="top">
+      {button}
+    </Tooltip>
+  ) : (
+    button
   );
 }

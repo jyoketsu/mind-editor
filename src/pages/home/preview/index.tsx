@@ -6,6 +6,7 @@ import {
   Menu,
   MenuItem,
   Popover,
+  Slider,
 } from "@mui/material";
 import screenfull from "screenfull";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
@@ -44,10 +45,14 @@ export default function Preview() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [zoomAnchorEl, setZoomAnchorEl] = useState<null | HTMLElement>(null);
   const [zoomRatio, setZoomRatio] = useState(1);
-  const zoomPercentage = useMemo(
-    () => `${((zoomRatio / 1) * 100).toFixed()}%`,
-    [zoomRatio]
-  );
+  const [value, setValue] = useState<number>(50);
+
+  useEffect(() => {
+    const isEdit = getSearchParamValue(location.search, "isEdit");
+    if (isEdit === "2") {
+      toEdit();
+    }
+  }, []);
 
   useEffect(() => {
     editorRef?.current?.resetMove();
@@ -111,6 +116,10 @@ export default function Preview() {
     }
   }, [docData]);
 
+  useEffect(() => {
+    setZoomRatio(value / 50);
+  }, [value]);
+
   const iconName = useMemo(() => {
     switch (viewType) {
       case "mutil-tree":
@@ -145,12 +154,14 @@ export default function Preview() {
   };
 
   const handleZoomIn = () => {
-    setZoomRatio(zoomRatio + 0.1);
+    if (value + 5 <= 100) {
+      setValue(value + 5);
+    }
   };
 
   const handleZoomOut = () => {
-    if (zoomRatio - 0.1 > 0.1) {
-      setZoomRatio(zoomRatio - 0.1);
+    if (value - 5 > 10) {
+      setValue(value - 5);
     }
   };
 
@@ -170,6 +181,10 @@ export default function Preview() {
       "_blank"
     );
   }
+
+  const handleChange = (event: Event, newValue: number | number[]) => {
+    setValue(newValue as number);
+  };
 
   return (
     <Box
@@ -208,42 +223,76 @@ export default function Preview() {
         orientation="vertical"
         variant="text"
         color="inherit"
-        sx={{ position: "absolute", left: "15px", bottom: "15px" }}
+        sx={{
+          position: "absolute",
+          left: "15px",
+          bottom: "15px",
+          background: "background.paper",
+          borderRadius: "8px",
+          boxShadow: 2,
+          width: "48px",
+          height: "238px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-around",
+          alignItems: "center",
+        }}
       >
         <IconFontIconButton
-          iconName="quanping"
+          iconName="fangdajing"
           fontSize={30}
-          style={{ borderRadius: "unset", width: "100%", height: "37px" }}
-          onClick={handleFullScreen}
+          style={{ borderRadius: "8px", width: "42px", height: "42px" }}
+          onClick={handleOpenZoom}
         />
         <IconFontIconButton
           // title={t("mind.changeView")}
           iconName={iconName}
           fontSize={30}
-          style={{ borderRadius: "unset", width: "100%", height: "37px" }}
+          style={{ borderRadius: "8px", width: "42px", height: "42px" }}
           onClick={handleClick}
           // onMouseEnter={handleClick}
         />
-        <Button key="one" onClick={toEdit}>
-          {t("menu.edit")}
-        </Button>
-        <Button key="two" onClick={handleOpenZoom}>
-          {zoomPercentage}
-        </Button>
+        <IconFontIconButton
+          iconName="quanping"
+          fontSize={30}
+          style={{ borderRadius: "8px", width: "42px", height: "42px" }}
+          onClick={handleFullScreen}
+        />
+        <IconFontIconButton
+          iconName="bi"
+          fontSize={30}
+          style={{ borderRadius: "8px", width: "42px", height: "42px" }}
+          onClick={toEdit}
+        />
       </ButtonGroup>
       <Menu
         anchorEl={zoomAnchorEl}
         open={Boolean(zoomAnchorEl)}
         onClose={() => setZoomAnchorEl(null)}
       >
-        <div style={{ padding: "0 15px" }}>
-          <IconButton onClick={handleZoomOut}>
-            <ZoomOutIcon />
-          </IconButton>
-          <span>{zoomPercentage}</span>
-          <IconButton onClick={handleZoomIn}>
-            <ZoomInIcon />
-          </IconButton>
+        <div
+          style={{ padding: "0 15px", display: "flex", alignItems: "center" }}
+        >
+          <IconFontIconButton
+            iconName="suoxiao"
+            fontSize={20}
+            onClick={handleZoomOut}
+          />
+          <div
+            style={{ width: "196px", display: "flex", alignItems: "center" }}
+          >
+            <Slider value={value} min={10} max={100} onChange={handleChange} />
+          </div>
+          <IconFontIconButton
+            iconName="fangdajing"
+            fontSize={20}
+            onClick={handleZoomIn}
+          />
+          <IconFontIconButton
+            iconName="yijianhuanyuan"
+            fontSize={20}
+            onClick={() => setValue(50)}
+          />
         </div>
       </Menu>
       <Popover

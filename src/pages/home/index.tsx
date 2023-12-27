@@ -1,4 +1,4 @@
-import { Box, IconButton, Slide, Typography } from "@mui/material";
+import { Box, IconButton, Menu, Slide, Typography } from "@mui/material";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -28,7 +28,7 @@ import qiniuUpload from "../../utils/qiniu";
 import api from "../../utils/api";
 import Config from "../../interface/Config";
 import ShortcutDialog from "./Shortcut";
-import _ from "lodash";
+import _, { set } from "lodash";
 
 const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 let timeout: NodeJS.Timeout;
@@ -51,6 +51,7 @@ export default function Home() {
   const [shortcutVisible, setShortcutVisible] = useState(false);
   const [history, setHistory] = useState<TreeData[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     editorRef?.current?.resetMove();
@@ -163,14 +164,17 @@ export default function Home() {
   };
 
   const handleAddChild = () => {
+    setAnchorEl(null);
     editorRef?.current?.handleAddChild();
   };
 
   const handleAddNext = () => {
+    setAnchorEl(null);
     editorRef?.current?.handleAddNext();
   };
 
   const handleDelete = () => {
+    setAnchorEl(null);
     editorRef?.current?.handleDelete();
   };
 
@@ -195,8 +199,10 @@ export default function Home() {
       setSelectedIds([]);
     } else if (Array.isArray(node)) {
       setSelectedIds(node.map((item) => item._key));
+      setAnchorEl(document.getElementById(`tree-node-${node[0]._key}`));
     } else {
       setSelectedIds([node._key]);
+      setAnchorEl(document.getElementById(`tree-node-${node._key}`));
     }
   };
 
@@ -456,6 +462,33 @@ export default function Home() {
           open={shortcutVisible}
           handleClose={() => setShortcutVisible(false)}
         />
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          onClose={() => setAnchorEl(null)}
+        >
+          <NodeToolbar
+            selectedIds={selectedIds}
+            handleCheckBox={handleCheckBox}
+            handleAddChild={handleAddChild}
+            handleAddNext={handleAddNext}
+            handleAddNote={handleAddNote}
+            handleAddIcon={handleAddIcon}
+            handleAddIllustration={handleAddIllustration}
+            handleFileChange={(files: FileList) => handleFileChange(files)}
+            handleDelete={handleDelete}
+            handleExport={handleExport}
+            handleImport={handleChange}
+            handleLink={handleLink}
+            handleUpdateNode={handleUpdateNode}
+            handleBack={handleBack}
+            horizontal={true}
+          />
+        </Menu>
       </div>
     </Box>
   );
