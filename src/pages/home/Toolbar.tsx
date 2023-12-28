@@ -20,6 +20,7 @@ export default function Toolbar({
   config,
   undoDisabled,
   redoDisabled,
+  mode,
   handleSetViewType,
   handleSetConfig,
   handleUndo,
@@ -27,11 +28,13 @@ export default function Toolbar({
   handleExport,
   handleImport,
   exportImage,
+  handleToggleMode,
 }: {
   viewType: string;
   config: Config | null;
   undoDisabled: boolean;
   redoDisabled: boolean;
+  mode: "normal" | "simple";
   handleSetViewType: (
     viewType: "mutil-tree" | "single-tree" | "mutil-mind" | "single-mind"
   ) => void;
@@ -41,6 +44,7 @@ export default function Toolbar({
   handleExport: (type?: string) => void;
   handleImport: (type: string, e: any) => void;
   exportImage: (type: "svg" | "png" | "pdf") => void;
+  handleToggleMode: () => void;
 }) {
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
@@ -272,17 +276,19 @@ export default function Toolbar({
         alignItems: "center",
       }}
     >
-      <i
-        style={{
-          width: "32px",
-          height: "32px",
-          backgroundImage: "url('/logo/logo.svg')",
-          backgroundSize: "contain",
-          backgroundRepeat: "no-repeat",
-          marginTop: "4px",
-          marginBottom: "8px",
-        }}
-      />
+      {mode === "normal" ? (
+        <i
+          style={{
+            width: "32px",
+            height: "32px",
+            backgroundImage: "url('/logo/logo.svg')",
+            backgroundSize: "contain",
+            backgroundRepeat: "no-repeat",
+            marginTop: "4px",
+            marginBottom: "8px",
+          }}
+        />
+      ) : null}
       <IconFontIconButton
         title={t("mind.changeView")}
         iconName={iconName}
@@ -490,14 +496,16 @@ export default function Toolbar({
           </Button>
         </div>
       </Popover>
-      <IconFontIconButton
-        key="import"
-        title={t("mind.import")}
-        iconName="daoru"
-        fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={handleOpenImport}
-      ></IconFontIconButton>
+      {mode === "normal" ? (
+        <IconFontIconButton
+          key="import"
+          title={t("mind.import")}
+          iconName="daoru"
+          fontSize={30}
+          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          onClick={handleOpenImport}
+        ></IconFontIconButton>
+      ) : null}
       <Popover
         anchorEl={importAnchorEl}
         open={importOpen}
@@ -528,14 +536,17 @@ export default function Toolbar({
           </Button>
         </div>
       </Popover>
-      <IconFontIconButton
-        key="export"
-        title={t("mind.export")}
-        iconName="daochu"
-        fontSize={30}
-        style={{ borderRadius: "unset", width: "100%", height: "68px" }}
-        onClick={handleOpenExport}
-      />
+      {mode === "normal" ? (
+        <IconFontIconButton
+          key="export"
+          title={t("mind.export")}
+          iconName="daochu"
+          fontSize={30}
+          style={{ borderRadius: "unset", width: "100%", height: "68px" }}
+          onClick={handleOpenExport}
+        />
+      ) : null}
+
       <Popover
         anchorEl={exportAnchorEl}
         open={exportOpen}
@@ -546,11 +557,24 @@ export default function Toolbar({
         onClose={handleCloseExport}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Button color="inherit" onClick={() => handleExport()}>
+          <Button
+            color="inherit"
+            onClick={() => handleExport()}
+          >
             {t("mind.file")}
           </Button>
           <Button color="inherit" onClick={() => handleExport("opml")}>
             OPML
+          </Button>
+          <Button color="inherit" onClick={() => handleExport("txt")}>
+            TXT
+          </Button>
+          <Button
+            color="inherit"
+            sx={{ textTransform: "unset" }}
+            onClick={() => handleExport("md")}
+          >
+            Markdown
           </Button>
           <Button color="inherit" onClick={() => exportImage("svg")}>
             SVG
@@ -563,7 +587,7 @@ export default function Toolbar({
           </Button>
         </div>
       </Popover>
-      <div style={{ flex: 1 }} />
+      {mode === "normal" ? <div style={{ flex: 1 }} /> : null}
       <IconFontIconButton
         title=""
         iconName="chexiao"
@@ -642,6 +666,16 @@ export default function Toolbar({
         <div
           style={{ width: "130px", display: "flex", flexDirection: "column" }}
         >
+          {mode === "simple" ? (
+            <Button color="inherit" onClick={handleOpenImport}>
+              {t("mind.import")}
+            </Button>
+          ) : null}
+          {mode === "simple" ? (
+            <Button color="inherit" onClick={handleOpenExport}>
+              {t("mind.export")}
+            </Button>
+          ) : null}
           <Button
             color="inherit"
             onClick={() => {
@@ -653,6 +687,9 @@ export default function Toolbar({
           </Button>
           <Button color="inherit" onClick={handleOpenLanguage}>
             {t("toolBar.language")}
+          </Button>
+          <Button color="inherit" onClick={handleToggleMode}>
+            {t(`toolBar.${mode === "normal" ? "simple" : "normal"}Mode`)}
           </Button>
         </div>
       </Popover>

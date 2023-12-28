@@ -69,7 +69,9 @@
     "taskStat": "任务统计",
     "language": "切换语言",
     "totalTask": "总任务",
-    "completed": "已完成"
+    "completed": "已完成",
+    "simpleMode": "极简模式",
+    "normalMode": "普通模式"
   },
   "shortcut": {
     "enter": "弟节点",

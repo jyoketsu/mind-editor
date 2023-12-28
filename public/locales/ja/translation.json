@@ -68,7 +68,9 @@
     "taskStat": "タスク統計",
     "language": "言語切り替え",
     "totalTask": "総タスク",
-    "completed": "完了済み"
+    "completed": "完了済み",
+    "simpleMode": "シンプルモード",
+    "normalMode": "通常モード"
   },
   "shortcut": {
     "enter": "次のノードを追加",

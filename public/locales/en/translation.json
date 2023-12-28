@@ -68,7 +68,9 @@
     "taskStat": "Statistics",
     "language": "Language",
     "totalTask": "Total Tasks",
-    "completed": "Completed"
+    "completed": "Completed",
+    "simpleMode": "Simple Mode",
+    "normalMode": "Normal Mode"
   },
   "shortcut": {
     "enter": "Silbing",

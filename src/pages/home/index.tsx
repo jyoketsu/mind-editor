@@ -1,4 +1,4 @@
-import { Box, IconButton, Menu, Slide, Typography } from "@mui/material";
+import { Box, IconButton, Menu, Slide, Typography, Fade } from "@mui/material";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,7 +6,9 @@ import { useLocation } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { setDark, setLoading } from "../../redux/reducer/commonSlice";
 import {
+  convert2Md,
   convert2Opml,
+  convert2Text,
   exportFile,
   getSearchParamValue,
   isColorDark,
@@ -52,6 +54,11 @@ export default function Home() {
   const [history, setHistory] = useState<TreeData[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [mode, setMode] = useState<"normal" | "simple">(
+    window.self !== window.top
+      ? "simple"
+      : (localStorage.getItem("MODE") as "normal" | "simple") || "normal"
+  );
 
   useEffect(() => {
     editorRef?.current?.resetMove();
@@ -129,6 +136,12 @@ export default function Home() {
       if (type === "opml") {
         const xml = convert2Opml(data);
         exportFile(xml, `${root.name}.opml`);
+      } else if (type === "txt") {
+        const str = convert2Text(data);
+        exportFile(str, `${root.name}.txt`, "text/plain");
+      } else if (type === "md") {
+        const str = convert2Md(data);
+        exportFile(str, `${root.name}.md`, "text/markdown");
       } else {
         exportFile(JSON.stringify(data), `${root.name}.mind`, "text/xml");
       }
@@ -195,14 +208,19 @@ export default function Home() {
   };
 
   const handleClickNode = (node: any) => {
+    const mode = localStorage.getItem("MODE");
     if (!node) {
       setSelectedIds([]);
     } else if (Array.isArray(node)) {
       setSelectedIds(node.map((item) => item._key));
-      setAnchorEl(document.getElementById(`tree-node-${node[0]._key}`));
+      if (mode === "simple") {
+        setAnchorEl(document.getElementById(`tree-node-${node[0]._key}`));
+      }
     } else {
       setSelectedIds([node._key]);
-      setAnchorEl(document.getElementById(`tree-node-${node._key}`));
+      if (mode === "simple") {
+        setAnchorEl(document.getElementById(`tree-node-${node._key}`));
+      }
     }
   };
 
@@ -345,6 +363,63 @@ export default function Home() {
     editorRef.current.exportImage(type);
   }
 
+  function handleToggleMode() {
+    const newMode = mode === "normal" ? "simple" : "normal";
+    localStorage.setItem("MODE", newMode);
+    setMode(newMode);
+  }
+
+  const nodeToolbar = (
+    <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+      <NodeToolbar
+        selectedIds={selectedIds}
+        mode={mode}
+        handleCheckBox={handleCheckBox}
+        handleAddChild={handleAddChild}
+        handleAddNext={handleAddNext}
+        handleAddNote={handleAddNote}
+        handleAddIcon={handleAddIcon}
+        handleAddIllustration={handleAddIllustration}
+        handleFileChange={(files: FileList) => handleFileChange(files)}
+        handleDelete={handleDelete}
+        handleExport={handleExport}
+        handleImport={handleChange}
+        handleLink={handleLink}
+        handleUpdateNode={handleUpdateNode}
+        handleBack={handleBack}
+      />
+    </div>
+  );
+  const toolBar = (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
+      }}
+    >
+      <Toolbar
+        viewType={viewType}
+        config={config}
+        undoDisabled={historyIndex === 0 || historyIndex === -1 ? true : false}
+        redoDisabled={
+          historyIndex === -1 || historyIndex + 1 === history.length
+            ? true
+            : false
+        }
+        mode={mode}
+        handleSetViewType={setViewType}
+        handleSetConfig={handleSetConfig}
+        handleUndo={handleUndo}
+        handleRedo={handleRedo}
+        handleExport={handleExport}
+        handleImport={handleChange}
+        exportImage={exportImage}
+        handleToggleMode={handleToggleMode}
+      />
+    </div>
+  );
+
   return (
     <Box
       sx={{
@@ -381,10 +456,11 @@ export default function Home() {
         <Box
           sx={{
             position: "absolute",
-            top: "14px",
+            top: mode === "normal" ? "14px" : undefined,
+            bottom: mode === "simple" ? "14px" : undefined,
             left: "17px",
             width: "58px",
-            height: "calc(100% - 28px)",
+            height: mode === "normal" ? "calc(100% - 28px)" : undefined,
             overflow: "hidden",
             backgroundColor: "background.paper",
             backdropFilter: "blur(18px) brightness(0.9)",
@@ -392,58 +468,29 @@ export default function Home() {
             borderRadius: "8px",
           }}
         >
-          <Slide
-            direction="right"
-            in={selectedIds.length ? true : false}
-            mountOnEnter
-            unmountOnExit
-          >
-            <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
-              <NodeToolbar
-                selectedIds={selectedIds}
-                handleCheckBox={handleCheckBox}
-                handleAddChild={handleAddChild}
-                handleAddNext={handleAddNext}
-                handleAddNote={handleAddNote}
-                handleAddIcon={handleAddIcon}
-                handleAddIllustration={handleAddIllustration}
-                handleFileChange={(files: FileList) => handleFileChange(files)}
-                handleDelete={handleDelete}
-                handleExport={handleExport}
-                handleImport={handleChange}
-                handleLink={handleLink}
-                handleUpdateNode={handleUpdateNode}
-                handleBack={handleBack}
-              />
-            </div>
-          </Slide>
-          <Slide
-            direction="right"
-            in={!selectedIds.length ? true : false}
-            timeout={500}
-          >
-            <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
-              <Toolbar
-                viewType={viewType}
-                config={config}
-                undoDisabled={
-                  historyIndex === 0 || historyIndex === -1 ? true : false
-                }
-                redoDisabled={
-                  historyIndex === -1 || historyIndex + 1 === history.length
-                    ? true
-                    : false
-                }
-                handleSetViewType={setViewType}
-                handleSetConfig={handleSetConfig}
-                handleUndo={handleUndo}
-                handleRedo={handleRedo}
-                handleExport={handleExport}
-                handleImport={handleChange}
-                exportImage={exportImage}
-              />
-            </div>
-          </Slide>
+          {mode === "normal"
+            ? [
+                <Slide
+                  key="nodeToolBar"
+                  direction="right"
+                  in={selectedIds.length ? true : false}
+                  mountOnEnter
+                  unmountOnExit
+                >
+                  {nodeToolbar}
+                </Slide>,
+                <Slide
+                  key="toolBar"
+                  direction="right"
+                  in={!selectedIds.length ? true : false}
+                  timeout={500}
+                  mountOnEnter
+                  unmountOnExit
+                >
+                  {toolBar}
+                </Slide>,
+              ]
+            : toolBar}
         </Box>
         <Box sx={{ position: "absolute", top: "15px", right: "15px" }}>
           <Typography
@@ -462,33 +509,52 @@ export default function Home() {
           open={shortcutVisible}
           handleClose={() => setShortcutVisible(false)}
         />
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-          onClose={() => setAnchorEl(null)}
-        >
-          <NodeToolbar
-            selectedIds={selectedIds}
-            handleCheckBox={handleCheckBox}
-            handleAddChild={handleAddChild}
-            handleAddNext={handleAddNext}
-            handleAddNote={handleAddNote}
-            handleAddIcon={handleAddIcon}
-            handleAddIllustration={handleAddIllustration}
-            handleFileChange={(files: FileList) => handleFileChange(files)}
-            handleDelete={handleDelete}
-            handleExport={handleExport}
-            handleImport={handleChange}
-            handleLink={handleLink}
-            handleUpdateNode={handleUpdateNode}
-            handleBack={handleBack}
-            horizontal={true}
+        {mode === "simple" ? (
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            onClose={() => setAnchorEl(null)}
+          >
+            <NodeToolbar
+              selectedIds={selectedIds}
+              mode={mode}
+              handleCheckBox={handleCheckBox}
+              handleAddChild={handleAddChild}
+              handleAddNext={handleAddNext}
+              handleAddNote={handleAddNote}
+              handleAddIcon={handleAddIcon}
+              handleAddIllustration={handleAddIllustration}
+              handleFileChange={(files: FileList) => handleFileChange(files)}
+              handleDelete={handleDelete}
+              handleExport={handleExport}
+              handleImport={handleChange}
+              handleLink={handleLink}
+              handleUpdateNode={handleUpdateNode}
+              handleBack={handleBack}
+              horizontal={true}
+            />
+          </Menu>
+        ) : null}
+        {mode === "simple" ? (
+          <i
+            style={{
+              position: "absolute",
+              left: "29px",
+              top: "8px",
+              width: "32px",
+              height: "32px",
+              backgroundImage: "url('/logo/logo.svg')",
+              backgroundSize: "contain",
+              backgroundRepeat: "no-repeat",
+              marginTop: "4px",
+              marginBottom: "8px",
+            }}
           />
-        </Menu>
+        ) : null}
       </div>
     </Box>
   );

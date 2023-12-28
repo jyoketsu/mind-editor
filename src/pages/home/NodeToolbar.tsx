@@ -6,6 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function NodeToolbar({
   selectedIds,
+  mode,
   handleCheckBox,
   handleAddChild,
   handleAddNext,
@@ -22,6 +23,7 @@ export default function NodeToolbar({
   horizontal,
 }: {
   selectedIds: string[];
+  mode: "normal" | "simple";
   handleCheckBox: () => void;
   handleAddChild: () => void;
   handleAddNext: () => void;
@@ -109,8 +111,8 @@ export default function NodeToolbar({
         fontSize={30}
         style={{
           borderRadius: "unset",
-           width: horizontal ? "48px" : "100%",
-            height: horizontal ? "48px" : "68px",
+          width: horizontal ? "48px" : "100%",
+          height: horizontal ? "48px" : "68px",
         }}
         hideText={horizontal}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
@@ -125,8 +127,8 @@ export default function NodeToolbar({
         hideText={horizontal}
         style={{
           borderRadius: "unset",
-           width: horizontal ? "48px" : "100%",
-            height: horizontal ? "48px" : "68px",
+          width: horizontal ? "48px" : "100%",
+          height: horizontal ? "48px" : "68px",
         }}
       >
         <input
@@ -248,20 +250,21 @@ export default function NodeToolbar({
         fontSize={30}
         style={{
           borderRadius: "unset",
-           width: horizontal ? "48px" : "100%",
-            height: horizontal ? "48px" : "68px",
+          width: horizontal ? "48px" : "100%",
+          height: horizontal ? "48px" : "68px",
         }}
         hideText={horizontal}
         onClick={handleCheckBox}
       />
+
       <IconFontIconButton
         title={t("toolBar.style")}
         iconName="yangshi"
         fontSize={30}
         style={{
           borderRadius: "unset",
-           width: horizontal ? "48px" : "100%",
-            height: horizontal ? "48px" : "68px",
+          width: horizontal ? "48px" : "100%",
+          height: horizontal ? "48px" : "68px",
         }}
         hideText={horizontal}
         onClick={handleOpenStyle}
@@ -331,8 +334,8 @@ export default function NodeToolbar({
         fontSize={30}
         style={{
           borderRadius: "unset",
-           width: horizontal ? "48px" : "100%",
-            height: horizontal ? "48px" : "68px",
+          width: horizontal ? "48px" : "100%",
+          height: horizontal ? "48px" : "68px",
         }}
         hideText={horizontal}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
@@ -391,8 +394,8 @@ export default function NodeToolbar({
         fontSize={30}
         style={{
           borderRadius: "unset",
-           width: horizontal ? "48px" : "100%",
-            height: horizontal ? "48px" : "68px",
+          width: horizontal ? "48px" : "100%",
+          height: horizontal ? "48px" : "68px",
         }}
         hideText={horizontal}
         onClick={handleDelete}

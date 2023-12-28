@@ -410,3 +410,45 @@ export function opml2json(opml: string) {
     return result;
   }
 }
+
+export function convert2Text(treeData: TreeData) {
+  const root = treeData.data[treeData.rootKey];
+  let data = "";
+  if (root) {
+    convert(root, 0);
+  }
+
+  function convert(node: TreeNode, level: number) {
+    data += `${"  ".repeat(level)}${node.name}\n`;
+    for (let index = 0; index < node.sortList.length; index++) {
+      const childKey = node.sortList[index];
+      const child = treeData.data[childKey];
+      if (child) {
+        convert(child, level + 1);
+      }
+    }
+  }
+
+  return data;
+}
+
+export function convert2Md(treeData: TreeData) {
+  const root = treeData.data[treeData.rootKey];
+  let data = "";
+  if (root) {
+    convert(root, 0);
+  }
+
+  function convert(node: TreeNode, level: number) {
+    data += `${"  ".repeat(level)}- ${node.name}\n`;
+    for (let index = 0; index < node.sortList.length; index++) {
+      const childKey = node.sortList[index];
+      const child = treeData.data[childKey];
+      if (child) {
+        convert(child, level + 1);
+      }
+    }
+  }
+
+  return data;
+}
