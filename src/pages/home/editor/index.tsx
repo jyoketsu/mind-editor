@@ -241,6 +241,32 @@ const Editor = React.forwardRef(
       [handleImport]
     );
 
+    const handleMessage = (e: any) => {
+      if (e.data.eventName === "changeName" && rootKey) {
+        let data = getData();
+        data.data[rootKey] = { ...data.data[rootKey], name: e.data.data };
+        if (data && patchDataApi) {
+          dispatch(
+            saveDoc({
+              patchDataApi,
+              data,
+            })
+          );
+        }
+        // treeRef.current.updateNodeById(data.data, rootKey, {
+        //   name: e.data.data,
+        // });
+        setTreeData(data);
+      }
+    };
+
+    useEffect(() => {
+      window.addEventListener("message", handleMessage);
+      return () => {
+        window.removeEventListener("message", handleMessage);
+      };
+    }, [rootKey]);
+
     useEffect(() => {
       if (docData) {
         const data = _.cloneDeep(docData);
@@ -785,6 +811,9 @@ const Editor = React.forwardRef(
             // imageHeight: 50,
           }
         );
+      }
+      if (nodeKey === rootKey) {
+        window.parent.postMessage({ eventName: "changeName", data: text }, "*");
       }
     }
 
