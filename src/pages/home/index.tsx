@@ -1,4 +1,12 @@
-import { Box, IconButton, Menu, Slide, Typography, Fade } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Menu,
+  Slide,
+  Typography,
+  Fade,
+  createTheme,
+} from "@mui/material";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,6 +39,7 @@ import api from "../../utils/api";
 import Config from "../../interface/Config";
 import ShortcutDialog from "./Shortcut";
 import _, { set } from "lodash";
+import "./GlobalCssMenu.css";
 
 const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 let timeout: NodeJS.Timeout;

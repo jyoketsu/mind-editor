@@ -720,30 +720,31 @@ const Editor = React.forwardRef(
       const data = treeRef.current.saveNodes();
       const node = data.data[nodeKey];
       if (!node) return;
-      const res: any = await api.getUrlInfo(url);
-      if (res.status === 200) {
-        const icon = res.icon;
-        let endAdornmentContent = node.endAdornmentContent || {};
-        endAdornmentContent = { ...endAdornmentContent, link: { url, text } };
-        treeRef.current.updateNodeById(
-          data.data,
-          nodeKey || contextMenuTargetNodeKey,
-          {
-            endAdornment: getEndAdornment(endAdornmentContent, {
-              note: handleOpenNote,
-              link: handleOpenLink,
-            }),
-            endAdornmentWidth:
-              Object.keys(endAdornmentContent).length * (18 + 2),
-            endAdornmentHeight: 18,
-            endAdornmentContent,
-            imageUrl: icon,
-            imageWidth: 50,
-            imageHeight: 50,
-          }
-        );
-        setLinkAnchorEl(null);
-      }
+      // const res: any = await api.getUrlInfo(url);
+      // if (res.status === 200) {
+
+      // }
+      // const icon = res.icon;
+      let endAdornmentContent = node.endAdornmentContent || {};
+      endAdornmentContent = { ...endAdornmentContent, link: { url, text } };
+      treeRef.current.updateNodeById(
+        data.data,
+        nodeKey || contextMenuTargetNodeKey,
+        {
+          endAdornment: getEndAdornment(endAdornmentContent, {
+            note: handleOpenNote,
+            link: handleOpenLink,
+          }),
+          endAdornmentWidth: Object.keys(endAdornmentContent).length * (18 + 2),
+          endAdornmentHeight: 18,
+          endAdornmentContent,
+          name: text,
+          // imageUrl: icon,
+          // imageWidth: 50,
+          // imageHeight: 50,
+        }
+      );
+      setLinkAnchorEl(null);
     }
 
     async function handleChangeNodeText(nodeKey: string, text: string) {
@@ -756,33 +757,34 @@ const Editor = React.forwardRef(
         if (!node) return;
         if (!matchList?.length) return;
         const url = matchList[0];
-        const res: any = await api.getUrlInfo(url);
-        if (res.status === 200) {
-          const icon = res.icon;
-          let endAdornmentContent = node.endAdornmentContent || {};
-          endAdornmentContent = {
-            ...endAdornmentContent,
-            link: { url, text: "" },
-          };
-          treeRef.current.updateNodeById(
-            data.data,
-            nodeKey || contextMenuTargetNodeKey,
-            {
-              endAdornment: getEndAdornment(endAdornmentContent, {
-                note: handleOpenNote,
-                link: handleOpenLink,
-              }),
-              endAdornmentWidth:
-                Object.keys(endAdornmentContent).length * (18 + 2),
-              endAdornmentHeight: 18,
-              endAdornmentContent,
-              name: text,
-              imageUrl: icon,
-              imageWidth: 50,
-              imageHeight: 50,
-            }
-          );
-        }
+        // const res: any = await api.getUrlInfo(url);
+        // if (res.status === 200) {
+
+        // }
+        // const icon = res.icon;
+        let endAdornmentContent = node.endAdornmentContent || {};
+        endAdornmentContent = {
+          ...endAdornmentContent,
+          link: { url, text: "" },
+        };
+        treeRef.current.updateNodeById(
+          data.data,
+          nodeKey || contextMenuTargetNodeKey,
+          {
+            endAdornment: getEndAdornment(endAdornmentContent, {
+              note: handleOpenNote,
+              link: handleOpenLink,
+            }),
+            endAdornmentWidth:
+              Object.keys(endAdornmentContent).length * (18 + 2),
+            endAdornmentHeight: 18,
+            endAdornmentContent,
+            name: text,
+            // imageUrl: icon,
+            // imageWidth: 50,
+            // imageHeight: 50,
+          }
+        );
       }
     }
 

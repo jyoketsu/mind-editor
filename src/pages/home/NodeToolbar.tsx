@@ -191,6 +191,7 @@ export default function NodeToolbar({
 
   return (
     <Box
+      className="nodeToolBarWrapper"
       sx={{
         width: "100%",
         height: "100%",
@@ -216,7 +217,7 @@ export default function NodeToolbar({
           onClick={handleBack}
         />
       ) : null}
-      {selectedIds.length === 1 ? (
+      {!horizontal && selectedIds.length === 1 ? (
         <IconFontIconButton
           title={t("mind.addChild")}
           iconName="a-tongjijiedian1x"
@@ -230,7 +231,7 @@ export default function NodeToolbar({
           onClick={handleAddChild}
         />
       ) : null}
-      {selectedIds.length === 1 ? (
+      {!horizontal && selectedIds.length === 1 ? (
         <IconFontIconButton
           title={t("mind.addNext")}
           iconName="a-xiajijiedian1x"
