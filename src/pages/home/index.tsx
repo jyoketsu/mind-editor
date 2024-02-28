@@ -217,7 +217,6 @@ export default function Home() {
   };
 
   const handleClickNode = (node: any) => {
-    const mode = localStorage.getItem("MODE");
     if (!node) {
       setSelectedIds([]);
     } else if (Array.isArray(node)) {
