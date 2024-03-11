@@ -233,15 +233,7 @@ export default function Home() {
   };
 
   const handleCheckBox = () => {
-    if (selectedIds.length) {
-      const res = editorRef.current.getNodes();
-      const firstNode = res.data[selectedIds[0]];
-      const data = {
-        showCheckbox: !firstNode.showCheckbox,
-        checked: false,
-      };
-      editorRef?.current?.updateNodesByIds(res.data, selectedIds, data);
-    }
+    editorRef.current.setCheckBox();
   };
 
   const handleBack = () => {

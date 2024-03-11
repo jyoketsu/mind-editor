@@ -139,6 +139,7 @@ const Editor = React.forwardRef(
       addIcon,
       addIllustration,
       addLink,
+      setCheckBox,
       handleChange,
       getSelectedIds: () => treeRef.current.getSelectedIds(),
       getNodes: () => treeRef.current.saveNodes(),
@@ -473,6 +474,22 @@ const Editor = React.forwardRef(
         treeRef.current.getSelectedId() || treeRef.current.getSelectedIds()[0];
       setContextMenuTargetNodeKey(nodeKey);
       handleOpenIllustration(nodeKey, anchorEl);
+    }
+
+    function setCheckBox() {
+      let selectedIds = treeRef.current.getSelectedIds();
+      if (selectedIds.length === 0) {
+        selectedIds = [treeRef.current.getSelectedId()];
+      }
+      if (selectedIds.length) {
+        const res = treeRef.current.saveNodes();
+        const firstNode = res.data[selectedIds[0]];
+        const data = {
+          showCheckbox: !firstNode.showCheckbox,
+          checked: false,
+        };
+        treeRef?.current?.updateNodesByIds(res.data, selectedIds, data);
+      }
     }
 
     function addLink(anchorEl?: HTMLElement) {
