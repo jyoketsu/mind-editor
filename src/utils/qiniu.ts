@@ -2,9 +2,8 @@ import * as qiniu from "qiniu-js";
 import api from "./api";
 
 const guid = (len?: number, radix?: number) => {
-  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split(
-    ""
-  );
+  const chars =
+    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
   const uuid = [];
   let i = 0;
   radix = radix || chars.length;
@@ -32,7 +31,12 @@ const guid = (len?: number, radix?: number) => {
   return uuid.join("");
 };
 
-const qiniuUpload = (uptoken: string, file: any) => {
+const qiniuUpload = (
+  uptoken: string,
+  file: any,
+  qiniuRegion: string,
+  qiniuDomain: string
+) => {
   const putExtra = {
     // 文件原文件名
     fname: "",
@@ -46,30 +50,39 @@ const qiniuUpload = (uptoken: string, file: any) => {
     useCdnDomain: true,
     disableStatisticsReport: false,
     retryCount: 5,
-    region: qiniu.region.z0,
+    // @ts-ignore
+    region: qiniu.region[qiniuRegion || "z0"],
   };
 
-  return new Promise(async function(resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     try {
       const observer = {
         error(err: any) {
           alert("上传失败！");
         },
         complete(res: any) {
-          const domain = "https://cdn-icare.qingtime.cn/";
-          const url:string = domain + encodeURIComponent(res.key);
-          api.qiniu.updateStorage([
-            {
-              url: url,
-              fileType: file.type,
-              fileSize: file.size,
-            },
-          ]);
+          const domain = qiniuDomain || "https://cdn-icare.qingtime.cn/";
+          const url: string = domain + encodeURIComponent(res.key);
+
+          // todo updateStorage
+          if (!qiniuRegion) {
+            api.qiniu.updateStorage([
+              {
+                url: url,
+                fileType: file.type,
+                fileSize: file.size,
+              },
+            ]);
+          }
+
           resolve(url);
         },
       };
 
-      const res: any = await api.qiniu.remainingStorage(file.size);
+      // todo remainingStorage
+      const res: any = !qiniuRegion
+        ? await api.qiniu.remainingStorage(file.size)
+        : { status: 200 };
       if (res.status === 200) {
         // 上传
         const observable = qiniu.upload(

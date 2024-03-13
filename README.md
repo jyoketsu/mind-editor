@@ -80,13 +80,25 @@ export const getThirdAppUrl = (
   });
   const token = localStorage.getItem("auth_token");
   // isEdit 2:edit mode 1:read-only mode 0:preview mode
+  const qiniuConfig = JSON.stringify({
+    useCdnDomain: true,
+    disableStatisticsReport: false,
+    retryCount: 5,
+    region: qiniu.region.z2,
+    forceDirect: true,
+  });
+  const qiniuDomain = "https://cdn-icare.qingtime.cn/";
+  const noRemainingStorageApi = 1;
+  const noUpdateStorageApi = 1;
   const query = `token=${token}&getDataApi=${encodeURIComponent(
     getDataApi
   )}&patchDataApi=${encodeURIComponent(
     patchDataApi
-  )}&getUptokenApi=${encodeURIComponent(getUptokenApi)}&isEdit=${
-    editMode ? 2 : 0
-  }&hideHead=1`;
+  )}&getUptokenApi=${encodeURIComponent(
+    getUptokenApi
+  )}&qiniuConfig=${encodeURIComponent(qiniuConfig)}&isEdit=${
+    editMode ? 2 : 1
+  }&qiniuDomain=${qiniuDomain}&noRemainingStorageApi=${noRemainingStorageApi}&noUpdateStorageApi=${noUpdateStorageApi}&hideHead=1`;
   return `${appUrl}?${query}`;
 };
 ```

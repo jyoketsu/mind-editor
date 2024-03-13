@@ -24,6 +24,8 @@ interface ServiceState {
   docData: TreeData | null;
   changed: boolean;
   loading: boolean;
+  qiniuRegion: string;
+  qiniuDomain: string;
 }
 
 const initialState: ServiceState = {
@@ -33,6 +35,8 @@ const initialState: ServiceState = {
   docData: null,
   changed: false,
   loading: false,
+  qiniuRegion: "",
+  qiniuDomain: "",
 };
 
 export const getDoc = createAsyncThunk(
@@ -73,6 +77,12 @@ export const serviceSlice = createSlice({
       state.patchDataApi = action.payload.patchDataApi;
       state.getUptokenApi = action.payload.getUptokenApi;
       api.setToken(action.payload.token);
+    },
+    setQiniuRegion: (state, action: PayloadAction<string>) => {
+      state.qiniuRegion = action.payload;
+    },
+    setQiniuDomain: (state, action: PayloadAction<string>) => {
+      state.qiniuDomain = action.payload;
     },
     setChanged: (state, action: PayloadAction<boolean>) => {
       state.changed = action.payload;
@@ -117,8 +127,14 @@ export const serviceSlice = createSlice({
   },
 });
 
-export const { setApi, setChanged, setDocData, setDocTreeData } =
-  serviceSlice.actions;
+export const {
+  setApi,
+  setChanged,
+  setDocData,
+  setDocTreeData,
+  setQiniuDomain,
+  setQiniuRegion,
+} = serviceSlice.actions;
 
 export default serviceSlice.reducer;
 

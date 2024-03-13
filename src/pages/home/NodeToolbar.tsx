@@ -388,7 +388,7 @@ export default function NodeToolbar({
       >
         <div style={{ padding: "15px" }}>{moreButtons}</div>
       </Popover>
-      <div style={{ flex: 1 }} />
+      {mode === "normal" ? <div style={{ flex: 1 }} /> : null}
       <IconFontIconButton
         title={t("mind.delete")}
         iconName="a-shanchu1x"

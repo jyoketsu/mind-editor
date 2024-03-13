@@ -10,6 +10,7 @@ import api from "../../../utils/api";
 import qiniuUpload from "../../../utils/qiniu";
 import Loading from "../../../components/common/Loading";
 import IconFontIconButton from "../../../components/common/IconFontIconButton";
+import { useAppSelector } from "../../../redux/hooks";
 
 export default function Note({
   anchorEl,
@@ -22,6 +23,9 @@ export default function Note({
   handleClose: (json: JSONContent) => void;
   data?: JSONContent;
 }) {
+  const qiniuDomain = useAppSelector((state) => state.service.qiniuDomain);
+  const qiniuRegion = useAppSelector((state) => state.service.qiniuRegion);
+
   const [loading, setLoading] = useState(false);
 
   const editor = useEditor({
@@ -110,7 +114,12 @@ export default function Note({
         });
         if (res.statusCode === "200") {
           const upToken = res.result;
-          const url = await qiniuUpload(upToken, file);
+          const url = await qiniuUpload(
+            upToken,
+            file,
+            qiniuRegion,
+            qiniuDomain
+          );
           const node = schema.nodes.image.create({
             src: url,
           });

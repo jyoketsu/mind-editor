@@ -6,6 +6,7 @@ import {
   Typography,
   Fade,
   createTheme,
+  Card,
 } from "@mui/material";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import { useEffect, useRef, useState } from "react";
@@ -30,6 +31,8 @@ import {
   setApi,
   setChanged,
   setDocData,
+  setQiniuRegion,
+  setQiniuDomain,
 } from "../../redux/reducer/serviceSlice";
 import Toolbar from "./Toolbar";
 import Editor from "./editor";
@@ -52,6 +55,9 @@ export default function Home() {
   const changed = useAppSelector((state) => state.service.changed);
   const docData = useAppSelector((state) => state.service.docData);
   const patchDataApi = useAppSelector((state) => state.service.patchDataApi);
+  const qiniuDomain = useAppSelector((state) => state.service.qiniuDomain);
+  const qiniuRegion = useAppSelector((state) => state.service.qiniuRegion);
+
   const [viewType, setViewType] = useState<string>(
     localStorage.getItem("VIEW_TYPE") || "mutil-tree"
   );
@@ -62,7 +68,7 @@ export default function Home() {
   const [shortcutVisible, setShortcutVisible] = useState(false);
   const [history, setHistory] = useState<TreeData[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mode, setMode] = useState<"normal" | "simple">(
     window.self !== window.top
       ? "simple"
@@ -97,6 +103,15 @@ export default function Home() {
           token,
         })
       );
+    }
+
+    const qiniuRegion = getSearchParamValue(location.search, "qiniuRegion");
+    if (qiniuRegion) {
+      dispatch(setQiniuRegion(qiniuRegion));
+    }
+    const qiniuDomain = getSearchParamValue(location.search, "qiniuDomain");
+    if (qiniuDomain) {
+      dispatch(setQiniuDomain(qiniuDomain));
     }
   }, [viewType]);
 
@@ -186,17 +201,17 @@ export default function Home() {
   };
 
   const handleAddChild = () => {
-    setAnchorEl(null);
+    // setAnchorEl(null);
     editorRef?.current?.handleAddChild();
   };
 
   const handleAddNext = () => {
-    setAnchorEl(null);
+    // setAnchorEl(null);
     editorRef?.current?.handleAddNext();
   };
 
   const handleDelete = () => {
-    setAnchorEl(null);
+    // setAnchorEl(null);
     editorRef?.current?.handleDelete();
   };
 
@@ -221,14 +236,14 @@ export default function Home() {
       setSelectedIds([]);
     } else if (Array.isArray(node)) {
       setSelectedIds(node.map((item) => item._key));
-      if (mode === "simple") {
-        setAnchorEl(document.getElementById(`tree-node-${node[0]._key}`));
-      }
+      // if (mode === "simple") {
+      //   setAnchorEl(document.getElementById(`tree-node-${node[0]._key}`));
+      // }
     } else {
       setSelectedIds([node._key]);
-      if (mode === "simple") {
-        setAnchorEl(document.getElementById(`tree-node-${node._key}`));
-      }
+      // if (mode === "simple") {
+      //   setAnchorEl(document.getElementById(`tree-node-${node._key}`));
+      // }
     }
   };
 
@@ -242,6 +257,7 @@ export default function Home() {
   };
 
   const handleUpdateNode = (key: string, value?: string) => {
+    const selectedIds = editorRef.current.getSelectedIds();
     if (selectedIds.length) {
       const res = editorRef.current.getNodes();
       const firstNode = res.data[selectedIds[0]];
@@ -262,6 +278,7 @@ export default function Home() {
   };
 
   const handleFileChange = async (files: FileList) => {
+    const selectedIds = editorRef.current.getSelectedIds();
     if (!selectedIds.length) return;
     const file = files[0];
     if (file.type.startsWith("image/")) {
@@ -270,15 +287,20 @@ export default function Home() {
           ...getUptokenApi.params,
           ...{ token: api.getToken() },
         });
-        if (res.statusCode === "200") {
-          const upToken = res.result;
+        if (res.statusCode === "200" || res.status === 200) {
+          const upToken = res.statusCode ? res.result : res.data;
           try {
             dispatch(setLoading(true));
-            const url = await qiniuUpload(upToken, file);
+            const url = await qiniuUpload(
+              upToken,
+              file,
+              qiniuRegion,
+              qiniuDomain
+            );
             dispatch(setLoading(false));
             if (
               typeof url === "string" &&
-              url.startsWith("https://cdn-icare.qingtime.cn/")
+              url.startsWith(qiniuDomain || "https://cdn-icare.qingtime.cn/")
             ) {
               let img = new Image();
               img.src = url;
@@ -298,9 +320,11 @@ export default function Home() {
               };
             }
           } catch (error) {
+            console.log("---error---", error);
             alert("error!");
           }
         } else {
+          console.log("---error!!!---", res);
           alert("error!");
         }
       }
@@ -509,7 +533,7 @@ export default function Home() {
           open={shortcutVisible}
           handleClose={() => setShortcutVisible(false)}
         />
-        {mode === "simple" ? (
+        {/* {mode === "simple" ? (
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
@@ -538,7 +562,7 @@ export default function Home() {
               horizontal={true}
             />
           </Menu>
-        ) : null}
+        ) : null} */}
         {mode === "simple" ? (
           <i
             style={{
@@ -556,6 +580,37 @@ export default function Home() {
           />
         ) : null}
       </div>
+      {mode === "simple" ? (
+        <Card
+          sx={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            margin: "auto",
+            bottom: "55px",
+            width: "fit-content",
+          }}
+        >
+          <NodeToolbar
+            selectedIds={selectedIds}
+            mode={mode}
+            handleCheckBox={handleCheckBox}
+            handleAddChild={handleAddChild}
+            handleAddNext={handleAddNext}
+            handleAddNote={handleAddNote}
+            handleAddIcon={handleAddIcon}
+            handleAddIllustration={handleAddIllustration}
+            handleFileChange={(files: FileList) => handleFileChange(files)}
+            handleDelete={handleDelete}
+            handleExport={handleExport}
+            handleImport={handleChange}
+            handleLink={handleLink}
+            handleUpdateNode={handleUpdateNode}
+            handleBack={handleBack}
+            horizontal={true}
+          />
+        </Card>
+      ) : null}
     </Box>
   );
 }

@@ -171,7 +171,7 @@ export default function Preview() {
 
   const handleFullScreen = () => {
     if (screenfull.isEnabled) {
-      screenfull.request();
+      screenfull.toggle();
     }
   };
 

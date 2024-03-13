@@ -95,6 +95,9 @@ const Editor = React.forwardRef(
     const getUptokenApi = useAppSelector(
       (state) => state.service.getUptokenApi
     );
+    const qiniuDomain = useAppSelector((state) => state.service.qiniuDomain);
+    const qiniuRegion = useAppSelector((state) => state.service.qiniuRegion);
+
     const [treeData, setTreeData] = useState<any>(null);
     const [rootKey, setRootKey] = useState<string | null>(null);
     const [openDelConfirm, setOpenDelConfirm] = useState(false);
@@ -141,7 +144,14 @@ const Editor = React.forwardRef(
       addLink,
       setCheckBox,
       handleChange,
-      getSelectedIds: () => treeRef.current.getSelectedIds(),
+      // getSelectedIds: () => treeRef.current.getSelectedIds(),
+      getSelectedIds: () => {
+        let selectedIds = treeRef.current.getSelectedIds();
+        if (selectedIds.length === 0) {
+          selectedIds = [treeRef.current.getSelectedId()];
+        }
+        return selectedIds;
+      },
       getNodes: () => treeRef.current.saveNodes(),
       updateNodesByIds: (nodes: NodeMap, ids: string[], data: any) => {
         treeRef?.current?.updateNodesByIds(nodes, ids, data);
@@ -337,6 +347,7 @@ const Editor = React.forwardRef(
 
     function handledeleteConform() {
       setOpenDelConfirm(true);
+      setNoteAnchorEl(null);
     }
     const handleCloseDelConfirm = () => {
       setOpenDelConfirm(false);
@@ -377,11 +388,16 @@ const Editor = React.forwardRef(
             const upToken = res.result;
             try {
               setLoading(true);
-              const url = await qiniuUpload(upToken, file);
+              const url = await qiniuUpload(
+                upToken,
+                file,
+                qiniuRegion,
+                qiniuDomain
+              );
               setLoading(false);
               if (
                 typeof url === "string" &&
-                url.startsWith("https://cdn-icare.qingtime.cn/")
+                url.startsWith(qiniuDomain || "https://cdn-icare.qingtime.cn/")
               ) {
                 let img = new Image();
                 img.src = url;
@@ -443,6 +459,7 @@ const Editor = React.forwardRef(
 
     function handleDelete() {
       setOpenDelConfirm(true);
+      setNoteAnchorEl(null);
     }
 
     function handleDeleteImage() {

@@ -51,6 +51,9 @@ export default function Toolbar({
   const dark = useAppSelector((state) => state.common.dark);
   const changed = useAppSelector((state) => state.service.changed);
   const getUptokenApi = useAppSelector((state) => state.service.getUptokenApi);
+  const qiniuDomain = useAppSelector((state) => state.service.qiniuDomain);
+  const qiniuRegion = useAppSelector((state) => state.service.qiniuRegion);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [languageAnchorEl, setLanguageAnchorEl] = useState<null | HTMLElement>(
@@ -160,7 +163,7 @@ export default function Toolbar({
 
   const handleFullScreen = () => {
     if (screenfull.isEnabled) {
-      screenfull.request();
+      screenfull.toggle();
     }
   };
 
@@ -216,11 +219,16 @@ export default function Toolbar({
           const upToken = res.result;
           try {
             dispatch(setLoading(true));
-            const url = await qiniuUpload(upToken, file);
+            const url = await qiniuUpload(
+              upToken,
+              file,
+              qiniuRegion,
+              qiniuDomain
+            );
             dispatch(setLoading(false));
             if (
               typeof url === "string" &&
-              url.startsWith("https://cdn-icare.qingtime.cn/")
+              url.startsWith(qiniuDomain || "https://cdn-icare.qingtime.cn/")
             ) {
               handleClickColor(url, "background");
             }
@@ -557,10 +565,7 @@ export default function Toolbar({
         onClose={handleCloseExport}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Button
-            color="inherit"
-            onClick={() => handleExport()}
-          >
+          <Button color="inherit" onClick={() => handleExport()}>
             {t("mind.file")}
           </Button>
           <Button color="inherit" onClick={() => handleExport("opml")}>
