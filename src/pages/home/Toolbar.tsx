@@ -123,7 +123,7 @@ export default function Toolbar({
   }, [page]);
 
   async function getWallpapers(page: number) {
-    const res: any = await api.wallpaper.get(1, 30);
+    const res: any = await api.wallpaper.get(page, 30);
     if (res.status === 200) {
       setWallpapers([...wallpapers, ...res.data]);
     }
