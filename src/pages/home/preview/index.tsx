@@ -52,7 +52,17 @@ export default function Preview() {
     if (isEdit === "2") {
       toEdit();
     }
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
   }, []);
+
+  const handleMessage = (e: any) => {
+    if (e.data.eventName === "switch2edit") {
+      toEdit();
+    }
+  };
 
   useEffect(() => {
     editorRef?.current?.resetMove();
